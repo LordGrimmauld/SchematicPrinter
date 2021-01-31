@@ -1,0 +1,26 @@
+modLoader="javafml"
+loaderVersion="[31,)"
+#issueTrackerURL=""
+
+[[mods]]
+    modId="schematicprinter"
+    version="${file.jarVersion}"
+    displayName="ModID"
+    #updateJSONURL=""
+    authors="Grimmauld"
+    description='''
+Some cool description'''
+
+[[dependencies.schematicprinter]]
+    modId="forge"
+    mandatory=true
+    versionRange="[31.2.0,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.schematicprinter]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.15.2,1.16)"
+    ordering="NONE"
+    side="BOTH"
