@@ -12,8 +12,8 @@ import java.util.function.Consumer;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class SelectItem {
-	private final Consumer<SelectOverlay> onInvoke;
 	private final ITextComponent description;
+	protected Consumer<SelectOverlay> onInvoke;
 
 	public SelectItem(ITextComponent description, @Nullable Consumer<SelectOverlay> onInvoke) {
 		this.onInvoke = onInvoke;
@@ -27,6 +27,9 @@ public class SelectItem {
 	public void invoke(SelectOverlay screen) {
 		if (onInvoke != null)
 			onInvoke.accept(screen);
+	}
+
+	public void onOverlayOpen() {
 	}
 
 	public ITextComponent getDescription() {

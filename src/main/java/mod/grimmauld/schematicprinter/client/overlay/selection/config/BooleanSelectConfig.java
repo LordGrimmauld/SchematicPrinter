@@ -9,7 +9,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public class BooleanSelectConfig extends SelectConfig {
-	private boolean value;
+	public boolean value;
 
 	public BooleanSelectConfig(ITextComponent description, boolean defaultValue) {
 		super(null, description);

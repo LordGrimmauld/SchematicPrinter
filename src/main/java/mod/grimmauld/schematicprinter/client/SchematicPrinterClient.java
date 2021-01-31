@@ -2,11 +2,12 @@ package mod.grimmauld.schematicprinter.client;
 
 import mcp.MethodsReturnNonnullByDefault;
 import mod.grimmauld.schematicprinter.SchematicPrinter;
+import mod.grimmauld.schematicprinter.client.overlay.SelectOverlay;
 import mod.grimmauld.schematicprinter.client.overlay.selection.SelectOpenOverlay;
 import mod.grimmauld.schematicprinter.client.overlay.selection.SelectOption;
-import mod.grimmauld.schematicprinter.client.overlay.SelectOverlay;
 import mod.grimmauld.schematicprinter.client.overlay.selection.config.BooleanSelectConfig;
 import mod.grimmauld.schematicprinter.client.overlay.selection.config.IntSelectConfig;
+import mod.grimmauld.schematicprinter.client.overlay.selection.config.SchematicSelectConfig;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
@@ -36,6 +37,7 @@ public class SchematicPrinterClient {
 
 		SelectOverlay schematicOverlay = new SelectOverlay(SchematicPrinterClient.MENU_BUTTON, "Schematics")
 			.addOption(new SelectOption(null, "test"))
+			.addOption(new SchematicSelectConfig("Selected Schematic"))
 			.register();
 
 		SelectOverlay overlayMain = new SelectOverlay(SchematicPrinterClient.MENU_BUTTON, new StringTextComponent("test"))

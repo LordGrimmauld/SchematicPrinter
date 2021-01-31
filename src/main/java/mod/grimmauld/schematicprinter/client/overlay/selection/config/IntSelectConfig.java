@@ -5,9 +5,9 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
 public class IntSelectConfig extends SelectConfig {
-	private final int min;
-	private final int max;
-	private int value;
+	public final int min;
+	public final int max;
+	public int value;
 
 	public IntSelectConfig(ITextComponent description, int min, int defaultValue, int max) {
 		super(null, description);

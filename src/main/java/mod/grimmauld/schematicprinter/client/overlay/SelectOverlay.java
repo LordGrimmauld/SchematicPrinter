@@ -30,12 +30,12 @@ public class SelectOverlay {
 	private static final Minecraft minecraft = Minecraft.getInstance();
 	private final KeyBinding openKey;
 	private final ITextComponent title;
+	public boolean canBeOpenedDirectly;
 	int menuWidth;
 	int menuHeight;
 	private boolean visible;
 	private int targetY;
 	private float movingY;
-	public boolean canBeOpenedDirectly;
 	private SelectOverlay previous;
 
 	private List<SelectItem> options;
@@ -102,6 +102,7 @@ public class SelectOverlay {
 			previous.close();
 		this.updateContents();
 		this.setVisible(true);
+		this.options.forEach(SelectItem::onOverlayOpen);
 	}
 
 	public void render(RenderGameOverlayEvent.Pre event) {
