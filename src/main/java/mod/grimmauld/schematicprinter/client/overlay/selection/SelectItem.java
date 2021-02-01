@@ -2,6 +2,7 @@ package mod.grimmauld.schematicprinter.client.overlay.selection;
 
 import mcp.MethodsReturnNonnullByDefault;
 import mod.grimmauld.schematicprinter.client.overlay.SelectOverlay;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.client.event.InputEvent;
@@ -35,7 +36,7 @@ public class SelectItem {
 			listener.init();
 	}
 
-	public ITextComponent getDescription() {
+	public IFormattableTextComponent getDescription() {
 		return description.deepCopy();
 	}
 

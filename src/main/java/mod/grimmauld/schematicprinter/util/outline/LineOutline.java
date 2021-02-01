@@ -2,18 +2,18 @@ package mod.grimmauld.schematicprinter.util.outline;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import mod.grimmauld.schematicprinter.render.SuperRenderTypeBuffer;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class LineOutline extends Outline {
-	protected Vec3d start;
-	protected Vec3d end;
+	protected Vector3d start;
+	protected Vector3d end;
 
 	public LineOutline() {
-		this.start = Vec3d.ZERO;
-		this.end = Vec3d.ZERO;
+		this.start = Vector3d.ZERO;
+		this.end = Vector3d.ZERO;
 	}
 
-	public LineOutline set(Vec3d start, Vec3d end) {
+	public LineOutline set(Vector3d start, Vector3d end) {
 		this.start = start;
 		this.end = end;
 		return this;

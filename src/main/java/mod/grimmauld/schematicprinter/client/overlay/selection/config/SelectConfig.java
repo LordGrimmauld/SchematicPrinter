@@ -3,6 +3,7 @@ package mod.grimmauld.schematicprinter.client.overlay.selection.config;
 import mcp.MethodsReturnNonnullByDefault;
 import mod.grimmauld.schematicprinter.client.overlay.selection.IOverlayEventListener;
 import mod.grimmauld.schematicprinter.client.overlay.selection.SelectItem;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 
 import javax.annotation.Nullable;
@@ -21,8 +22,8 @@ public abstract class SelectConfig extends SelectItem {
 	public abstract void onScrolled(int amount);
 
 	@Override
-	public ITextComponent getDescription() {
-		return super.getDescription().appendText(": ").appendText(this.getState());
+	public IFormattableTextComponent getDescription() {
+		return super.getDescription().appendString(": ").appendString(this.getState());
 	}
 
 	protected abstract String getState();

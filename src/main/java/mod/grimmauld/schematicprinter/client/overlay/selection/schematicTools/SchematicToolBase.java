@@ -16,13 +16,14 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
+
 
 public abstract class SchematicToolBase implements ISchematicTool {
 	protected SchematicHandler schematicHandler;
 	protected BlockPos selectedPos;
-	protected Vec3d chasingSelectedPos;
-	protected Vec3d lastChasingSelectedPos;
+	protected Vector3d chasingSelectedPos;
+	protected Vector3d lastChasingSelectedPos;
 	protected boolean selectIgnoreBlocks;
 	protected int selectionRange;
 	protected boolean schematicSelected;
@@ -35,8 +36,8 @@ public abstract class SchematicToolBase implements ISchematicTool {
 		selectedPos = null;
 		selectedFace = null;
 		schematicSelected = false;
-		chasingSelectedPos = Vec3d.ZERO;
-		lastChasingSelectedPos = Vec3d.ZERO;
+		chasingSelectedPos = Vector3d.ZERO;
+		lastChasingSelectedPos = Vector3d.ZERO;
 	}
 
 	@Override
@@ -46,7 +47,7 @@ public abstract class SchematicToolBase implements ISchematicTool {
 		if (selectedPos == null)
 			return;
 		lastChasingSelectedPos = chasingSelectedPos;
-		Vec3d target = new Vec3d(selectedPos);
+		Vector3d target = Vector3d.copy(selectedPos);
 		if (target.distanceTo(chasingSelectedPos) < 1 / 512f) {
 			chasingSelectedPos = target;
 			return;
@@ -66,9 +67,9 @@ public abstract class SchematicToolBase implements ISchematicTool {
 		// Select Blueprint
 		if (schematicHandler.isDeployed()) {
 
-			Vec3d traceOrigin = RaycastHelper.getTraceOrigin(player);
-			Vec3d start = inf.transformation.toLocalSpace(traceOrigin);
-			Vec3d end = inf.transformation.toLocalSpace(RaycastHelper.getTraceTarget(player, 70, traceOrigin));
+			Vector3d traceOrigin = RaycastHelper.getTraceOrigin(player);
+			Vector3d start = inf.transformation.toLocalSpace(traceOrigin);
+			Vector3d end = inf.transformation.toLocalSpace(RaycastHelper.getTraceTarget(player, 70, traceOrigin));
 			RaycastHelper.PredicateTraceResult result =
 				RaycastHelper.rayTraceUntil(start, end, pos -> inf.bounds.contains(VecHelper.getCenterOf(pos)));
 
@@ -86,7 +87,7 @@ public abstract class SchematicToolBase implements ISchematicTool {
 				.add(player.getLookVec()
 					.scale(selectionRange)));
 			if (snap)
-				lastChasingSelectedPos = chasingSelectedPos = new Vec3d(selectedPos);
+				lastChasingSelectedPos = chasingSelectedPos = Vector3d.copy(selectedPos);
 			return;
 		}
 
@@ -106,7 +107,7 @@ public abstract class SchematicToolBase implements ISchematicTool {
 			hit = hit.offset(trace.getFace());
 		selectedPos = hit;
 		if (snap)
-			lastChasingSelectedPos = chasingSelectedPos = new Vec3d(selectedPos);
+			lastChasingSelectedPos = chasingSelectedPos = Vector3d.copy(selectedPos);
 	}
 
 	@Override

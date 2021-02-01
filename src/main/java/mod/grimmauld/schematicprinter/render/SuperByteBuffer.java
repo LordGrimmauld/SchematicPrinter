@@ -5,8 +5,8 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GLAllocation;
-import net.minecraft.client.renderer.Matrix4f;
-import net.minecraft.client.renderer.Vector4f;
+import net.minecraft.util.math.vector.Matrix4f;
+import net.minecraft.util.math.vector.Vector4f;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;

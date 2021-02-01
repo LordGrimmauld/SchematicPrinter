@@ -39,7 +39,7 @@ public class Printer {
 				return inf;
 
 			// canPlace
-			if (!MC.world.func_226663_a_(inf.state, inf.pos, ISelectionContext.forEntity(MC.player)))
+			if (!MC.world.placedBlockCollides(inf.state, inf.pos, ISelectionContext.forEntity(MC.player)))
 				return inf;
 
 			if (MC.isSingleplayer() && MC.player.isCreative())

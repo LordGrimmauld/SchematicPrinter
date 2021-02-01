@@ -3,19 +3,20 @@ package mod.grimmauld.schematicprinter.util;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.*;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 
 import java.util.function.Predicate;
 
 public class RaycastHelper {
 	public static BlockRayTraceResult rayTraceRange(World worldIn, PlayerEntity playerIn, double range) {
-		Vec3d origin = getTraceOrigin(playerIn);
-		Vec3d target = getTraceTarget(playerIn, range, origin);
+		Vector3d origin = getTraceOrigin(playerIn);
+		Vector3d target = getTraceTarget(playerIn, range, origin);
 		RayTraceContext context = new RayTraceContext(origin, target, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, playerIn);
 		return worldIn.rayTraceBlocks(context);
 	}
 
-	public static Vec3d getTraceTarget(PlayerEntity playerIn, double range, Vec3d origin) {
+	public static Vector3d getTraceTarget(PlayerEntity playerIn, double range, Vector3d origin) {
 		float f = playerIn.rotationPitch;
 		float f1 = playerIn.rotationYaw;
 		float f2 = MathHelper.cos(-f1 * 0.017453292F - 3.1415927F);
@@ -27,14 +28,14 @@ public class RaycastHelper {
 		return origin.add((double) f6 * range, (double) f5 * range, (double) f7 * range);
 	}
 
-	public static Vec3d getTraceOrigin(PlayerEntity playerIn) {
+	public static Vector3d getTraceOrigin(PlayerEntity playerIn) {
 		double d0 = playerIn.getPosX();
 		double d1 = playerIn.getPosY() + (double) playerIn.getEyeHeight();
 		double d2 = playerIn.getPosZ();
-		return new Vec3d(d0, d1, d2);
+		return new Vector3d(d0, d1, d2);
 	}
 
-	public static PredicateTraceResult rayTraceUntil(Vec3d start, Vec3d end, Predicate<BlockPos> predicate) {
+	public static PredicateTraceResult rayTraceUntil(Vector3d start, Vector3d end, Predicate<BlockPos> predicate) {
 		if (!Double.isNaN(start.x) && !Double.isNaN(start.y) && !Double.isNaN(start.z)) {
 			if (!Double.isNaN(end.x) && !Double.isNaN(end.y) && !Double.isNaN(end.z)) {
 				int dx = MathHelper.floor(end.x);
@@ -125,13 +126,13 @@ public class RaycastHelper {
 
 						if (d3 < d4 && d3 < d5) {
 							enumfacing = dx > x ? Direction.WEST : Direction.EAST;
-							start = new Vec3d(d0, start.y + d7 * d3, start.z + d8 * d3);
+							start = new Vector3d(d0, start.y + d7 * d3, start.z + d8 * d3);
 						} else if (d4 < d5) {
 							enumfacing = dy > y ? Direction.DOWN : Direction.UP;
-							start = new Vec3d(start.x + d6 * d4, d1, start.z + d8 * d4);
+							start = new Vector3d(start.x + d6 * d4, d1, start.z + d8 * d4);
 						} else {
 							enumfacing = dz > z ? Direction.NORTH : Direction.SOUTH;
-							start = new Vec3d(start.x + d6 * d5, start.y + d7 * d5, d2);
+							start = new Vector3d(start.x + d6 * d5, start.y + d7 * d5, d2);
 						}
 
 						x = MathHelper.floor(start.x) - (enumfacing == Direction.EAST ? 1 : 0);

@@ -11,20 +11,16 @@ import net.minecraft.entity.item.ArmorStandEntity;
 import net.minecraft.entity.item.ItemFrameEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.IFluidState;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MutableBoundingBox;
-import net.minecraft.world.EmptyTickList;
-import net.minecraft.world.ITickList;
-import net.minecraft.world.LightType;
-import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.Biomes;
+import net.minecraft.world.*;
+import net.minecraft.world.server.ServerWorld;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
 import java.util.function.Predicate;
@@ -32,7 +28,7 @@ import java.util.function.Predicate;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 @SuppressWarnings("unused")
-public class SchematicWorld extends WrappedWorld {
+public class SchematicWorld extends WrappedWorld implements IServerWorld {
 
 	public final BlockPos anchor;
 	private final Map<BlockPos, BlockState> blocks;
@@ -112,7 +108,7 @@ public class SchematicWorld extends WrappedWorld {
 			return Blocks.GRASS_BLOCK.getDefaultState();
 		if (getBounds().isVecInside(pos) && blocks.containsKey(pos)) {
 			BlockState blockState = blocks.get(pos);
-			if (blockState.has(BlockStateProperties.LIT))
+			if (blockState.func_235903_d_(BlockStateProperties.LIT).isPresent())
 				blockState = blockState.with(BlockStateProperties.LIT, false);
 			return blockState;
 		}
@@ -124,13 +120,8 @@ public class SchematicWorld extends WrappedWorld {
 	}
 
 	@Override
-	public IFluidState getFluidState(BlockPos pos) {
+	public FluidState getFluidState(BlockPos pos) {
 		return getBlockState(pos).getFluidState();
-	}
-
-	@Override
-	public Biome getBiome(BlockPos pos) {
-		return Biomes.THE_VOID;
 	}
 
 	@Override
@@ -198,6 +189,14 @@ public class SchematicWorld extends WrappedWorld {
 
 	public Iterable<TileEntity> getRenderedTileEntities() {
 		return renderedTileEntities;
+	}
+
+	@Override
+	public ServerWorld getWorld() {
+		if (this.world instanceof ServerWorld) {
+			return (ServerWorld) this.world;
+		}
+		throw new IllegalStateException("Cannot use IServerWorld#getWorld in a client environment");
 	}
 
 }

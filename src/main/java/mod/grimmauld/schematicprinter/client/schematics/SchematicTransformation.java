@@ -5,13 +5,13 @@ import mod.grimmauld.schematicprinter.util.VecHelper;
 import mod.grimmauld.schematicprinter.util.interpolation.InterpolatedChasingAngle;
 import mod.grimmauld.schematicprinter.util.interpolation.InterpolatedChasingValue;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.gen.feature.template.PlacementSettings;
 
 public class SchematicTransformation {
@@ -36,7 +36,7 @@ public class SchematicTransformation {
 		this.zOrigin = bounds.getZSize() / 2.0D;
 		int r = -(settings.getRotation().ordinal() * 90);
 		this.rotation.setStart((float) r);
-		Vec3d vec = this.fromAnchor(anchor);
+		Vector3d vec = this.fromAnchor(anchor);
 		this.x.setStart((float) vec.x);
 		this.y.setStart((float) vec.y);
 		this.z.setStart((float) vec.z);
@@ -45,7 +45,7 @@ public class SchematicTransformation {
 	public void applyGLTransformations(MatrixStack ms) {
 		float pt = Minecraft.getInstance().getRenderPartialTicks();
 		ms.translate(this.x.get(pt), this.y.get(pt), this.z.get(pt));
-		Vec3d rotationOffset = this.getRotationOffset(true);
+		Vector3d rotationOffset = this.getRotationOffset(true);
 		float fb = this.getScaleFB().get(pt);
 		float lr = this.getScaleLR().get(pt);
 		float rot = this.rotation.get(pt) + (float) (fb < 0.0F && lr < 0.0F ? 180 : 0);
@@ -57,8 +57,8 @@ public class SchematicTransformation {
 		ms.translate(-this.xOrigin, 0.0D, -this.zOrigin);
 	}
 
-	public Vec3d getRotationOffset(boolean ignoreMirrors) {
-		Vec3d rotationOffset = Vec3d.ZERO;
+	public Vector3d getRotationOffset(boolean ignoreMirrors) {
+		Vector3d rotationOffset = Vector3d.ZERO;
 		if ((int) (this.zOrigin * 2.0D) % 2 != (int) (this.xOrigin * 2.0D) % 2) {
 			boolean xGreaterZ = this.xOrigin > this.zOrigin;
 			float xIn = xGreaterZ ? 0.0F : 0.5F;
@@ -68,15 +68,15 @@ public class SchematicTransformation {
 				zIn *= (float) this.getMirrorModifier(Direction.Axis.Z);
 			}
 
-			rotationOffset = new Vec3d(xIn, 0.0D, zIn);
+			rotationOffset = new Vector3d(xIn, 0.0D, zIn);
 		}
 
 		return rotationOffset;
 	}
 
-	public Vec3d toLocalSpace(Vec3d vec) {
+	public Vector3d toLocalSpace(Vector3d vec) {
 		float pt = Minecraft.getInstance().getRenderPartialTicks();
-		Vec3d rotationOffset = this.getRotationOffset(true);
+		Vector3d rotationOffset = this.getRotationOffset(true);
 		vec = vec.subtract(this.x.get(pt), this.y.get(pt), this.z.get(pt));
 		vec = vec.subtract(this.xOrigin + rotationOffset.x, 0.0D, this.zOrigin + rotationOffset.z);
 		vec = VecHelper.rotate(vec, -this.rotation.get(pt), Direction.Axis.Y);
@@ -127,8 +127,8 @@ public class SchematicTransformation {
 	}
 
 	public BlockPos getAnchor() {
-		Vec3d vec = Vec3d.ZERO.add(0.5D, 0.0D, 0.5D);
-		Vec3d rotationOffset = this.getRotationOffset(false);
+		Vector3d vec = Vector3d.ZERO.add(0.5D, 0.0D, 0.5D);
+		Vector3d rotationOffset = this.getRotationOffset(false);
 		vec = vec.subtract(this.xOrigin, 0.0D, this.zOrigin);
 		vec = vec.subtract(rotationOffset.x, 0.0D, rotationOffset.z);
 		vec = vec.mul(this.getScaleFB().getTarget(), 1.0D, this.getScaleLR().getTarget());
@@ -138,15 +138,15 @@ public class SchematicTransformation {
 		return new BlockPos(vec.x, vec.y, vec.z);
 	}
 
-	public Vec3d fromAnchor(BlockPos pos) {
-		Vec3d vec = Vec3d.ZERO.add(0.5D, 0.0D, 0.5D);
-		Vec3d rotationOffset = this.getRotationOffset(false);
+	public Vector3d fromAnchor(BlockPos pos) {
+		Vector3d vec = Vector3d.ZERO.add(0.5D, 0.0D, 0.5D);
+		Vector3d rotationOffset = this.getRotationOffset(false);
 		vec = vec.subtract(this.xOrigin, 0.0D, this.zOrigin);
 		vec = vec.subtract(rotationOffset.x, 0.0D, rotationOffset.z);
 		vec = vec.mul(this.getScaleFB().getTarget(), 1.0D, this.getScaleLR().getTarget());
 		vec = VecHelper.rotate(vec, this.rotation.getTarget(), Direction.Axis.Y);
 		vec = vec.add(this.xOrigin, 0.0D, this.zOrigin);
-		return new Vec3d(pos.subtract(new BlockPos(vec.x, vec.y, vec.z)));
+		return Vector3d.copy(pos.subtract(new BlockPos(vec.x, vec.y, vec.z)));
 	}
 
 	public int getRotationTarget() {

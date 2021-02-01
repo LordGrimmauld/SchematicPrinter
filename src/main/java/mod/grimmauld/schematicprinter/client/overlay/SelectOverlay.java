@@ -1,5 +1,6 @@
 package mod.grimmauld.schematicprinter.client.overlay;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import mcp.MethodsReturnNonnullByDefault;
 import mod.grimmauld.schematicprinter.client.ExtraTextures;
@@ -14,6 +15,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.util.InputMappings;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -114,10 +116,10 @@ public class SelectOverlay {
 	}
 
 	public void render(RenderGameOverlayEvent.Pre event) {
-		draw(event.getPartialTicks());
+		draw(event.getMatrixStack(), event.getPartialTicks());
 	}
 
-	private void draw(float partialTicks) {
+	private void draw(MatrixStack ms, float partialTicks) {
 		if (!visible)
 			return;
 		MainWindow window = minecraft.getMainWindow();
@@ -131,18 +133,18 @@ public class SelectOverlay {
 			y -= 24;
 		}
 
-		RenderSystem.pushMatrix();
+		ms.push();
 		float shift = yShift(partialTicks);
 		float sidewaysShift = shift * ((float) menuWidth / (float) menuHeight) + (40 + menuHeight / 4f)
 			+ 8;
 
-		RenderSystem.translatef(sideways ? sidewaysShift : 0, sideways ? 0 : shift, 0);
+		ms.translate(sideways ? sidewaysShift : 0, sideways ? 0 : shift, 0);
 
 		RenderSystem.enableBlend();
 		RenderSystem.color4f(1, 1, 1, 3 / 4f);
 
 		minecraft.getTextureManager().bindTexture(ExtraTextures.GRAY.getLocation());
-		blit(x, y, 0, 0, menuWidth, menuHeight, 16, 16);
+		blit(ms, x, y, 0, 0, menuWidth, menuHeight, 16, 16);
 		RenderSystem.color4f(1, 1, 1, 1);
 
 		int yPos = y + 4;
@@ -152,7 +154,7 @@ public class SelectOverlay {
 
 		// TODO add Keybinds
 
-		font.drawStringWithShadow(title.getFormattedText(), xPos, yPos, 0xEEEEEE);
+		font.func_243246_a(ms, title, xPos, yPos, 0xEEEEEE);
 
 		yPos += 4;
 
@@ -162,15 +164,14 @@ public class SelectOverlay {
 		yPos += font.FONT_HEIGHT;
 
 		for (int i = 0; i < options.size(); i++) {
-			ITextComponent desc = options.get(i).getDescription();
+			IFormattableTextComponent desc = options.get(i).getDescription();
 			if (i == selectedOptionIndex)
-				desc.applyTextStyles(TextFormatting.UNDERLINE, TextFormatting.ITALIC);
-			int lines = Minecraft.getInstance().fontRenderer.listFormattedStringToWidth(desc.getFormattedText(), menuWidth - 8).size();
-			font.drawSplitString(desc.getFormattedText(), xPos, yPos, menuWidth - 8, 0xEEEEEE);
-			yPos += font.FONT_HEIGHT * lines + 2;
+				desc.mergeStyle(TextFormatting.UNDERLINE, TextFormatting.ITALIC);
+			font.func_243248_b(ms, desc, xPos, yPos, menuWidth - 8);
+			yPos += font.FONT_HEIGHT + 2;
 		}
 
-		RenderSystem.popMatrix();
+		ms.pop();
 	}
 
 	private float yShift(float partialTicks) {
@@ -199,13 +200,7 @@ public class SelectOverlay {
 		this.menuHeight += 12; // title
 
 		// todo special keybinds
-
-		menuHeight += 4;
-
-		for (SelectItem option : options) {
-			menuHeight += 2 + fontheight * minecraft.fontRenderer.listFormattedStringToWidth(option.getDescription().getFormattedText(), menuWidth - 8).size();
-		}
-
+		menuHeight += 4 + (2 + fontheight) * options.size();
 		adjustTarget();
 	}
 

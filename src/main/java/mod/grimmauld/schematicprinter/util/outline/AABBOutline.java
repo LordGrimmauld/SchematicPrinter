@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class AABBOutline extends Outline {
 	protected AxisAlignedBB bb;
@@ -23,18 +23,18 @@ public class AABBOutline extends Outline {
 	}
 
 	public void renderBB(MatrixStack ms, SuperRenderTypeBuffer buffer, AxisAlignedBB bb) {
-		Vec3d projectedView = Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getProjectedView();
+		Vector3d projectedView = Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getProjectedView();
 		boolean noCull = bb.contains(projectedView);
 		bb = bb.grow(noCull ? -0.0078125D : 0.0078125D);
 		noCull |= this.params.disableCull;
-		Vec3d xyz = new Vec3d(bb.minX, bb.minY, bb.minZ);
-		Vec3d Xyz = new Vec3d(bb.maxX, bb.minY, bb.minZ);
-		Vec3d xYz = new Vec3d(bb.minX, bb.maxY, bb.minZ);
-		Vec3d XYz = new Vec3d(bb.maxX, bb.maxY, bb.minZ);
-		Vec3d xyZ = new Vec3d(bb.minX, bb.minY, bb.maxZ);
-		Vec3d XyZ = new Vec3d(bb.maxX, bb.minY, bb.maxZ);
-		Vec3d xYZ = new Vec3d(bb.minX, bb.maxY, bb.maxZ);
-		Vec3d XYZ = new Vec3d(bb.maxX, bb.maxY, bb.maxZ);
+		Vector3d xyz = new Vector3d(bb.minX, bb.minY, bb.minZ);
+		Vector3d Xyz = new Vector3d(bb.maxX, bb.minY, bb.minZ);
+		Vector3d xYz = new Vector3d(bb.minX, bb.maxY, bb.minZ);
+		Vector3d XYz = new Vector3d(bb.maxX, bb.maxY, bb.minZ);
+		Vector3d xyZ = new Vector3d(bb.minX, bb.minY, bb.maxZ);
+		Vector3d XyZ = new Vector3d(bb.maxX, bb.minY, bb.maxZ);
+		Vector3d xYZ = new Vector3d(bb.minX, bb.maxY, bb.maxZ);
+		Vector3d XYZ = new Vector3d(bb.maxX, bb.maxY, bb.maxZ);
 		renderPartial(ms, buffer, xYz, Xyz, xyz, XYZ, XyZ, xyZ);
 		renderPartial(ms, buffer, Xyz, xYz, XYz, xyZ, xYZ, XYZ);
 		this.renderFace(ms, buffer, Direction.NORTH, xYz, XYz, Xyz, xyz, noCull);
@@ -45,7 +45,7 @@ public class AABBOutline extends Outline {
 		this.renderFace(ms, buffer, Direction.DOWN, xyz, Xyz, XyZ, xyZ, noCull);
 	}
 
-	private void renderPartial(MatrixStack ms, SuperRenderTypeBuffer buffer, Vec3d xyz, Vec3d xYz, Vec3d XYz, Vec3d xyZ, Vec3d xYZ, Vec3d XYZ) {
+	private void renderPartial(MatrixStack ms, SuperRenderTypeBuffer buffer, Vector3d xyz, Vector3d xYz, Vector3d XYz, Vector3d xyZ, Vector3d xYZ, Vector3d XYZ) {
 		this.renderAACuboidLine(ms, buffer, XYz, xYz);
 		this.renderAACuboidLine(ms, buffer, XYz, xyz);
 		this.renderAACuboidLine(ms, buffer, XYz, XYZ);
@@ -54,7 +54,7 @@ public class AABBOutline extends Outline {
 		this.renderAACuboidLine(ms, buffer, xYZ, xYz);
 	}
 
-	protected void renderFace(MatrixStack ms, SuperRenderTypeBuffer buffer, Direction direction, Vec3d p1, Vec3d p2, Vec3d p3, Vec3d p4, boolean noCull) {
+	protected void renderFace(MatrixStack ms, SuperRenderTypeBuffer buffer, Direction direction, Vector3d p1, Vector3d p2, Vector3d p3, Vector3d p4, boolean noCull) {
 		if (this.params.faceTexture.isPresent()) {
 			ResourceLocation faceTexture = this.params.faceTexture.get().getLocation();
 			float alphaBefore = this.params.alpha;
@@ -62,8 +62,8 @@ public class AABBOutline extends Outline {
 			RenderType translucentType = RenderTypes.getOutlineTranslucent(faceTexture, !noCull);
 			IVertexBuilder builder = buffer.getLateBuffer(translucentType);
 			Direction.Axis axis = direction.getAxis();
-			Vec3d uDiff = p2.subtract(p1);
-			Vec3d vDiff = p4.subtract(p1);
+			Vector3d uDiff = p2.subtract(p1);
+			Vector3d vDiff = p4.subtract(p1);
 			float maxU = (float) Math.abs(axis == Direction.Axis.X ? uDiff.z : uDiff.x);
 			float maxV = (float) Math.abs(axis == Direction.Axis.Y ? vDiff.z : vDiff.y);
 			this.putQuadUV(ms, builder, p1, p2, p3, p4, 0.0F, 0.0F, maxU, maxV, Direction.UP);

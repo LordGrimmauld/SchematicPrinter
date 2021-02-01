@@ -8,7 +8,7 @@ import mod.grimmauld.schematicprinter.util.outline.AABBOutline;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class FlipTool extends PlacementToolBase {
 	private final AABBOutline outline = new AABBOutline(new AxisAlignedBB(BlockPos.ZERO));
@@ -52,10 +52,10 @@ public class FlipTool extends PlacementToolBase {
 		Direction facing = selectedFace.rotateY();
 		AxisAlignedBB bounds = inf.bounds;
 
-		Vec3d directionVec = new Vec3d(Direction.getFacingFromAxis(Direction.AxisDirection.POSITIVE, facing.getAxis())
+		Vector3d directionVec = Vector3d.copy(Direction.getFacingFromAxis(Direction.AxisDirection.POSITIVE, facing.getAxis())
 			.getDirectionVec());
-		Vec3d boundsSize = new Vec3d(bounds.getXSize(), bounds.getYSize(), bounds.getZSize());
-		Vec3d vec = boundsSize.mul(directionVec);
+		Vector3d boundsSize = new Vector3d(bounds.getXSize(), bounds.getYSize(), bounds.getZSize());
+		Vector3d vec = boundsSize.mul(directionVec);
 		bounds = bounds.contract(vec.x, vec.y, vec.z)
 			.grow(1 - directionVec.x, 1 - directionVec.y, 1 - directionVec.z);
 		bounds = bounds.offset(directionVec.scale(.5f)

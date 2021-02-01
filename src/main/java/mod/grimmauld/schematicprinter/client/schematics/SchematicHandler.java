@@ -63,11 +63,11 @@ public class SchematicHandler {
 			SchematicWorld wMirroredFB = new SchematicWorld(clientWorld);
 			SchematicWorld wMirroredLR = new SchematicWorld(clientWorld);
 			PlacementSettings placementSettings = new PlacementSettings();
-			activeSchematic.structure.addBlocksToWorld(w, BlockPos.ZERO, placementSettings);
+			activeSchematic.structure.func_237144_a_(w, BlockPos.ZERO, placementSettings, w.getRandom());
 			placementSettings.setMirror(Mirror.FRONT_BACK);
-			activeSchematic.structure.addBlocksToWorld(wMirroredFB, BlockPos.ZERO.east(size.getX() - 1), placementSettings);
+			activeSchematic.structure.func_237144_a_(wMirroredFB, BlockPos.ZERO.east(size.getX() - 1), placementSettings, wMirroredFB.getRandom());
 			placementSettings.setMirror(Mirror.LEFT_RIGHT);
-			activeSchematic.structure.addBlocksToWorld(wMirroredLR, BlockPos.ZERO.south(size.getZ() - 1), placementSettings);
+			activeSchematic.structure.func_237144_a_(wMirroredLR, BlockPos.ZERO.south(size.getZ() - 1), placementSettings, wMirroredLR.getRandom());
 			this.renderers.get(0).display(w);
 			this.renderers.get(1).display(wMirroredFB);
 			this.renderers.get(2).display(wMirroredLR);
@@ -115,7 +115,7 @@ public class SchematicHandler {
 		if (this.activeSchematic == null || !deployed)
 			return;
 
-		activeSchematic.structure.addBlocksToWorld(placementWorld.getValue(), activeSchematic.transformation.getAnchor(), activeSchematic.transformation.toSettings());
+		activeSchematic.structure.func_237144_a_(placementWorld.getValue(), activeSchematic.transformation.getAnchor(), activeSchematic.transformation.toSettings(), placementWorld.getValue().getRandom());
 		quitSchematic();
 		Printer.startPrinting();
 	}

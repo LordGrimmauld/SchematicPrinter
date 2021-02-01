@@ -8,14 +8,18 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.crafting.RecipeManager;
 import net.minecraft.scoreboard.Scoreboard;
-import net.minecraft.tags.NetworkTagManager;
+import net.minecraft.tags.ITagCollectionSupplier;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.DynamicRegistries;
 import net.minecraft.world.ITickList;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.chunk.AbstractChunkProvider;
+import net.minecraft.world.storage.ISpawnWorldInfo;
 import net.minecraft.world.storage.MapData;
 
 import javax.annotation.Nullable;
@@ -30,7 +34,8 @@ public class WrappedWorld extends World {
 	protected final World world;
 
 	public WrappedWorld(World world) {
-		super(world.getWorldInfo(), world.getDimension().getType(), (w, d) -> world.getChunkProvider(), world.getProfiler(), world.isRemote);
+		super((ISpawnWorldInfo) world.getWorldInfo(), world.getDimensionKey(), world.getDimensionType(),
+			world::getProfiler, world.isRemote, world.isDebug(), 0);
 		this.world = world;
 	}
 
@@ -68,6 +73,11 @@ public class WrappedWorld extends World {
 
 	public ITickList<Fluid> getPendingFluidTicks() {
 		return this.world.getPendingFluidTicks();
+	}
+
+	@Override
+	public AbstractChunkProvider getChunkProvider() {
+		return world.getChunkProvider();
 	}
 
 	public void playEvent(@Nullable PlayerEntity player, int type, BlockPos pos, int data) {
@@ -114,15 +124,21 @@ public class WrappedWorld extends World {
 		return this.world.getRecipeManager();
 	}
 
-	public NetworkTagManager getTags() {
+	public ITagCollectionSupplier getTags() {
 		return this.world.getTags();
-	}
-
-	public int getMaxHeight() {
-		return 256;
 	}
 
 	public Biome getNoiseBiomeRaw(int p_225604_1_, int p_225604_2_, int p_225604_3_) {
 		return this.world.getNoiseBiomeRaw(p_225604_1_, p_225604_2_, p_225604_3_);
+	}
+
+	@Override
+	public DynamicRegistries func_241828_r() {
+		return world.func_241828_r();
+	}
+
+	@Override
+	public float func_230487_a_(Direction p_230487_1_, boolean p_230487_2_) {
+		return world.func_230487_a_(p_230487_1_, p_230487_2_);
 	}
 }

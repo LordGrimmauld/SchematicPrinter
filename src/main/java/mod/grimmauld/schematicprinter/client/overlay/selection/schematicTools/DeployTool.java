@@ -5,10 +5,10 @@ import mod.grimmauld.schematicprinter.client.SchematicPrinterClient;
 import mod.grimmauld.schematicprinter.client.schematics.SchematicMetaInf;
 import mod.grimmauld.schematicprinter.render.SuperRenderTypeBuffer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.vector.Vector3f;
 
 public class DeployTool extends SchematicToolBase {
 	@Override
@@ -45,13 +45,13 @@ public class DeployTool extends SchematicToolBase {
 		double y = MathHelper.lerp(pt, lastChasingSelectedPos.y, chasingSelectedPos.y);
 		double z = MathHelper.lerp(pt, lastChasingSelectedPos.z, chasingSelectedPos.z);
 
-		Vec3d center = inf.bounds.getCenter();
-		Vec3d rotationOffset = inf.transformation.getRotationOffset(true);
+		Vector3d center = inf.bounds.getCenter();
+		Vector3d rotationOffset = inf.transformation.getRotationOffset(true);
 		int centerX = (int) center.x;
 		int centerZ = (int) center.z;
 		double xOrigin = inf.bounds.getXSize() / 2f;
 		double zOrigin = inf.bounds.getZSize() / 2f;
-		Vec3d origin = new Vec3d(xOrigin, 0, zOrigin);
+		Vector3d origin = new Vector3d(xOrigin, 0, zOrigin);
 
 		ms.translate(x - centerX, y, z - centerZ);
 		ms.translate(origin.x, origin.y, origin.z);
@@ -79,7 +79,7 @@ public class DeployTool extends SchematicToolBase {
 		SchematicMetaInf inf = schematicHandler.activeSchematic;
 		if (selectedPos == null || inf == null)
 			return super.handleActivated();
-		Vec3d center = inf.bounds
+		Vector3d center = inf.bounds
 			.getCenter();
 		BlockPos target = selectedPos.add(-((int) center.x), 0, -((int) center.z));
 		inf.transformation

@@ -4,7 +4,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import mod.grimmauld.schematicprinter.client.schematics.SchematicMetaInf;
 import mod.grimmauld.schematicprinter.render.SuperRenderTypeBuffer;
 import mod.grimmauld.schematicprinter.util.outline.LineOutline;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class RotateTool extends PlacementToolBase {
 	private final LineOutline line = new LineOutline();
@@ -32,11 +32,11 @@ public class RotateTool extends PlacementToolBase {
 			return;
 
 		double height = inf.bounds.getYSize() + Math.max(20, inf.bounds.getYSize());
-		Vec3d center = inf.bounds.getCenter()
+		Vector3d center = inf.bounds.getCenter()
 			.add(inf.transformation
 				.getRotationOffset(false));
-		Vec3d start = center.subtract(0, height / 2, 0);
-		Vec3d end = center.add(0, height / 2, 0);
+		Vector3d start = center.subtract(0, height / 2, 0);
+		Vector3d end = center.add(0, height / 2, 0);
 
 		line.getParams()
 			.disableCull()
