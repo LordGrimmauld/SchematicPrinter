@@ -2,7 +2,6 @@ package mod.grimmauld.schematicprinter.client;
 
 import mcp.MethodsReturnNonnullByDefault;
 import mod.grimmauld.schematicprinter.client.overlay.SelectOverlay;
-import mod.grimmauld.schematicprinter.client.printer.BlockInformation;
 import mod.grimmauld.schematicprinter.util.KeybindHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
@@ -15,7 +14,6 @@ import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -25,7 +23,7 @@ import java.util.Set;
 @SuppressWarnings("unused")
 public class Manager {
 	public static final boolean shouldCloseOnEsc = false;
-	public static Set<SelectOverlay> overlays = new HashSet<>();
+	public static final Set<SelectOverlay> overlays = new HashSet<>();
 
 	@SubscribeEvent
 	public static void onKeyPressed(InputEvent.KeyInputEvent event) {

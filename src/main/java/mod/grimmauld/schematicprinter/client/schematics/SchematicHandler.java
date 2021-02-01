@@ -44,9 +44,6 @@ public class SchematicHandler {
 		this.renderers.forEach(r -> r.setActive(false));
 	}
 
-	private void init() {
-	}
-
 	public void tick() {
 		if (activeSchematic != null)
 			activeSchematic.transformation.tick();
@@ -115,7 +112,7 @@ public class SchematicHandler {
 	}
 
 	public void printInstantly() {
-		if (this.activeSchematic == null)
+		if (this.activeSchematic == null || !deployed)
 			return;
 
 		activeSchematic.structure.addBlocksToWorld(placementWorld.getValue(), activeSchematic.transformation.getAnchor(), activeSchematic.transformation.toSettings());
@@ -150,6 +147,5 @@ public class SchematicHandler {
 		}
 		activeSchematic = SchematicMetaInf.load(selectedFile);
 		active = true;
-		init();
 	}
 }

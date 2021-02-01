@@ -27,7 +27,7 @@ import java.util.function.Predicate;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class WrappedWorld extends World {
-	protected World world;
+	protected final World world;
 
 	public WrappedWorld(World world) {
 		super(world.getWorldInfo(), world.getDimension().getType(), (w, d) -> world.getChunkProvider(), world.getProfiler(), world.isRemote);

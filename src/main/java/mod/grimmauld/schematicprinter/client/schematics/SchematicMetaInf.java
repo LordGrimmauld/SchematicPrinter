@@ -1,6 +1,5 @@
 package mod.grimmauld.schematicprinter.client.schematics;
 
-import com.simibubi.create.content.schematics.client.SchematicTransformation;
 import mcp.MethodsReturnNonnullByDefault;
 import mod.grimmauld.schematicprinter.util.outline.AABBOutline;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -13,14 +12,12 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class SchematicMetaInf {
-	public final String name;
 	public final Template structure;
 	public final AxisAlignedBB bounds;
 	public final AABBOutline outline;
 	public final SchematicTransformation transformation;
 
 	private SchematicMetaInf(String name) {
-		this.name = name;
 		this.structure = Schematics.loadSchematic(name).orElseGet(Template::new);
 		this.bounds = new AxisAlignedBB(BlockPos.ZERO, structure.getSize());
 		this.outline = new AABBOutline(this.bounds);

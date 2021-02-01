@@ -1,14 +1,13 @@
 package mod.grimmauld.schematicprinter.client.overlay.selection.schematicTools;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.simibubi.create.AllSpecialTextures;
-import com.simibubi.create.foundation.utility.RaycastHelper;
-import com.simibubi.create.foundation.utility.VecHelper;
-import mod.grimmauld.schematicprinter.client.Keyboard;
+import mod.grimmauld.schematicprinter.client.ExtraTextures;
 import mod.grimmauld.schematicprinter.client.SchematicPrinterClient;
 import mod.grimmauld.schematicprinter.client.schematics.SchematicHandler;
 import mod.grimmauld.schematicprinter.client.schematics.SchematicMetaInf;
 import mod.grimmauld.schematicprinter.render.SuperRenderTypeBuffer;
+import mod.grimmauld.schematicprinter.util.RaycastHelper;
+import mod.grimmauld.schematicprinter.util.VecHelper;
 import mod.grimmauld.schematicprinter.util.outline.AABBOutline;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
@@ -18,9 +17,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
-
-import java.util.Arrays;
-import java.util.List;
 
 public abstract class SchematicToolBase implements ISchematicTool {
 	protected SchematicHandler schematicHandler;
@@ -76,7 +72,7 @@ public abstract class SchematicToolBase implements ISchematicTool {
 			RaycastHelper.PredicateTraceResult result =
 				RaycastHelper.rayTraceUntil(start, end, pos -> inf.bounds.contains(VecHelper.getCenterOf(pos)));
 
-			schematicSelected = !result.missed();
+			schematicSelected = result != null && !result.missed();
 			selectedFace = schematicSelected ? result.getFacing() : null;
 		}
 
@@ -97,7 +93,7 @@ public abstract class SchematicToolBase implements ISchematicTool {
 		// Select targeted Block
 		selectedPos = null;
 		BlockRayTraceResult trace = RaycastHelper.rayTraceRange(player.world, player, 75);
-		if (trace == null || trace.getType() != RayTraceResult.Type.BLOCK)
+		if (trace.getType() != RayTraceResult.Type.BLOCK)
 			return;
 
 		BlockPos hit = new BlockPos(trace.getHitVec());
@@ -133,12 +129,12 @@ public abstract class SchematicToolBase implements ISchematicTool {
 		if (renderSelectedFace) {
 			outline.getParams()
 				.highlightFace(selectedFace)
-				.withFaceTextures(AllSpecialTextures.CHECKERED,
-					Keyboard.CTRL.isKeyDown() ? AllSpecialTextures.HIGHLIGHT_CHECKERED : AllSpecialTextures.CHECKERED);
+				.withFaceTextures(ExtraTextures.CHECKERED,
+					SchematicPrinterClient.TOOL_CONFIG.isKeyDown() ? ExtraTextures.HIGHLIGHT_CHECKERED : ExtraTextures.CHECKERED);
 		}
 		outline.getParams()
 			.colored(0x6886c5)
-			.withFaceTexture(AllSpecialTextures.CHECKERED)
+			.withFaceTexture(ExtraTextures.CHECKERED)
 			.lineWidth(1 / 16f);
 		outline.render(ms, buffer);
 		outline.getParams()

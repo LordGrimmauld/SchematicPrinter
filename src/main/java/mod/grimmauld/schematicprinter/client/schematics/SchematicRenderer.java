@@ -1,10 +1,9 @@
 package mod.grimmauld.schematicprinter.client.schematics;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.simibubi.create.foundation.utility.MatrixStacker;
-import com.simibubi.create.foundation.utility.SuperByteBuffer;
-import com.simibubi.create.foundation.utility.TileEntityRenderHelper;
+import mod.grimmauld.schematicprinter.render.SuperByteBuffer;
 import mod.grimmauld.schematicprinter.render.SuperRenderTypeBuffer;
+import mod.grimmauld.schematicprinter.util.TERenderHelper;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
@@ -48,10 +47,6 @@ public class SchematicRenderer {
 		this.active = active;
 	}
 
-	public void update() {
-		this.changed = true;
-	}
-
 	public void tick() {
 		if (this.active) {
 			Minecraft mc = Minecraft.getInstance();
@@ -72,7 +67,7 @@ public class SchematicRenderer {
 				}
 			}
 
-			TileEntityRenderHelper.renderTileEntities(this.schematic, this.schematic.getRenderedTileEntities(), ms, new MatrixStack(), buffer);
+			TERenderHelper.renderTileEntities(this.schematic, this.schematic.getRenderedTileEntities(), ms, new MatrixStack(), buffer);
 		}
 	}
 
@@ -85,7 +80,7 @@ public class SchematicRenderer {
 		MatrixStack ms = new MatrixStack();
 		BlockPos.getAllInBox(blockAccess.getBounds()).forEach((localPos) -> {
 			ms.push();
-			MatrixStacker.of(ms).translate(localPos);
+			ms.translate(localPos.getX(), localPos.getY(), localPos.getZ());
 			BlockPos pos = localPos.add(this.anchor);
 			BlockState state = blockAccess.getBlockState(pos);
 			for (RenderType blockRenderLayer : RenderType.getBlockRenderTypes()) {

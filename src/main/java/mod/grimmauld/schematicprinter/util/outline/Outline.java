@@ -2,14 +2,14 @@ package mod.grimmauld.schematicprinter.util.outline;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
-import com.simibubi.create.AllSpecialTextures;
-import com.simibubi.create.foundation.utility.AngleHelper;
-import com.simibubi.create.foundation.utility.ColorHelper;
-import com.simibubi.create.foundation.utility.MatrixStacker;
-import com.simibubi.create.foundation.utility.VecHelper;
+import mod.grimmauld.schematicprinter.client.ExtraTextures;
 import mod.grimmauld.schematicprinter.render.RenderTypes;
 import mod.grimmauld.schematicprinter.render.SuperRenderTypeBuffer;
+import mod.grimmauld.schematicprinter.util.AngleHelper;
+import mod.grimmauld.schematicprinter.util.ColorHelper;
+import mod.grimmauld.schematicprinter.util.VecHelper;
 import net.minecraft.client.renderer.Matrix3f;
+import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.MathHelper;
@@ -19,7 +19,7 @@ import javax.annotation.Nullable;
 import java.util.Optional;
 
 public abstract class Outline {
-	protected OutlineParams params = new OutlineParams();
+	final protected OutlineParams params = new OutlineParams();
 	protected Matrix3f transformNormals;
 
 	public Outline() {
@@ -33,7 +33,9 @@ public abstract class Outline {
 		float hDistance = (float) diff.mul(1.0D, 0.0D, 1.0D).length();
 		float vAngle = AngleHelper.deg(MathHelper.atan2(hDistance, diff.y)) - 90.0F;
 		ms.push();
-		MatrixStacker.of(ms).translate(start).rotateY(hAngle).rotateX(vAngle);
+		ms.translate(start.x, start.y, start.z);
+		ms.rotate(Vector3f.YP.rotationDegrees(hAngle));
+		ms.rotate(Vector3f.XP.rotationDegrees(vAngle));
 		this.renderAACuboidLine(ms, buffer, Vec3d.ZERO, new Vec3d(0.0D, 0.0D, diff.length()));
 		ms.pop();
 	}
@@ -76,7 +78,6 @@ public abstract class Outline {
 				this.putQuad(ms, builder, a1, b1, b2, a2, face);
 				this.putQuad(ms, builder, a2, b2, b3, a3, face);
 				this.putQuad(ms, builder, a3, b3, b4, a4, face);
-				this.putQuad(ms, builder, a4, b4, b1, a1, face);
 			} else {
 				this.putQuad(ms, builder, b4, b3, b2, b1, face);
 				this.putQuad(ms, builder, a1, a2, a3, a4, face.getOpposite());
@@ -91,8 +92,8 @@ public abstract class Outline {
 				this.putQuad(ms, builder, a3, b3, b4, a4, face);
 				vec = VecHelper.rotate(vec, -90.0D, axis);
 				face = Direction.getFacingFromVector(vec.x, vec.y, vec.z);
-				this.putQuad(ms, builder, a4, b4, b1, a1, face);
 			}
+			this.putQuad(ms, builder, a4, b4, b1, a1, face);
 		}
 	}
 
@@ -130,23 +131,20 @@ public abstract class Outline {
 		this.transformNormals = null;
 	}
 
-	public void tick() {
-	}
-
 	public OutlineParams getParams() {
 		return this.params;
 	}
 
 	public static class OutlineParams {
-		protected Optional<AllSpecialTextures> faceTexture;
-		protected Optional<AllSpecialTextures> hightlightedFaceTexture;
+		protected final boolean fadeLineWidth;
+		protected final int lightMapU;
+		protected final int lightMapV;
+		protected Optional<ExtraTextures> faceTexture;
+		protected Optional<ExtraTextures> hightlightedFaceTexture;
 		protected Direction highlightedFace;
-		protected boolean fadeLineWidth;
 		protected boolean disableCull;
 		protected boolean disableNormals;
 		protected float alpha;
-		protected int lightMapU;
-		protected int lightMapV;
 		protected Vec3d rgb;
 		private float lineWidth;
 
@@ -171,19 +169,18 @@ public abstract class Outline {
 			return this;
 		}
 
-		public OutlineParams withFaceTexture(AllSpecialTextures texture) {
+		public OutlineParams withFaceTexture(ExtraTextures texture) {
 			this.faceTexture = Optional.ofNullable(texture);
 			return this;
 		}
 
-		public OutlineParams clearTextures() {
-			return this.withFaceTextures(null, null);
+		public void clearTextures() {
+			this.withFaceTextures(null, null);
 		}
 
-		public OutlineParams withFaceTextures(AllSpecialTextures texture, AllSpecialTextures highlightTexture) {
+		public void withFaceTextures(ExtraTextures texture, ExtraTextures highlightTexture) {
 			this.faceTexture = Optional.ofNullable(texture);
 			this.hightlightedFaceTexture = Optional.ofNullable(highlightTexture);
-			return this;
 		}
 
 		public OutlineParams highlightFace(@Nullable Direction face) {

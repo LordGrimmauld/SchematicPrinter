@@ -1,7 +1,7 @@
 package mod.grimmauld.schematicprinter.client.overlay.selection.schematicTools;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.simibubi.create.AllSpecialTextures;
+import mod.grimmauld.schematicprinter.client.ExtraTextures;
 import mod.grimmauld.schematicprinter.client.schematics.SchematicMetaInf;
 import mod.grimmauld.schematicprinter.render.SuperRenderTypeBuffer;
 import mod.grimmauld.schematicprinter.util.outline.AABBOutline;
@@ -29,11 +29,6 @@ public class FlipTool extends PlacementToolBase {
 	public boolean handleMouseWheel(double delta) {
 		mirror();
 		return true;
-	}
-
-	@Override
-	public void updateSelection() {
-		super.updateSelection();
 	}
 
 	private void mirror() {
@@ -67,7 +62,7 @@ public class FlipTool extends PlacementToolBase {
 			.mul(boundsSize));
 
 		outline.setBounds(bounds);
-		AllSpecialTextures tex = AllSpecialTextures.CHECKERED;
+		ExtraTextures tex = ExtraTextures.CHECKERED;
 		outline.getParams()
 			.lineWidth(1 / 16f)
 			.disableNormals()

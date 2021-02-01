@@ -35,7 +35,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @MethodsReturnNonnullByDefault
 @SuppressWarnings("unused")
 public class SchematicPrinterClient {
-	public static SchematicHandler schematicHandler = new SchematicHandler();
+	public static final SchematicHandler schematicHandler = new SchematicHandler();
 
 	public static KeyBinding TOOL_CONFIG;
 	public static KeyBinding MENU_BUTTON;

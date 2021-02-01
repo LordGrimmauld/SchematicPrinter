@@ -13,7 +13,7 @@ public class BlockInformation {
 	}
 
 	public String getPrintCommand() {
-		String blockstring = state.toString().replaceFirst("Block\\{", "").replaceFirst("\\}", "");
+		String blockstring = state.toString().replaceFirst("Block\\{", "").replaceFirst("}", "");
 
 		return "/setblock " + pos.getX() + " " + pos.getY() + " "
 			+ pos.getZ() + " " + blockstring;

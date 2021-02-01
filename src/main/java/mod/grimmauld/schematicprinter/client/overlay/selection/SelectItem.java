@@ -12,9 +12,9 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class SelectItem {
-	private final ITextComponent description;
 	@Nullable
-	public IOverlayEventListener listener;
+	public final IOverlayEventListener listener;
+	private final ITextComponent description;
 
 	public SelectItem(ITextComponent description, @Nullable IOverlayEventListener listener) {
 		this.listener = listener;

@@ -1,11 +1,11 @@
 package mod.grimmauld.schematicprinter.client.overlay.selection.schematicTools;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.simibubi.create.foundation.utility.MatrixStacker;
 import mod.grimmauld.schematicprinter.client.SchematicPrinterClient;
 import mod.grimmauld.schematicprinter.client.schematics.SchematicMetaInf;
 import mod.grimmauld.schematicprinter.render.SuperRenderTypeBuffer;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -54,13 +54,11 @@ public class DeployTool extends SchematicToolBase {
 		Vec3d origin = new Vec3d(xOrigin, 0, zOrigin);
 
 		ms.translate(x - centerX, y, z - centerZ);
-		MatrixStacker.of(ms)
-			.translate(origin)
-			.translate(rotationOffset)
-			.rotateY(inf.transformation.getCurrentRotation())
-			.translateBack(rotationOffset)
-			.translateBack(origin);
-
+		ms.translate(origin.x, origin.y, origin.z);
+		ms.translate(rotationOffset.x, rotationOffset.y, rotationOffset.z);
+		ms.rotate(Vector3f.YP.rotationDegrees(inf.transformation.getCurrentRotation()));
+		ms.translate(-rotationOffset.x, -rotationOffset.y, -rotationOffset.z);
+		ms.translate(-origin.x, -origin.y, -origin.z);
 		inf.outline.render(ms, buffer);
 		inf.outline.getParams()
 			.clearTextures();

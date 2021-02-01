@@ -1,8 +1,8 @@
 package mod.grimmauld.schematicprinter.client.overlay;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.simibubi.mightyarchitect.gui.ScreenResources;
 import mcp.MethodsReturnNonnullByDefault;
+import mod.grimmauld.schematicprinter.client.ExtraTextures;
 import mod.grimmauld.schematicprinter.client.Keyboard;
 import mod.grimmauld.schematicprinter.client.Manager;
 import mod.grimmauld.schematicprinter.client.SchematicPrinterClient;
@@ -138,12 +138,11 @@ public class SelectOverlay {
 
 		RenderSystem.translatef(sideways ? sidewaysShift : 0, sideways ? 0 : shift, 0);
 
-		ScreenResources gray = ScreenResources.GRAY;
 		RenderSystem.enableBlend();
 		RenderSystem.color4f(1, 1, 1, 3 / 4f);
 
-		minecraft.getTextureManager().bindTexture(gray.location);
-		blit(x, y, gray.startX, gray.startY, menuWidth, menuHeight, gray.width, gray.height);
+		minecraft.getTextureManager().bindTexture(ExtraTextures.GRAY.getLocation());
+		blit(x, y, 0, 0, menuWidth, menuHeight, 16, 16);
 		RenderSystem.color4f(1, 1, 1, 1);
 
 		int yPos = y + 4;

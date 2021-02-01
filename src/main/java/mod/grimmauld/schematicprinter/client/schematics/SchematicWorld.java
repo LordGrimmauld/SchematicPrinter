@@ -34,12 +34,12 @@ import java.util.function.Predicate;
 @SuppressWarnings("unused")
 public class SchematicWorld extends WrappedWorld {
 
+	public final BlockPos anchor;
 	private final Map<BlockPos, BlockState> blocks;
 	private final Map<BlockPos, TileEntity> tileEntities;
 	private final List<TileEntity> renderedTileEntities;
 	private final List<Entity> entities;
 	private final MutableBoundingBox bounds;
-	public BlockPos anchor;
 	public boolean renderMode;
 
 	public SchematicWorld(World original) {

@@ -15,9 +15,9 @@ import java.util.SortedMap;
 @ParametersAreNonnullByDefault
 public class SuperRenderTypeBuffer implements IRenderTypeBuffer {
 	static SuperRenderTypeBuffer instance;
-	SuperRenderTypeBufferPhase earlyBuffer = new SuperRenderTypeBufferPhase();
-	SuperRenderTypeBufferPhase defaultBuffer = new SuperRenderTypeBufferPhase();
-	SuperRenderTypeBufferPhase lateBuffer = new SuperRenderTypeBufferPhase();
+	final SuperRenderTypeBufferPhase earlyBuffer = new SuperRenderTypeBufferPhase();
+	final SuperRenderTypeBufferPhase defaultBuffer = new SuperRenderTypeBufferPhase();
+	final SuperRenderTypeBufferPhase lateBuffer = new SuperRenderTypeBufferPhase();
 
 	public SuperRenderTypeBuffer() {
 	}
@@ -26,12 +26,7 @@ public class SuperRenderTypeBuffer implements IRenderTypeBuffer {
 		if (instance == null) {
 			instance = new SuperRenderTypeBuffer();
 		}
-
 		return instance;
-	}
-
-	public IVertexBuilder getEarlyBuffer(RenderType type) {
-		return this.earlyBuffer.getBuffer(type);
 	}
 
 	public IVertexBuilder getBuffer(RenderType type) {
@@ -47,13 +42,6 @@ public class SuperRenderTypeBuffer implements IRenderTypeBuffer {
 		this.earlyBuffer.finish();
 		this.defaultBuffer.finish();
 		this.lateBuffer.finish();
-	}
-
-	public void draw(RenderType type) {
-		RenderSystem.disableCull();
-		this.earlyBuffer.finish(type);
-		this.defaultBuffer.finish(type);
-		this.lateBuffer.finish(type);
 	}
 
 	private static class SuperRenderTypeBufferPhase extends Impl {
@@ -79,9 +67,7 @@ public class SuperRenderTypeBuffer implements IRenderTypeBuffer {
 				assign(map, RenderType.getGlint());
 				assign(map, RenderType.getEntityGlint());
 				assign(map, RenderType.getWaterMask());
-				ModelBakery.DESTROY_RENDER_TYPES.forEach((p_228488_1_) -> {
-					assign(map, p_228488_1_);
-				});
+				ModelBakery.DESTROY_RENDER_TYPES.forEach((p_228488_1_) -> assign(map, p_228488_1_));
 			});
 		}
 

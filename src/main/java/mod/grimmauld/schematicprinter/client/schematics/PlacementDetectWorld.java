@@ -11,10 +11,6 @@ import javax.annotation.Nonnull;
 
 @MethodsReturnNonnullByDefault
 public class PlacementDetectWorld extends SchematicWorld {
-	public PlacementDetectWorld(BlockPos anchor, World original) {
-		super(anchor, original);
-	}
-
 	public PlacementDetectWorld(World original) {
 		super(original);
 	}

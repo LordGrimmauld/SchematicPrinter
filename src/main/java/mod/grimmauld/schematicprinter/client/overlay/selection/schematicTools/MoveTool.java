@@ -1,7 +1,7 @@
 package mod.grimmauld.schematicprinter.client.overlay.selection.schematicTools;
 
-import com.simibubi.create.foundation.utility.VecHelper;
 import mod.grimmauld.schematicprinter.client.schematics.SchematicMetaInf;
+import mod.grimmauld.schematicprinter.util.VecHelper;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.Vec3d;
 
@@ -10,11 +10,6 @@ public class MoveTool extends PlacementToolBase {
 	public void init() {
 		super.init();
 		renderSelectedFace = true;
-	}
-
-	@Override
-	public void updateSelection() {
-		super.updateSelection();
 	}
 
 	@Override

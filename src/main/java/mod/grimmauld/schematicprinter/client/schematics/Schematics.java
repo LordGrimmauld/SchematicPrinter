@@ -26,7 +26,7 @@ public class Schematics {
 			Template t = new Template();
 			t.read(nbt);
 			return Optional.of(t);
-		} catch (IOException var10) {
+		} catch (IOException ignored) {
 		} finally {
 			if (stream != null) {
 				IOUtils.closeQuietly(stream);
