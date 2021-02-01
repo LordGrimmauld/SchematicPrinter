@@ -3,6 +3,7 @@ package mod.grimmauld.schematicprinter.client.overlay;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.simibubi.mightyarchitect.gui.ScreenResources;
 import mcp.MethodsReturnNonnullByDefault;
+import mod.grimmauld.schematicprinter.client.Keyboard;
 import mod.grimmauld.schematicprinter.client.Manager;
 import mod.grimmauld.schematicprinter.client.SchematicPrinterClient;
 import mod.grimmauld.schematicprinter.client.overlay.selection.SelectItem;
@@ -11,6 +12,7 @@ import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.client.util.InputMappings;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -60,8 +62,10 @@ public class SelectOverlay {
 		this(openKey, new TranslationTextComponent(titleIn));
 	}
 
-	public void testAndClose(int keyCode) {
-		if (keyCode == 256 || (openKey != null && keyCode == openKey.getKey().getKeyCode())) {
+	public void testAndClose(InputEvent event) {
+		if (openKey != null && ((event instanceof InputEvent.KeyInputEvent && ((((InputEvent.KeyInputEvent) event).getKey() == Keyboard.ESC.getKeycode()
+			&& Manager.shouldCloseOnEsc) || ((InputEvent.KeyInputEvent) event).getKey() == openKey.getKey().getKeyCode()))
+			|| (event instanceof InputEvent.MouseInputEvent && openKey.matchesMouseKey(((InputEvent.MouseInputEvent) event).getButton())))) {
 			close();
 			if (previous != null)
 				previous.open(previous.previous);
@@ -88,8 +92,11 @@ public class SelectOverlay {
 		return this;
 	}
 
-	public boolean testAndOpen(@Nullable SelectOverlay previous) {
-		if ((canBeOpenedDirectly || previous != null) && !visible && (openKey != null && openKey.isKeyDown())) {
+	public boolean testAndOpen(@Nullable SelectOverlay previous, InputEvent event) {
+		if ((canBeOpenedDirectly || previous != null) && !visible && (openKey != null &&
+			(event instanceof InputEvent.KeyInputEvent ?
+				openKey.isActiveAndMatches(InputMappings.getInputByCode(((InputEvent.KeyInputEvent) event).getKey(), ((InputEvent.KeyInputEvent) event).getScanCode())) :
+				event instanceof InputEvent.MouseInputEvent && openKey.matchesMouseKey(((InputEvent.MouseInputEvent) event).getButton())))) {
 			open(previous);
 			return true;
 		}
@@ -262,8 +269,8 @@ public class SelectOverlay {
 				selectConfig.onScrolled(amount);
 				event.setCanceled(true);
 			});
-		} else {
-			getActiveSelectItem().ifPresent(item -> item.onScroll(event));
 		}
+		if (!event.isCanceled())
+			getActiveSelectItem().ifPresent(item -> item.onScroll(event));
 	}
 }

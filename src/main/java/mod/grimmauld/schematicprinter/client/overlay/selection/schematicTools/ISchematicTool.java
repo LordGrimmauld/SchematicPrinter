@@ -7,13 +7,17 @@ import net.minecraft.client.renderer.IRenderTypeBuffer;
 
 public interface ISchematicTool extends IOverlayEventListener {
 	void init();
+
 	void updateSelection();
 
-	boolean handleRightClick();
+	boolean handleActivated();
+
 	boolean handleMouseWheel(double delta);
 
 	void renderTool(MatrixStack ms, SuperRenderTypeBuffer buffer);
+
 	void renderOverlay(MatrixStack ms, IRenderTypeBuffer buffer);
+
 	void renderOnSchematic(MatrixStack ms, SuperRenderTypeBuffer buffer);
 
 }

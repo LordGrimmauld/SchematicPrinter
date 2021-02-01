@@ -1,28 +1,32 @@
 package mod.grimmauld.schematicprinter.client.overlay.selection;
 
+import mod.grimmauld.schematicprinter.client.SchematicPrinterClient;
 import mod.grimmauld.schematicprinter.client.overlay.SelectOverlay;
 import net.minecraftforge.client.event.InputEvent;
 
 public interface IOverlayEventListener {
 	default void onEnter(SelectOverlay overlay) {
+		handleActivated();
 	}
 
 	default void onScroll(InputEvent.MouseScrollEvent event) {
-		handleMouseWheel(event.getScrollDelta());
+		if (SchematicPrinterClient.TOOL_CONFIG.isKeyDown())
+			event.setCanceled(handleMouseWheel(event.getScrollDelta()));
 	}
 
 	default void onRightClick(InputEvent.MouseInputEvent event) {
-		handleRightClick();
+		// handleActivated();
 	}
 
-	default boolean handleRightClick() {
+	default boolean handleActivated() {
 		return true;
 	}
 
 	default boolean handleMouseWheel(double delta) {
-		return true;
+		return false;
 	}
 
-	default void init() {}
+	default void init() {
+	}
 
 }

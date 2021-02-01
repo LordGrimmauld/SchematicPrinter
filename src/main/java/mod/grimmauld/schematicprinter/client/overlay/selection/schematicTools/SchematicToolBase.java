@@ -149,7 +149,7 @@ public abstract class SchematicToolBase implements ISchematicTool {
 	}
 
 	@Override
-	public boolean handleRightClick() {
+	public boolean handleActivated() {
 		return false;
 	}
 

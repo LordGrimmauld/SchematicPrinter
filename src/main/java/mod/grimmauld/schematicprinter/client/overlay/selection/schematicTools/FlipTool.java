@@ -1,0 +1,80 @@
+package mod.grimmauld.schematicprinter.client.overlay.selection.schematicTools;
+
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.simibubi.create.AllSpecialTextures;
+import mod.grimmauld.schematicprinter.client.schematics.SchematicMetaInf;
+import mod.grimmauld.schematicprinter.render.SuperRenderTypeBuffer;
+import mod.grimmauld.schematicprinter.util.outline.AABBOutline;
+import net.minecraft.util.Direction;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
+
+public class FlipTool extends PlacementToolBase {
+	private final AABBOutline outline = new AABBOutline(new AxisAlignedBB(BlockPos.ZERO));
+
+	@Override
+	public void init() {
+		super.init();
+		renderSelectedFace = false;
+	}
+
+	@Override
+	public boolean handleActivated() {
+		mirror();
+		return true;
+	}
+
+	@Override
+	public boolean handleMouseWheel(double delta) {
+		mirror();
+		return true;
+	}
+
+	@Override
+	public void updateSelection() {
+		super.updateSelection();
+	}
+
+	private void mirror() {
+		SchematicMetaInf inf = schematicHandler.activeSchematic;
+		if (inf != null && schematicSelected && selectedFace.getAxis()
+			.isHorizontal()) {
+			inf.transformation
+				.flip(selectedFace.getAxis());
+		}
+	}
+
+	@Override
+	public void renderOnSchematic(MatrixStack ms, SuperRenderTypeBuffer buffer) {
+		SchematicMetaInf inf = schematicHandler.activeSchematic;
+		if (!schematicSelected || !selectedFace.getAxis()
+			.isHorizontal() || inf == null) {
+			super.renderOnSchematic(ms, buffer);
+			return;
+		}
+
+		Direction facing = selectedFace.rotateY();
+		AxisAlignedBB bounds = inf.bounds;
+
+		Vec3d directionVec = new Vec3d(Direction.getFacingFromAxis(Direction.AxisDirection.POSITIVE, facing.getAxis())
+			.getDirectionVec());
+		Vec3d boundsSize = new Vec3d(bounds.getXSize(), bounds.getYSize(), bounds.getZSize());
+		Vec3d vec = boundsSize.mul(directionVec);
+		bounds = bounds.contract(vec.x, vec.y, vec.z)
+			.grow(1 - directionVec.x, 1 - directionVec.y, 1 - directionVec.z);
+		bounds = bounds.offset(directionVec.scale(.5f)
+			.mul(boundsSize));
+
+		outline.setBounds(bounds);
+		AllSpecialTextures tex = AllSpecialTextures.CHECKERED;
+		outline.getParams()
+			.lineWidth(1 / 16f)
+			.disableNormals()
+			.colored(0xdddddd)
+			.withFaceTextures(tex, tex);
+		outline.render(ms, buffer);
+
+		super.renderOnSchematic(ms, buffer);
+	}
+}

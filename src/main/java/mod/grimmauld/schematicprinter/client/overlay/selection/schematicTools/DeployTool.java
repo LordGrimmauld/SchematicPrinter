@@ -5,7 +5,6 @@ import com.simibubi.create.foundation.utility.MatrixStacker;
 import mod.grimmauld.schematicprinter.client.SchematicPrinterClient;
 import mod.grimmauld.schematicprinter.client.schematics.SchematicMetaInf;
 import mod.grimmauld.schematicprinter.render.SuperRenderTypeBuffer;
-import mod.grimmauld.schematicprinter.util.outline.AABBOutline;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -62,12 +61,9 @@ public class DeployTool extends SchematicToolBase {
 			.translateBack(rotationOffset)
 			.translateBack(origin);
 
-		AABBOutline outline = inf.outline;
-		if (outline != null) {
-			outline.render(ms, buffer);
-			outline.getParams()
-				.clearTextures();
-		}
+		inf.outline.render(ms, buffer);
+		inf.outline.getParams()
+			.clearTextures();
 		ms.pop();
 	}
 
@@ -81,10 +77,10 @@ public class DeployTool extends SchematicToolBase {
 	}
 
 	@Override
-	public boolean handleRightClick() {
+	public boolean handleActivated() {
 		SchematicMetaInf inf = schematicHandler.activeSchematic;
 		if (selectedPos == null || inf == null)
-			return super.handleRightClick();
+			return super.handleActivated();
 		Vec3d center = inf.bounds
 			.getCenter();
 		BlockPos target = selectedPos.add(-((int) center.x), 0, -((int) center.z));

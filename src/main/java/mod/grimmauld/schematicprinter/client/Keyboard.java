@@ -13,7 +13,8 @@ public enum Keyboard {
 	L(76),
 	O(79),
 	ENTER(GLFW_KEY_ENTER), // 257
-	CTRL(GLFW_KEY_LEFT_CONTROL); // 341r
+	CTRL(GLFW_KEY_LEFT_CONTROL), // 341r
+	ESC(GLFW_KEY_ESCAPE);
 
 	public static final int PRESS = 1;
 	public static final int HOLD = 2;

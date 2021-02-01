@@ -10,8 +10,7 @@ import mod.grimmauld.schematicprinter.client.overlay.selection.SelectOption;
 import mod.grimmauld.schematicprinter.client.overlay.selection.config.BooleanSelectConfig;
 import mod.grimmauld.schematicprinter.client.overlay.selection.config.IntSelectConfig;
 import mod.grimmauld.schematicprinter.client.overlay.selection.config.SchematicSelectConfig;
-import mod.grimmauld.schematicprinter.client.overlay.selection.schematicTools.ClearTool;
-import mod.grimmauld.schematicprinter.client.overlay.selection.schematicTools.DeployTool;
+import mod.grimmauld.schematicprinter.client.overlay.selection.schematicTools.*;
 import mod.grimmauld.schematicprinter.client.schematics.SchematicHandler;
 import mod.grimmauld.schematicprinter.render.SuperRenderTypeBuffer;
 import net.minecraft.client.Minecraft;
@@ -58,6 +57,10 @@ public class SchematicPrinterClient {
 			.addOption(new SchematicSelectConfig("schematic", "Selected Schematic"))
 			.addOption(new SelectItem("deploy", new DeployTool()))
 			.addOption(new SelectItem("clear", new ClearTool()))
+			.addOption(new SelectItem("flip", new FlipTool()))
+			.addOption(new SelectItem("rotate", new RotateTool()))
+			.addOption(new SelectItem("moveXZ", new MoveTool()))
+			.addOption(new SelectItem("moveY", new MoveVerticalTool()))
 			.register();
 
 		SelectOverlay overlayMain = new SelectOverlay(SchematicPrinterClient.MENU_BUTTON, new StringTextComponent("test"))

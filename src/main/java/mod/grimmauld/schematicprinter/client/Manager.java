@@ -3,6 +3,7 @@ package mod.grimmauld.schematicprinter.client;
 import mcp.MethodsReturnNonnullByDefault;
 import mod.grimmauld.schematicprinter.client.overlay.SelectOverlay;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.util.InputMappings;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -10,7 +11,6 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.HashSet;
@@ -22,44 +22,33 @@ import java.util.Set;
 @ParametersAreNonnullByDefault
 @SuppressWarnings("unused")
 public class Manager {
+	public static final boolean shouldCloseOnEsc = false;
 	public static Set<SelectOverlay> overlays = new HashSet<>();
-
 
 	@SubscribeEvent
 	public static void onKeyPressed(InputEvent.KeyInputEvent event) {
 		if (event.getAction() != Keyboard.PRESS)
 			return;
+		testKeybinds(event);
+	}
 
+	private static void testKeybinds(InputEvent event) {
 		Optional<SelectOverlay> activeOverlay = getActiveOverlay();
-
-		if (event.getKey() == GLFW.GLFW_KEY_ESCAPE) {
-			boolean closed = false;
-
-			// Close all to get rid of a glitched state
-			for (SelectOverlay overlay : overlays) {
-				if (overlay.isVisible()) {
-					overlay.close();
-					closed = true;
-				}
-			}
-			if (closed)
-				Minecraft.getInstance().displayGuiScreen(null); // Cancel pause screen
-			return;
-		}
-
-		if (event.getKey() == SchematicPrinterClient.TOOL_SUBMIT.getKey().getKeyCode() && SchematicPrinterClient.TOOL_SUBMIT.isKeyDown()) {
+		if ((event instanceof InputEvent.KeyInputEvent && SchematicPrinterClient.TOOL_SUBMIT.isActiveAndMatches(
+			InputMappings.getInputByCode(((InputEvent.KeyInputEvent) event).getKey(), ((InputEvent.KeyInputEvent) event).getScanCode())))
+			|| (event instanceof InputEvent.MouseInputEvent && SchematicPrinterClient.TOOL_SUBMIT.matchesMouseKey(((InputEvent.MouseInputEvent) event).getButton()))) {
 			activeOverlay.ifPresent(SelectOverlay::select);
 			return;
 		}
 
 		if (!activeOverlay.isPresent()) {
 			for (SelectOverlay overlay : overlays) {
-				if (overlay.testAndOpen(null))
+				if (overlay.testAndOpen(null, event))
 					return;
 			}
 		}
 
-		activeOverlay.ifPresent(overlay -> overlay.testAndClose(event.getKey()));
+		activeOverlay.ifPresent(overlay -> overlay.testAndClose(event));
 	}
 
 	@SubscribeEvent
@@ -89,12 +78,17 @@ public class Manager {
 		int button = event.getButton();
 		boolean pressed = !(event.getAction() == 0);
 
-		if (!pressed || button != 1)
+		if (!pressed)
 			return;
-		Minecraft mc = Minecraft.getInstance();
-		if (mc.world == null || mc.player == null || mc.player.isSneaking())
-			return;
-		getActiveOverlay().flatMap(SelectOverlay::getActiveSelectItem).ifPresent(selectItem -> selectItem.onRightClick(event));
+
+		if (button == 1) { // FIXME add block place reference
+			Minecraft mc = Minecraft.getInstance();
+			if (mc.world == null || mc.player == null || mc.player.isSneaking())
+				return;
+			getActiveOverlay().flatMap(SelectOverlay::getActiveSelectItem).ifPresent(selectItem -> selectItem.onRightClick(event));
+		} else {
+			testKeybinds(event);
+		}
 	}
 
 	@SubscribeEvent
