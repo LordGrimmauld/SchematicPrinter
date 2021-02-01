@@ -2,8 +2,8 @@ package mod.grimmauld.schematicprinter.client;
 
 import mcp.MethodsReturnNonnullByDefault;
 import mod.grimmauld.schematicprinter.client.overlay.SelectOverlay;
+import mod.grimmauld.schematicprinter.util.KeybindHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.util.InputMappings;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -34,9 +34,7 @@ public class Manager {
 
 	private static void testKeybinds(InputEvent event) {
 		Optional<SelectOverlay> activeOverlay = getActiveOverlay();
-		if ((event instanceof InputEvent.KeyInputEvent && SchematicPrinterClient.TOOL_SUBMIT.isActiveAndMatches(
-			InputMappings.getInputByCode(((InputEvent.KeyInputEvent) event).getKey(), ((InputEvent.KeyInputEvent) event).getScanCode())))
-			|| (event instanceof InputEvent.MouseInputEvent && SchematicPrinterClient.TOOL_SUBMIT.matchesMouseKey(((InputEvent.MouseInputEvent) event).getButton()))) {
+		if (KeybindHelper.eventActivatesKeybind(event, SchematicPrinterClient.TOOL_SUBMIT)) {
 			activeOverlay.ifPresent(SelectOverlay::select);
 			return;
 		}
@@ -86,9 +84,8 @@ public class Manager {
 			if (mc.world == null || mc.player == null || mc.player.isSneaking())
 				return;
 			getActiveOverlay().flatMap(SelectOverlay::getActiveSelectItem).ifPresent(selectItem -> selectItem.onRightClick(event));
-		} else {
-			testKeybinds(event);
 		}
+		testKeybinds(event);
 	}
 
 	@SubscribeEvent

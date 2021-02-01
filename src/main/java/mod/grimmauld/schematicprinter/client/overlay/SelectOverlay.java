@@ -8,6 +8,7 @@ import mod.grimmauld.schematicprinter.client.Manager;
 import mod.grimmauld.schematicprinter.client.SchematicPrinterClient;
 import mod.grimmauld.schematicprinter.client.overlay.selection.SelectItem;
 import mod.grimmauld.schematicprinter.client.overlay.selection.config.SelectConfig;
+import mod.grimmauld.schematicprinter.util.KeybindHelper;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -63,9 +64,7 @@ public class SelectOverlay {
 	}
 
 	public void testAndClose(InputEvent event) {
-		if (openKey != null && ((event instanceof InputEvent.KeyInputEvent && ((((InputEvent.KeyInputEvent) event).getKey() == Keyboard.ESC.getKeycode()
-			&& Manager.shouldCloseOnEsc) || ((InputEvent.KeyInputEvent) event).getKey() == openKey.getKey().getKeyCode()))
-			|| (event instanceof InputEvent.MouseInputEvent && openKey.matchesMouseKey(((InputEvent.MouseInputEvent) event).getButton())))) {
+		if ((Keyboard.ESC.isKeyDown() && Manager.shouldCloseOnEsc) || KeybindHelper.eventActivatesKeybind(event, openKey)) {
 			close();
 			if (previous != null)
 				previous.open(previous.previous);
