@@ -24,16 +24,18 @@ import java.util.List;
 public class Printer {
 	private static final Minecraft MC = Minecraft.getInstance();
 	public static List<BlockInformation> printQueue = new ArrayList<>();
-	static boolean approved;
+	private static boolean shouldPrint = false;
 
 	@SubscribeEvent
 	public static void tick(TickEvent.ClientTickEvent event) {
-		if (MC.world == null || MC.player == null)
+		if (MC.world == null || MC.player == null || !shouldPrint)
 			return;
 
 		for (int i = 0; i < 10; i++) {
-			if (printQueue.isEmpty())
+			if (printQueue.isEmpty()) {
+				stopPrinting();
 				return;
+			}
 			BlockInformation inf = printQueue.get(0);
 			printQueue.remove(0);
 
@@ -44,7 +46,10 @@ public class Printer {
 			if (!MC.world.func_226663_a_(inf.state, inf.pos, ISelectionContext.forEntity(MC.player)))
 				continue;
 
-			MC.player.sendChatMessage(inf.getPrintCommand());
+			if (MC.isSingleplayer() && MC.player.isCreative())
+				MC.world.setBlockState(inf.pos, inf.state);
+			else
+				MC.player.sendChatMessage(inf.getPrintCommand());
 		}
 	}
 
@@ -60,13 +65,12 @@ public class Printer {
 			if (iTextComponent instanceof TranslationTextComponent) {
 				String test = ((TranslationTextComponent) iTextComponent).getKey();
 				if (test.equals("command.unknown.command")) {
-					printQueue.clear();
+					stopPrinting();
 					event.setMessage(new StringTextComponent(
 						TextFormatting.RED + "You do not have permission to print on this server."));
 					return;
 				}
 				if (test.equals("parsing.int.expected")) {
-					approved = true;
 					MC.player
 						.sendChatMessage("/me is printing a structure with " + SchematicPrinter.NAME);
 					MC.player.sendChatMessage("/gamerule sendCommandFeedback false");
@@ -84,5 +88,27 @@ public class Printer {
 	@SubscribeEvent
 	public static void onPlayerJoinWorld(PlayerEvent.PlayerLoggedInEvent event) {
 		printQueue.clear();
+		shouldPrint = false;
+	}
+
+	public static void startPrinting() {
+		if (printQueue.isEmpty())
+			return;
+		shouldPrint = true;
+		if (MC.player == null)
+			return;
+		MC.player.sendStatusMessage(new StringTextComponent("Printing Structure..."), true);
+		MC.player.sendChatMessage("/gamerule sendCommandFeedback false");
+		MC.player.sendChatMessage("/gamerule logAdminCommands false");
+	}
+
+	public static void stopPrinting() {
+		shouldPrint = false;
+		printQueue.clear();
+		if (MC.player == null)
+			return;
+		MC.player.sendStatusMessage(new StringTextComponent("Printing done"), true);
+		MC.player.sendChatMessage("/gamerule logAdminCommands true");
+		MC.player.sendChatMessage("/gamerule sendCommandFeedback true");
 	}
 }

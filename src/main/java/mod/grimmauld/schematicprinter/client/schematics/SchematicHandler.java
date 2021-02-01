@@ -7,6 +7,7 @@ import mod.grimmauld.schematicprinter.client.overlay.SelectOverlay;
 import mod.grimmauld.schematicprinter.client.overlay.selection.SelectItem;
 import mod.grimmauld.schematicprinter.client.overlay.selection.schematicTools.EmptySchematicTool;
 import mod.grimmauld.schematicprinter.client.overlay.selection.schematicTools.ISchematicTool;
+import mod.grimmauld.schematicprinter.client.printer.Printer;
 import mod.grimmauld.schematicprinter.render.SuperRenderTypeBuffer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
@@ -119,6 +120,7 @@ public class SchematicHandler {
 
 		activeSchematic.structure.addBlocksToWorld(placementWorld.getValue(), activeSchematic.transformation.getAnchor(), activeSchematic.transformation.toSettings());
 		quitSchematic();
+		Printer.startPrinting();
 	}
 
 	public boolean isActive() {
