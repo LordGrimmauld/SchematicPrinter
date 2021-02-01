@@ -10,6 +10,7 @@ import mod.grimmauld.schematicprinter.client.overlay.selection.schematicTools.IS
 import mod.grimmauld.schematicprinter.render.SuperRenderTypeBuffer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.util.LazyValue;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -25,6 +26,7 @@ import java.util.Vector;
 @ParametersAreNonnullByDefault
 public class SchematicHandler {
 	private final Vector<SchematicRenderer> renderers = new Vector<>(3);
+	private final LazyValue<PlacementDetectWorld> placementWorld = new LazyValue<>(() -> new PlacementDetectWorld(Minecraft.getInstance().world));
 	@Nullable
 	public SchematicMetaInf activeSchematic;
 	private boolean deployed;
@@ -115,11 +117,8 @@ public class SchematicHandler {
 		if (this.activeSchematic == null)
 			return;
 
+		activeSchematic.structure.addBlocksToWorld(placementWorld.getValue(), activeSchematic.transformation.getAnchor(), activeSchematic.transformation.toSettings());
 		quitSchematic();
-	}
-
-	public String getCurrentSchematicName() {
-		return this.activeSchematic != null ? this.activeSchematic.name : "-";
 	}
 
 	public boolean isActive() {

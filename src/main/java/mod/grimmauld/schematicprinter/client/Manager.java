@@ -2,6 +2,7 @@ package mod.grimmauld.schematicprinter.client;
 
 import mcp.MethodsReturnNonnullByDefault;
 import mod.grimmauld.schematicprinter.client.overlay.SelectOverlay;
+import mod.grimmauld.schematicprinter.client.printer.BlockInformation;
 import mod.grimmauld.schematicprinter.util.KeybindHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
@@ -14,6 +15,7 @@ import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -90,7 +92,7 @@ public class Manager {
 
 	@SubscribeEvent
 	// FIXME: Client only equivalent!
-	public static void onPlayerLeaveWorld(PlayerEvent.PlayerLoggedInEvent event) {
+	public static void onPlayerJoinWorld(PlayerEvent.PlayerLoggedInEvent event) {
 		SchematicPrinterClient.schematicHandler.quitSchematic();
 	}
 

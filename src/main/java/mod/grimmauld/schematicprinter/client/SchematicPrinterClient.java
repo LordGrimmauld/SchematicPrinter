@@ -61,6 +61,7 @@ public class SchematicPrinterClient {
 			.addOption(new SelectItem("rotate", new RotateTool()))
 			.addOption(new SelectItem("moveXZ", new MoveTool()))
 			.addOption(new SelectItem("moveY", new MoveVerticalTool()))
+			.addOption(new SelectItem("print", new InstantPrintTool()))
 			.register();
 
 		SelectOverlay overlayMain = new SelectOverlay(SchematicPrinterClient.MENU_BUTTON, new StringTextComponent("test"))

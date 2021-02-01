@@ -23,8 +23,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public abstract class SchematicToolBase implements ISchematicTool {
-	protected final List<String> mirrors = Arrays.asList("none", "leftRight", "frontBack");
-	protected final List<String> rotations = Arrays.asList("none", "cw90", "cw180", "cw270");
 	protected SchematicHandler schematicHandler;
 	protected BlockPos selectedPos;
 	protected Vec3d chasingSelectedPos;
