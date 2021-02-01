@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.simibubi.mightyarchitect.gui.ScreenResources;
 import mcp.MethodsReturnNonnullByDefault;
 import mod.grimmauld.schematicprinter.client.Manager;
+import mod.grimmauld.schematicprinter.client.SchematicPrinterClient;
 import mod.grimmauld.schematicprinter.client.overlay.selection.SelectItem;
 import mod.grimmauld.schematicprinter.client.overlay.selection.config.SelectConfig;
 import net.minecraft.client.MainWindow;
@@ -13,21 +14,22 @@ import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static net.minecraft.client.gui.AbstractGui.blit;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class SelectOverlay {
+	public static final SelectOverlay EMPTY = new SelectOverlay(null, "");
+
 	private static final Minecraft minecraft = Minecraft.getInstance();
+	@Nullable
 	private final KeyBinding openKey;
 	private final ITextComponent title;
 	public boolean canBeOpenedDirectly;
@@ -41,7 +43,7 @@ public class SelectOverlay {
 	private List<SelectItem> options;
 	private int selectedOptionIndex;
 
-	public SelectOverlay(KeyBinding openKey, ITextComponent titleIn) {
+	public SelectOverlay(@Nullable KeyBinding openKey, ITextComponent titleIn) {
 		this.title = titleIn;
 		visible = false;
 		options = new ArrayList<>();
@@ -54,12 +56,12 @@ public class SelectOverlay {
 		adjustTarget();
 	}
 
-	public SelectOverlay(KeyBinding openKey, String titleIn) {
+	public SelectOverlay(@Nullable KeyBinding openKey, String titleIn) {
 		this(openKey, new TranslationTextComponent(titleIn));
 	}
 
 	public void testAndClose(int keyCode) {
-		if (keyCode == 256 || keyCode == openKey.getKey().getKeyCode()) {
+		if (keyCode == 256 || (openKey != null && keyCode == openKey.getKey().getKeyCode())) {
 			close();
 			if (previous != null)
 				previous.open(previous.previous);
@@ -87,7 +89,7 @@ public class SelectOverlay {
 	}
 
 	public boolean testAndOpen(@Nullable SelectOverlay previous) {
-		if ((canBeOpenedDirectly || previous != null) && !visible && openKey.isKeyDown()) {
+		if ((canBeOpenedDirectly || previous != null) && !visible && (openKey != null && openKey.isKeyDown())) {
 			open(previous);
 			return true;
 		}
@@ -212,7 +214,7 @@ public class SelectOverlay {
 	}
 
 	public void select() {
-		getActiveSelectItem().ifPresent(selectItem -> selectItem.invoke(this));
+		getActiveSelectItem().ifPresent(selectItem -> selectItem.onEnter(this));
 	}
 
 	public Optional<SelectItem> getActiveSelectItem() {
@@ -242,5 +244,26 @@ public class SelectOverlay {
 	public SelectOverlay register() {
 		Manager.overlays.add(this);
 		return this;
+	}
+
+	public Map<String, SelectConfig> getConfigs() {
+		Map<String, SelectConfig> configs = new HashMap<>();
+		this.options.stream().filter(option -> option instanceof SelectConfig).forEach(option -> configs.put(((SelectConfig) option).key, ((SelectConfig) option)));
+		return configs;
+	}
+
+	public void onScroll(InputEvent.MouseScrollEvent event) {
+		int amount = (int) Math.signum(event.getScrollDelta());
+		if (SchematicPrinterClient.TOOL_SELECT.isKeyDown()) {
+			this.advanceSelectionIndex(amount);
+			event.setCanceled(true);
+		} else if (SchematicPrinterClient.TOOL_CONFIG.isKeyDown()) {
+			getActiveSelectConfig().ifPresent(selectConfig -> {
+				selectConfig.onScrolled(amount);
+				event.setCanceled(true);
+			});
+		} else {
+			getActiveSelectItem().ifPresent(item -> item.onScroll(event));
+		}
 	}
 }

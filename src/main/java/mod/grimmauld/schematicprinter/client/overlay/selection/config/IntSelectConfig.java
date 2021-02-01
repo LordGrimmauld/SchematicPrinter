@@ -9,15 +9,15 @@ public class IntSelectConfig extends SelectConfig {
 	public final int max;
 	public int value;
 
-	public IntSelectConfig(ITextComponent description, int min, int defaultValue, int max) {
-		super(null, description);
+	public IntSelectConfig(String key, ITextComponent description, int min, int defaultValue, int max) {
+		super(key, null, description);
 		this.min = min;
 		this.value = defaultValue;
 		this.max = max;
 	}
 
-	public IntSelectConfig(String description, int min, int defaultValue, int max) {
-		this(new TranslationTextComponent(description), min, defaultValue, max);
+	public IntSelectConfig(String key, String description, int min, int defaultValue, int max) {
+		this(key, new TranslationTextComponent(description), min, defaultValue, max);
 	}
 
 	@Override

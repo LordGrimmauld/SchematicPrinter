@@ -1,6 +1,8 @@
 package mod.grimmauld.schematicprinter.client.overlay.selection.config;
 
 import mcp.MethodsReturnNonnullByDefault;
+import mod.grimmauld.schematicprinter.client.SchematicPrinterClient;
+import mod.grimmauld.schematicprinter.client.overlay.SelectOverlay;
 import mod.grimmauld.schematicprinter.util.FileHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -20,16 +22,22 @@ public class SchematicSelectConfig extends SelectConfig {
 	private final List<String> availableSchematics;
 	private int index;
 
-	public SchematicSelectConfig(String description) {
-		this(new TranslationTextComponent(description));
+	public SchematicSelectConfig(String key, String description) {
+		this(key, new TranslationTextComponent(description));
 	}
 
-	public SchematicSelectConfig(ITextComponent description) {
-		super(null, description);
+	public SchematicSelectConfig(String key, ITextComponent description) {
+		super(key, null, description);
 		availableSchematics = new ArrayList<>();
 		refreshFiles();
 		index = 0;
-		onInvoke = selectOverlay -> this.refreshFiles();
+		SchematicPrinterClient.schematicHandler.setActiveSchematic(getSelectedFile());
+	}
+
+	@Override
+	public void onEnter(SelectOverlay screen) {
+		super.onEnter(screen);
+		refreshFiles();
 	}
 
 	@Override
@@ -61,6 +69,7 @@ public class SchematicSelectConfig extends SelectConfig {
 	@Override
 	public void onScrolled(int amount) {
 		index += amount;
+		SchematicPrinterClient.schematicHandler.setActiveSchematic(getSelectedFile());
 	}
 
 	@Nullable

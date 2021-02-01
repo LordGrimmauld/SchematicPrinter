@@ -11,13 +11,13 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public class BooleanSelectConfig extends SelectConfig {
 	public boolean value;
 
-	public BooleanSelectConfig(ITextComponent description, boolean defaultValue) {
-		super(null, description);
+	public BooleanSelectConfig(String key, ITextComponent description, boolean defaultValue) {
+		super(key, null, description);
 		this.value = defaultValue;
 	}
 
-	public BooleanSelectConfig(String description, boolean defaultValue) {
-		this(new TranslationTextComponent(description), defaultValue);
+	public BooleanSelectConfig(String key, String description, boolean defaultValue) {
+		this(key, new TranslationTextComponent(description), defaultValue);
 	}
 
 	@Override

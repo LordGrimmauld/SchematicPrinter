@@ -1,14 +1,13 @@
 package mod.grimmauld.schematicprinter.client;
 
-import com.simibubi.mightyarchitect.foundation.utility.Keyboard;
 import mcp.MethodsReturnNonnullByDefault;
 import mod.grimmauld.schematicprinter.client.overlay.SelectOverlay;
-import mod.grimmauld.schematicprinter.client.overlay.selection.config.SelectConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.glfw.GLFW;
@@ -79,20 +78,29 @@ public class Manager {
 	public static void onMouseScrolled(InputEvent.MouseScrollEvent event) {
 		if (Minecraft.getInstance().currentScreen != null)
 			return;
-		int amount = (int) Math.signum(event.getScrollDelta());
+		overlays.stream().filter(SelectOverlay::isVisible).forEach(overlay -> overlay.onScroll(event));
+	}
 
-		if (SchematicPrinterClient.TOOL_SELECT.isKeyDown()) {
-			event.setCanceled(overlays.stream().filter(SelectOverlay::isVisible).map(overlay -> {
-				overlay.advanceSelectionIndex(amount);
-				return true;
-			}).findFirst().orElse(false));
-		} else if (SchematicPrinterClient.TOOL_CONFIG.isKeyDown()) {
-			event.setCanceled(overlays.stream().filter(SelectOverlay::isVisible).map(overlay -> {
-				Optional<SelectConfig> config = overlay.getActiveSelectConfig();
-				config.ifPresent(selectConfig -> selectConfig.onScrolled(amount));
-				return config.isPresent();
-			}).findFirst().orElse(false));
-		}
+	@SubscribeEvent
+	public static void onMouseInput(InputEvent.MouseInputEvent event) {
+		if (Minecraft.getInstance().currentScreen != null)
+			return;
+
+		int button = event.getButton();
+		boolean pressed = !(event.getAction() == 0);
+
+		if (!pressed || button != 1)
+			return;
+		Minecraft mc = Minecraft.getInstance();
+		if (mc.world == null || mc.player == null || mc.player.isSneaking())
+			return;
+		getActiveOverlay().flatMap(SelectOverlay::getActiveSelectItem).ifPresent(selectItem -> selectItem.onRightClick(event));
+	}
+
+	@SubscribeEvent
+	// FIXME: Client only equivalent!
+	public static void onPlayerLeaveWorld(PlayerEvent.PlayerLoggedInEvent event) {
+		SchematicPrinterClient.schematicHandler.quitSchematic();
 	}
 
 	public static Optional<SelectOverlay> getActiveOverlay() {

@@ -28,7 +28,7 @@ public class SchematicPrinter {
 	}
 
 	private void clientInit(FMLClientSetupEvent event) {
-		DistExecutor.runWhenOn(Dist.CLIENT, () -> SchematicPrinterClient::init);
+		DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> SchematicPrinterClient::init);
 	}
 
 	private void init(final FMLCommonSetupEvent event) {
