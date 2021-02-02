@@ -63,6 +63,7 @@ public class BlockPosSelectConfig extends SelectConfig {
 			hit = hit.offset(trace.getFace().getOpposite());
 		pos = hit;
 		outline = null;
+		onValueChanged();
 	}
 
 	@Override
@@ -84,5 +85,10 @@ public class BlockPosSelectConfig extends SelectConfig {
 		outline.render(ms, buffer);
 		outline.getParams()
 			.clearTextures();
+	}
+
+	@Nullable
+	public BlockPos getPos() {
+		return pos;
 	}
 }

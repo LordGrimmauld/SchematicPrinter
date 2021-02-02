@@ -20,6 +20,7 @@ public class IntSelectConfig extends SelectConfig {
 		this.min = min;
 		this.value = defaultValue;
 		this.max = max;
+		this.onValueChanged();
 	}
 
 	public IntSelectConfig(String key, String description, int min, int defaultValue, int max) {
@@ -29,6 +30,7 @@ public class IntSelectConfig extends SelectConfig {
 	@Override
 	public void onScrolled(int amount) {
 		value = MathHelper.clamp(value + amount, min, max);
+		this.onValueChanged();
 	}
 
 	@Override

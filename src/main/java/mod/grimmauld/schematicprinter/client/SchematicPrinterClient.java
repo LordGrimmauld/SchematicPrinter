@@ -6,7 +6,7 @@ import mod.grimmauld.schematicprinter.SchematicPrinter;
 import mod.grimmauld.schematicprinter.client.overlay.SelectOverlay;
 import mod.grimmauld.schematicprinter.client.overlay.selection.SelectItem;
 import mod.grimmauld.schematicprinter.client.overlay.selection.SelectOpenOverlay;
-import mod.grimmauld.schematicprinter.client.overlay.selection.SelectOption;
+import mod.grimmauld.schematicprinter.client.overlay.selection.SelectSchematicSave;
 import mod.grimmauld.schematicprinter.client.overlay.selection.config.BlockPosSelectConfig;
 import mod.grimmauld.schematicprinter.client.overlay.selection.config.BooleanSelectConfig;
 import mod.grimmauld.schematicprinter.client.overlay.selection.config.IntSelectConfig;
@@ -76,6 +76,7 @@ public class SchematicPrinterClient {
 		SuperRenderTypeBuffer buffer = SuperRenderTypeBuffer.getInstance();
 		schematicHandler.render(ms, buffer);
 		Manager.getActiveOverlay().ifPresent(overlay -> overlay.options.forEach(selectItem -> selectItem.continuousRendering(ms, buffer)));
+		Manager.getActiveOverlay().flatMap(SelectOverlay::getActiveSelectItem).ifPresent(selectItem -> selectItem.renderActive(ms, buffer));
 		buffer.draw();
 
 		ms.pop();
@@ -109,9 +110,9 @@ public class SchematicPrinterClient {
 
 		SelectOverlay overlayMain = new SelectOverlay(SchematicPrinterClient.MENU_BUTTON, new StringTextComponent("test"))
 			.configureDirectOpen(true)
-			.addOption(new SelectOption("test"))
 			.addOption(pos1)
 			.addOption(pos2)
+			.addOption(new SelectSchematicSave("save", pos1, pos2))
 			.addOption(new BooleanSelectConfig("testbool1", "testBoolean", false))
 			.addOption(new IntSelectConfig("testint1", "testInt", 0, 42, 100))
 			.addOption(new SelectOpenOverlay("Schematics", schematicOverlay))

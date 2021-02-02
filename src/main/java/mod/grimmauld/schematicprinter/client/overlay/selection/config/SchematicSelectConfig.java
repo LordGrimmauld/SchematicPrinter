@@ -33,6 +33,7 @@ public class SchematicSelectConfig extends SelectConfig {
 		refreshFiles();
 		index = 0;
 		SchematicPrinterClient.schematicHandler.setActiveSchematic(getSelectedFile());
+		this.onValueChanged();
 	}
 
 	@Override
@@ -71,6 +72,7 @@ public class SchematicSelectConfig extends SelectConfig {
 	public void onScrolled(int amount) {
 		index += amount;
 		SchematicPrinterClient.schematicHandler.setActiveSchematic(getSelectedFile());
+		this.onValueChanged();
 	}
 
 	@Nullable

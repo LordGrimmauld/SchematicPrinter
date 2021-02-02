@@ -24,6 +24,7 @@ public class BooleanSelectConfig extends SelectConfig {
 	@Override
 	public void onScrolled(int amount) {
 		value ^= Math.abs(amount) % 2 != 0;
+		this.onValueChanged();
 	}
 
 	@Override
