@@ -7,6 +7,7 @@ import mod.grimmauld.schematicprinter.client.overlay.SelectOverlay;
 import mod.grimmauld.schematicprinter.client.overlay.selection.SelectItem;
 import mod.grimmauld.schematicprinter.client.overlay.selection.SelectOpenOverlay;
 import mod.grimmauld.schematicprinter.client.overlay.selection.SelectOption;
+import mod.grimmauld.schematicprinter.client.overlay.selection.config.BlockPosSelectConfig;
 import mod.grimmauld.schematicprinter.client.overlay.selection.config.BooleanSelectConfig;
 import mod.grimmauld.schematicprinter.client.overlay.selection.config.IntSelectConfig;
 import mod.grimmauld.schematicprinter.client.overlay.selection.config.SchematicSelectConfig;
@@ -20,6 +21,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -42,6 +44,9 @@ public class SchematicPrinterClient {
 	public static KeyBinding TOOL_SELECT;
 	public static KeyBinding TOOL_SUBMIT;
 
+	public static BlockPosSelectConfig pos1;
+	public static BlockPosSelectConfig pos2;
+
 	public static void init() {
 		MENU_BUTTON = new KeyBinding("open Menu", Keyboard.O.getKeycode(), SchematicPrinter.NAME);
 		TOOL_SELECT = new KeyBinding("Tool Select", Keyboard.LALT.getKeycode(), SchematicPrinter.NAME);
@@ -53,24 +58,7 @@ public class SchematicPrinterClient {
 		ClientRegistry.registerKeyBinding(TOOL_SUBMIT);
 		ClientRegistry.registerKeyBinding(TOOL_CONFIG);
 
-		SelectOverlay schematicOverlay = new SelectOverlay(SchematicPrinterClient.MENU_BUTTON, "Schematics")
-			.addOption(new SchematicSelectConfig("schematic", "Selected Schematic"))
-			.addOption(new SelectItem("deploy", new DeployTool()))
-			.addOption(new SelectItem("clear", new ClearTool()))
-			.addOption(new SelectItem("flip", new FlipTool()))
-			.addOption(new SelectItem("rotate", new RotateTool()))
-			.addOption(new SelectItem("moveXZ", new MoveTool()))
-			.addOption(new SelectItem("moveY", new MoveVerticalTool()))
-			.addOption(new SelectItem("print", new InstantPrintTool()))
-			.register();
-
-		SelectOverlay overlayMain = new SelectOverlay(SchematicPrinterClient.MENU_BUTTON, new StringTextComponent("test"))
-			.configureDirectOpen(true)
-			.addOption(new SelectOption("test"))
-			.addOption(new BooleanSelectConfig("testbool1", "testBoolean", false))
-			.addOption(new IntSelectConfig("testint1", "testInt", 0, 42, 100))
-			.addOption(new SelectOpenOverlay("Schematics", schematicOverlay))
-			.register();
+		setupOverlay();
 	}
 
 	@SubscribeEvent
@@ -87,6 +75,7 @@ public class SchematicPrinterClient {
 		ms.translate(-view.getX(), -view.getY(), -view.getZ());
 		SuperRenderTypeBuffer buffer = SuperRenderTypeBuffer.getInstance();
 		schematicHandler.render(ms, buffer);
+		Manager.getActiveOverlay().ifPresent(overlay -> overlay.options.forEach(selectItem -> selectItem.continuousRendering(ms, buffer)));
 		buffer.draw();
 
 		ms.pop();
@@ -101,5 +90,31 @@ public class SchematicPrinterClient {
 
 	public static void onRenderHotbar(MatrixStack ms, IRenderTypeBuffer buffer, int light, int overlay) {
 		schematicHandler.renderOverlay(ms, buffer);
+	}
+
+	private static void setupOverlay() {
+		pos1 = new BlockPosSelectConfig("pos1", "pos1", TextFormatting.YELLOW);
+		pos2 = new BlockPosSelectConfig("pos2", "pos2", TextFormatting.LIGHT_PURPLE);
+
+		SelectOverlay schematicOverlay = new SelectOverlay(SchematicPrinterClient.MENU_BUTTON, "Schematics")
+			.addOption(new SchematicSelectConfig("schematic", "Selected Schematic"))
+			.addOption(new SelectItem("deploy", new DeployTool()))
+			.addOption(new SelectItem("clear", new ClearTool()))
+			.addOption(new SelectItem("flip", new FlipTool()))
+			.addOption(new SelectItem("rotate", new RotateTool()))
+			.addOption(new SelectItem("moveXZ", new MoveTool()))
+			.addOption(new SelectItem("moveY", new MoveVerticalTool()))
+			.addOption(new SelectItem("print", new InstantPrintTool()))
+			.register();
+
+		SelectOverlay overlayMain = new SelectOverlay(SchematicPrinterClient.MENU_BUTTON, new StringTextComponent("test"))
+			.configureDirectOpen(true)
+			.addOption(new SelectOption("test"))
+			.addOption(pos1)
+			.addOption(pos2)
+			.addOption(new BooleanSelectConfig("testbool1", "testBoolean", false))
+			.addOption(new IntSelectConfig("testint1", "testInt", 0, 42, 100))
+			.addOption(new SelectOpenOverlay("Schematics", schematicOverlay))
+			.register();
 	}
 }

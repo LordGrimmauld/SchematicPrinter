@@ -3,6 +3,7 @@ package mod.grimmauld.schematicprinter.client.overlay.selection.config;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -31,7 +32,7 @@ public class IntSelectConfig extends SelectConfig {
 	}
 
 	@Override
-	protected String getState() {
-		return String.valueOf(value);
+	protected ITextComponent getState() {
+		return new StringTextComponent(String.valueOf(value));
 	}
 }

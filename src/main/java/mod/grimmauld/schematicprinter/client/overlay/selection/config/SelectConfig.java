@@ -22,8 +22,8 @@ public abstract class SelectConfig extends SelectItem {
 
 	@Override
 	public ITextComponent getDescription() {
-		return super.getDescription().appendText(": ").appendText(this.getState());
+		return super.getDescription().appendText(": ").appendSibling(this.getState());
 	}
 
-	protected abstract String getState();
+	protected abstract ITextComponent getState();
 }

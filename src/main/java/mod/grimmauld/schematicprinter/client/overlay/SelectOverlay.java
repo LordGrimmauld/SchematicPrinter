@@ -43,7 +43,7 @@ public class SelectOverlay {
 	private float movingY;
 	private SelectOverlay previous;
 
-	private List<SelectItem> options;
+	public List<SelectItem> options;
 	private int selectedOptionIndex;
 
 	public SelectOverlay(@Nullable KeyBinding openKey, ITextComponent titleIn) {

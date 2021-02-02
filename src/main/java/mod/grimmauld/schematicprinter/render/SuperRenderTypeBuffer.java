@@ -6,6 +6,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.model.ModelBakery;
+import net.minecraft.util.LazyValue;
 import net.minecraft.util.Util;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -14,7 +15,7 @@ import java.util.SortedMap;
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public class SuperRenderTypeBuffer implements IRenderTypeBuffer {
-	static SuperRenderTypeBuffer instance;
+	static LazyValue<SuperRenderTypeBuffer> instance = new LazyValue<>(SuperRenderTypeBuffer::new);
 	final SuperRenderTypeBufferPhase earlyBuffer = new SuperRenderTypeBufferPhase();
 	final SuperRenderTypeBufferPhase defaultBuffer = new SuperRenderTypeBufferPhase();
 	final SuperRenderTypeBufferPhase lateBuffer = new SuperRenderTypeBufferPhase();
@@ -23,10 +24,7 @@ public class SuperRenderTypeBuffer implements IRenderTypeBuffer {
 	}
 
 	public static SuperRenderTypeBuffer getInstance() {
-		if (instance == null) {
-			instance = new SuperRenderTypeBuffer();
-		}
-		return instance;
+		return instance.getValue();
 	}
 
 	public IVertexBuilder getBuffer(RenderType type) {
