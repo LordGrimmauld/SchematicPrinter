@@ -53,7 +53,6 @@ public class SelectSchematicSave extends SelectBox {
 			TextHelper.sendStatus(MC.player, "schematic.save_empty_selection");
 			return;
 		}
-		bb = bb.expand(1, 1, 1);
 		BlockPos origin = new BlockPos(bb.minX, bb.minY, bb.minZ);
 		BlockPos bounds = new BlockPos(bb.getXSize(), bb.getYSize(), bb.getZSize());
 		Template t = new Template();
