@@ -28,7 +28,7 @@ public class RotateTool extends PlacementToolBase {
 	@Override
 	public void renderOnSchematic(MatrixStack ms, SuperRenderTypeBuffer buffer) {
 		SchematicMetaInf inf = schematicHandler.activeSchematic;
-		if (inf == null)
+		if (inf == null || !schematicHandler.isDeployed())
 			return;
 
 		double height = inf.bounds.getYSize() + Math.max(20, inf.bounds.getYSize());

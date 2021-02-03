@@ -1,7 +1,10 @@
 package mod.grimmauld.schematicprinter.client.overlay.selection;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import mcp.MethodsReturnNonnullByDefault;
 import mod.grimmauld.schematicprinter.client.overlay.SelectOverlay;
+import mod.grimmauld.schematicprinter.render.SuperRenderTypeBuffer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -13,6 +16,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class SelectItem {
+	protected static final Minecraft MC = Minecraft.getInstance();
 	@Nullable
 	public final IOverlayEventListener listener;
 	private final ITextComponent description;
@@ -48,5 +52,11 @@ public class SelectItem {
 	public void onRightClick(InputEvent.MouseInputEvent event) {
 		if (listener != null)
 			listener.onRightClick(event);
+	}
+
+	public void continuousRendering(MatrixStack ms, SuperRenderTypeBuffer buffer) {
+	}
+
+	public void renderActive(MatrixStack ms, SuperRenderTypeBuffer buffer) {
 	}
 }

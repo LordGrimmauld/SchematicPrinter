@@ -5,6 +5,7 @@ import mod.grimmauld.schematicprinter.client.SchematicPrinterClient;
 import mod.grimmauld.schematicprinter.client.overlay.SelectOverlay;
 import mod.grimmauld.schematicprinter.util.FileHelper;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import javax.annotation.Nullable;
@@ -32,6 +33,7 @@ public class SchematicSelectConfig extends SelectConfig {
 		refreshFiles();
 		index = 0;
 		SchematicPrinterClient.schematicHandler.setActiveSchematic(getSelectedFile());
+		this.onValueChanged();
 	}
 
 	@Override
@@ -70,6 +72,7 @@ public class SchematicSelectConfig extends SelectConfig {
 	public void onScrolled(int amount) {
 		index += amount;
 		SchematicPrinterClient.schematicHandler.setActiveSchematic(getSelectedFile());
+		this.onValueChanged();
 	}
 
 	@Nullable
@@ -83,8 +86,8 @@ public class SchematicSelectConfig extends SelectConfig {
 	}
 
 	@Override
-	protected String getState() {
+	protected ITextComponent getState() {
 		String filename = getSelectedFile();
-		return filename != null ? filename : "none";
+		return new StringTextComponent(filename != null ? filename : "none");
 	}
 }

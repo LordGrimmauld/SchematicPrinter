@@ -5,10 +5,10 @@ import mod.grimmauld.schematicprinter.client.overlay.SelectOverlay;
 import mod.grimmauld.schematicprinter.util.KeybindHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -34,15 +34,16 @@ public class Manager {
 
 	private static void testKeybinds(InputEvent event) {
 		Optional<SelectOverlay> activeOverlay = getActiveOverlay();
-		if (KeybindHelper.eventActivatesKeybind(event, SchematicPrinterClient.TOOL_SUBMIT)) {
-			activeOverlay.ifPresent(SelectOverlay::select);
-			return;
-		}
-
-		if (!activeOverlay.isPresent()) {
-			for (SelectOverlay overlay : overlays) {
-				if (overlay.testAndOpen(null, event))
-					return;
+		if (KeybindHelper.eventActivatesKeybind(event, SchematicPrinterClient.TOOL_ACTIVATE)) {
+			SelectOverlay activeSelectOverlay = activeOverlay.orElse(null);
+			if (activeSelectOverlay != null) {
+				activeSelectOverlay.select();
+				return;
+			} else {
+				for (SelectOverlay overlay : overlays) {
+					if (overlay.testAndOpenDirectly())
+						return;
+				}
 			}
 		}
 
@@ -90,7 +91,7 @@ public class Manager {
 
 	@SubscribeEvent
 	// FIXME: Client only equivalent!
-	public static void onPlayerJoinWorld(PlayerEvent.PlayerLoggedInEvent event) {
+	public static void onPlayerJoinWorld(ClientPlayerNetworkEvent.LoggedInEvent event) {
 		SchematicPrinterClient.schematicHandler.quitSchematic();
 	}
 

@@ -2,6 +2,7 @@ package mod.grimmauld.schematicprinter.client.overlay.selection.config;
 
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -23,10 +24,11 @@ public class BooleanSelectConfig extends SelectConfig {
 	@Override
 	public void onScrolled(int amount) {
 		value ^= Math.abs(amount) % 2 != 0;
+		this.onValueChanged();
 	}
 
 	@Override
-	protected String getState() {
-		return value ? "On" : "Off";
+	protected ITextComponent getState() {
+		return new StringTextComponent(value ? "On" : "Off");
 	}
 }

@@ -3,6 +3,7 @@ package mod.grimmauld.schematicprinter.client.overlay.selection.config;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -19,6 +20,7 @@ public class IntSelectConfig extends SelectConfig {
 		this.min = min;
 		this.value = defaultValue;
 		this.max = max;
+		this.onValueChanged();
 	}
 
 	public IntSelectConfig(String key, String description, int min, int defaultValue, int max) {
@@ -28,10 +30,11 @@ public class IntSelectConfig extends SelectConfig {
 	@Override
 	public void onScrolled(int amount) {
 		value = MathHelper.clamp(value + amount, min, max);
+		this.onValueChanged();
 	}
 
 	@Override
-	protected String getState() {
-		return String.valueOf(value);
+	protected ITextComponent getState() {
+		return new StringTextComponent(String.valueOf(value));
 	}
 }
