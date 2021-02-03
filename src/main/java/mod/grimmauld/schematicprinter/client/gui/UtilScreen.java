@@ -1,6 +1,5 @@
 package mod.grimmauld.schematicprinter.client.gui;
 
-import com.simibubi.create.foundation.gui.widgets.AbstractSimiWidget;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.Widget;
@@ -108,8 +107,8 @@ public abstract class UtilScreen extends Screen {
 			if (!widget.isHovered())
 				continue;
 
-			if (widget instanceof AbstractSimiWidget && !((AbstractSimiWidget) widget).getToolTip().isEmpty()) {
-				renderTooltip(((AbstractSimiWidget) widget).getToolTip(), mouseX, mouseY);
+			if (widget instanceof SmartWidget && !((SmartWidget) widget).getToolTip().isEmpty()) {
+				renderTooltip(((SmartWidget) widget).getToolTip(), mouseX, mouseY);
 			}
 		}
 	}
