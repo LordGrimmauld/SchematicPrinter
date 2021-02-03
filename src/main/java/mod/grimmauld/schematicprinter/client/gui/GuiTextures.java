@@ -1,5 +1,6 @@
 package mod.grimmauld.schematicprinter.client.gui;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import mod.grimmauld.schematicprinter.SchematicPrinter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
@@ -38,8 +39,8 @@ public enum GuiTextures {
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	public void draw(AbstractGui screen, int x, int y) {
+	public void draw(MatrixStack ms, AbstractGui screen, int x, int y) {
 		this.bind();
-		screen.blit(x, y, this.startX, this.startY, this.width, this.height);
+		screen.blit(ms, x, y, this.startX, this.startY, this.width, this.height);
 	}
 }

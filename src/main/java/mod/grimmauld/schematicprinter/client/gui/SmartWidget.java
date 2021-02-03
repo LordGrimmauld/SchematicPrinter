@@ -1,18 +1,20 @@
 package mod.grimmauld.schematicprinter.client.gui;
 
 import net.minecraft.client.gui.widget.Widget;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 
 import java.util.LinkedList;
 import java.util.List;
 
 public class SmartWidget extends Widget {
-	protected List<String> toolTip = new LinkedList<>();
+	protected List<ITextComponent> toolTip = new LinkedList<>();
 
 	public SmartWidget(int xIn, int yIn, int widthIn, int heightIn) {
-		super(xIn, yIn, widthIn, heightIn, "");
+		super(xIn, yIn, widthIn, heightIn, StringTextComponent.EMPTY);
 	}
 
-	public List<String> getToolTip() {
+	public List<ITextComponent> getToolTip() {
 		return this.toolTip;
 	}
 

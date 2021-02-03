@@ -7,6 +7,7 @@ import mod.grimmauld.schematicprinter.render.SuperRenderTypeBuffer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.client.event.InputEvent;
 
@@ -41,7 +42,7 @@ public class SelectItem {
 	}
 
 	public IFormattableTextComponent getDescription() {
-		return description.deepCopy();
+		return description.deepCopy().mergeStyle(TextFormatting.WHITE);
 	}
 
 	public void onScroll(InputEvent.MouseScrollEvent event) {

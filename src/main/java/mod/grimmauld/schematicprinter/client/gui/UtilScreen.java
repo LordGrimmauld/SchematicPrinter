@@ -1,5 +1,6 @@
 package mod.grimmauld.schematicprinter.client.gui;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.Widget;
@@ -31,14 +32,14 @@ public abstract class UtilScreen extends Screen {
 	}
 
 	@Override
-	public void render(int mouseX, int mouseY, float partialTicks) {
-		renderBackground();
-		renderWindow(mouseX, mouseY, partialTicks);
+	public void render(MatrixStack ms, int mouseX, int mouseY, float partialTicks) {
+		renderBackground(ms);
+		renderWindow(ms, mouseX, mouseY, partialTicks);
 		for (Widget widget : widgets)
-			widget.render(mouseX, mouseY, partialTicks);
-		renderWindowForeground(mouseX, mouseY, partialTicks);
+			widget.render(ms, mouseX, mouseY, partialTicks);
+		renderWindowForeground(ms, mouseX, mouseY, partialTicks);
 		for (Widget widget : widgets)
-			widget.renderToolTip(mouseX, mouseY);
+			widget.renderToolTip(ms, mouseX, mouseY);
 	}
 
 	@Override
@@ -100,16 +101,17 @@ public abstract class UtilScreen extends Screen {
 		return false;
 	}
 
-	protected abstract void renderWindow(int mouseX, int mouseY, float partialTicks);
+	protected abstract void renderWindow(MatrixStack ms, int mouseX, int mouseY, float partialTicks);
 
-	protected void renderWindowForeground(int mouseX, int mouseY, float partialTicks) {
+	protected void renderWindowForeground(MatrixStack ms, int mouseX, int mouseY, float partialTicks) {
+		/*
 		for (Widget widget : widgets) {
 			if (!widget.isHovered())
 				continue;
 
 			if (widget instanceof SmartWidget && !((SmartWidget) widget).getToolTip().isEmpty()) {
-				renderTooltip(((SmartWidget) widget).getToolTip(), mouseX, mouseY);
+				renderTooltip(ms, ((SmartWidget) widget).getToolTip(), mouseX, mouseY);
 			}
-		}
+		}*/
 	}
 }

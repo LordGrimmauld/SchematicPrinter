@@ -1,29 +1,32 @@
 package mod.grimmauld.schematicprinter.client.gui;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.widget.Widget;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 
 import java.util.LinkedList;
 import java.util.List;
 
 public class IconButton extends Widget {
 	private final GuiIcons icon;
-	protected List<String> toolTip = new LinkedList<>();
+	protected List<ITextComponent> toolTip = new LinkedList<>();
 	protected boolean pressed;
 
 	public IconButton(int x, int y, GuiIcons icon) {
-		super(x, y, 18, 18, "");
+		super(x, y, 18, 18, StringTextComponent.EMPTY);
 		this.icon = icon;
 	}
 
-	public void renderButton(int mouseX, int mouseY, float partialTicks) {
+	public void renderButton(MatrixStack ms, int mouseX, int mouseY, float partialTicks) {
 		if (this.visible) {
 			this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
 			GuiTextures button = !this.pressed && this.active ? (this.isHovered ? GuiTextures.BUTTON_HOVER : GuiTextures.BUTTON) : GuiTextures.BUTTON_DOWN;
 			RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 			GuiTextures.BUTTON.bind();
-			this.blit(this.x, this.y, button.startX, button.startY, button.width, button.height);
-			this.icon.draw(this, this.x + 1, this.y + 1);
+			this.blit(ms, this.x, this.y, button.startX, button.startY, button.width, button.height);
+			this.icon.draw(ms, this, this.x + 1, this.y + 1);
 		}
 
 	}
@@ -38,7 +41,7 @@ public class IconButton extends Widget {
 		this.pressed = false;
 	}
 
-	public void setToolTip(String text) {
+	public void setToolTip(ITextComponent text) {
 		this.toolTip.clear();
 		this.toolTip.add(text);
 	}

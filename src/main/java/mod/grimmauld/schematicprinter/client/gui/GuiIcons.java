@@ -1,5 +1,6 @@
 package mod.grimmauld.schematicprinter.client.gui;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import mod.grimmauld.schematicprinter.SchematicPrinter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
@@ -26,8 +27,8 @@ public class GuiIcons {
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	public void draw(AbstractGui screen, int x, int y) {
+	public void draw(MatrixStack ms, AbstractGui screen, int x, int y) {
 		this.bind();
-		screen.blit(x, y, this.iconX, this.iconY, 16, 16);
+		screen.blit(ms, x, y, this.iconX, this.iconY, 16, 16);
 	}
 }

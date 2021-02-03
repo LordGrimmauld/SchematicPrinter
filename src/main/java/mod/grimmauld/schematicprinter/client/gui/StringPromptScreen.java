@@ -1,10 +1,12 @@
 package mod.grimmauld.schematicprinter.client.gui;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import mcp.MethodsReturnNonnullByDefault;
 import mod.grimmauld.schematicprinter.SchematicPrinter;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.util.Util;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.lwjgl.glfw.GLFW;
 
@@ -36,7 +38,7 @@ public class StringPromptScreen extends UtilScreen {
 		GuiTextures background = GuiTextures.SCHEMATIC_PROMPT;
 		setWindowSize(background.width, background.height + 30);
 
-		nameField = new TextFieldWidget(font, guiLeft + 49, guiTop + 26, 131, 10, "");
+		nameField = new TextFieldWidget(font, guiLeft + 49, guiTop + 26, 131, 10, StringTextComponent.EMPTY);
 		nameField.setTextColor(-1);
 		nameField.setDisabledTextColour(-1);
 		nameField.setEnableBackgroundDrawing(false);
@@ -44,15 +46,15 @@ public class StringPromptScreen extends UtilScreen {
 		nameField.changeFocus(true);
 
 		abort = new IconButton(guiLeft + 180, guiTop + 53, GuiIcons.I_TRASH);
-		abort.setToolTip(abortLabel.getFormattedText());
+		abort.setToolTip(abortLabel);
 		widgets.add(abort);
 
 		confirm = new IconButton(guiLeft + 158, guiTop + 53, GuiIcons.I_CONFIRM);
-		confirm.setToolTip(confirmLabel.getFormattedText());
+		confirm.setToolTip(confirmLabel);
 		widgets.add(confirm);
 
 		folderButton = new IconButton(guiLeft + 21, guiTop + 21, GuiIcons.I_OPEN_FOLDER);
-		folderButton.setToolTip(folder.getFormattedText());
+		folderButton.setToolTip(folder);
 		widgets.add(folderButton);
 
 		widgets.add(confirm);
@@ -61,9 +63,9 @@ public class StringPromptScreen extends UtilScreen {
 	}
 
 	@Override
-	public void renderWindow(int mouseX, int mouseY, float partialTicks) {
-		GuiTextures.SCHEMATIC_PROMPT.draw(this, guiLeft, guiTop);
-		font.drawStringWithShadow(title.getFormattedText(), guiLeft + (sWidth / 2) - (font.getStringWidth(title.getFormattedText()) / 2), guiTop + 3,
+	public void renderWindow(MatrixStack ms, int mouseX, int mouseY, float partialTicks) {
+		GuiTextures.SCHEMATIC_PROMPT.draw(ms, this, guiLeft, guiTop);
+		font.func_243246_a(ms, title, guiLeft + (sWidth / 2) - (font.getStringWidth(title.getUnformattedComponentText()) / 2), guiTop + 3,
 			0xffffff);
 	}
 
