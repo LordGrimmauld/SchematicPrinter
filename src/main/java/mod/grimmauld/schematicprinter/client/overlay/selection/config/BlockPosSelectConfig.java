@@ -7,7 +7,6 @@ import mod.grimmauld.schematicprinter.client.overlay.SelectOverlay;
 import mod.grimmauld.schematicprinter.render.SuperRenderTypeBuffer;
 import mod.grimmauld.schematicprinter.util.RaycastHelper;
 import mod.grimmauld.schematicprinter.util.outline.AABBOutline;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
@@ -23,7 +22,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public class BlockPosSelectConfig extends SelectConfig {
-	private static final Minecraft MC = Minecraft.getInstance();
 	private final TextFormatting color;
 	@Nullable
 	private AABBOutline outline = null;

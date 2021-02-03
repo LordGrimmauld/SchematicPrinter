@@ -12,8 +12,6 @@ import mod.grimmauld.schematicprinter.util.KeybindHelper;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.client.util.InputMappings;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -29,28 +27,24 @@ import static net.minecraft.client.gui.AbstractGui.blit;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class SelectOverlay {
-	public static final SelectOverlay EMPTY = new SelectOverlay(null, "");
+	public static final SelectOverlay EMPTY = new SelectOverlay("");
 
 	private static final Minecraft minecraft = Minecraft.getInstance();
-	@Nullable
-	private final KeyBinding openKey;
 	private final ITextComponent title;
 	public boolean canBeOpenedDirectly;
+	public List<SelectItem> options;
 	int menuWidth;
 	int menuHeight;
 	private boolean visible;
 	private int targetY;
 	private float movingY;
 	private SelectOverlay previous;
-
-	public List<SelectItem> options;
 	private int selectedOptionIndex;
 
-	public SelectOverlay(@Nullable KeyBinding openKey, ITextComponent titleIn) {
+	public SelectOverlay(ITextComponent titleIn) {
 		this.title = titleIn;
 		visible = false;
 		options = new ArrayList<>();
-		this.openKey = openKey;
 		movingY = 0;
 		targetY = 0;
 		selectedOptionIndex = 0;
@@ -59,12 +53,16 @@ public class SelectOverlay {
 		adjustTarget();
 	}
 
-	public SelectOverlay(@Nullable KeyBinding openKey, String titleIn) {
-		this(openKey, new TranslationTextComponent(titleIn));
+	public SelectOverlay(String titleIn) {
+		this(new TranslationTextComponent(titleIn));
 	}
 
 	public void testAndClose(InputEvent event) {
-		if ((Keyboard.ESC.isKeyDown() && Manager.shouldCloseOnEsc) || KeybindHelper.eventActivatesKeybind(event, openKey)) {
+		if (Keyboard.ESC.isKeyDown() && Manager.shouldCloseOnEsc) {
+			close();
+			return;
+		}
+		if (KeybindHelper.eventActivatesKeybind(event, SchematicPrinterClient.TOOL_DEACTIVATE)) {
 			close();
 			if (previous != null)
 				previous.open(previous.previous);
@@ -91,12 +89,9 @@ public class SelectOverlay {
 		return this;
 	}
 
-	public boolean testAndOpen(@Nullable SelectOverlay previous, InputEvent event) {
-		if ((canBeOpenedDirectly || previous != null) && !visible && (openKey != null &&
-			(event instanceof InputEvent.KeyInputEvent ?
-				openKey.isActiveAndMatches(InputMappings.getInputByCode(((InputEvent.KeyInputEvent) event).getKey(), ((InputEvent.KeyInputEvent) event).getScanCode())) :
-				event instanceof InputEvent.MouseInputEvent && openKey.matchesMouseKey(((InputEvent.MouseInputEvent) event).getButton())))) {
-			open(previous);
+	public boolean testAndOpenDirectly() {
+		if (canBeOpenedDirectly && !visible) {
+			open(null);
 			return true;
 		}
 		return false;

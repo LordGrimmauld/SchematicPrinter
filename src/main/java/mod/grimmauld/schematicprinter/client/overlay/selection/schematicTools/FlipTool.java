@@ -44,7 +44,7 @@ public class FlipTool extends PlacementToolBase {
 	public void renderOnSchematic(MatrixStack ms, SuperRenderTypeBuffer buffer) {
 		SchematicMetaInf inf = schematicHandler.activeSchematic;
 		if (!schematicSelected || !selectedFace.getAxis()
-			.isHorizontal() || inf == null) {
+			.isHorizontal() || inf == null || !schematicHandler.isDeployed()) {
 			super.renderOnSchematic(ms, buffer);
 			return;
 		}

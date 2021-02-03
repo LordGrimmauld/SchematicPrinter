@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Locale;
 
 public class FileHelper {
 	public static void createFolderIfMissing(String name) {
@@ -22,4 +23,23 @@ public class FileHelper {
 			}
 		}
 	}
+
+	public static String findFirstValidFilename(String name, String folderPath, String extension) {
+		int index = 0;
+
+		String filename;
+		String filepath;
+		do {
+			filename = slug(name) + (index == 0 ? "" : "_" + index) + "." + extension;
+			++index;
+			filepath = folderPath + "/" + filename;
+		} while (Files.exists(Paths.get(filepath)));
+
+		return filename;
+	}
+
+	public static String slug(String name) {
+		return name.toLowerCase(Locale.ENGLISH).replace(' ', '_').replace('!', '_').replace(':', '_').replace('?', '_');
+	}
+
 }

@@ -5,7 +5,6 @@ import mcp.MethodsReturnNonnullByDefault;
 import mod.grimmauld.schematicprinter.client.ExtraTextures;
 import mod.grimmauld.schematicprinter.client.overlay.selection.config.BlockPosSelectConfig;
 import mod.grimmauld.schematicprinter.render.SuperRenderTypeBuffer;
-import mod.grimmauld.schematicprinter.util.VecHelper;
 import mod.grimmauld.schematicprinter.util.outline.AABBOutline;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -58,11 +57,20 @@ public abstract class SelectBox extends SelectItem {
 		if (outline != null)
 			return;
 
+		AxisAlignedBB bb = getBoundingBox();
+		if (bb == null)
+			return;
+
+		outline = new AABBOutline(bb.grow(.01));
+	}
+
+	@Nullable
+	protected AxisAlignedBB getBoundingBox() {
 		BlockPos blockPos1 = pos1.getPos();
 		BlockPos blockPos2 = pos2.getPos();
 
 		if (blockPos1 == null || blockPos2 == null)
-			return;
-		outline = new AABBOutline(new AxisAlignedBB(blockPos1, blockPos2).offset(VecHelper.CENTER_OF_ORIGIN).grow(.51));
+			return null;
+		return new AxisAlignedBB(blockPos1, blockPos2).expand(1, 1, 1);
 	}
 }
