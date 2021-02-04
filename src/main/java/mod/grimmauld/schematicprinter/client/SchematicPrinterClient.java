@@ -4,7 +4,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import mcp.MethodsReturnNonnullByDefault;
 import mod.grimmauld.schematicprinter.SchematicPrinter;
 import mod.grimmauld.schematicprinter.client.overlay.SelectOverlay;
-import mod.grimmauld.schematicprinter.client.overlay.selection.SelectItem;
+import mod.grimmauld.schematicprinter.client.overlay.selection.SelectEventListener;
 import mod.grimmauld.schematicprinter.client.overlay.selection.SelectOpenOverlay;
 import mod.grimmauld.schematicprinter.client.overlay.selection.SelectSchematicSave;
 import mod.grimmauld.schematicprinter.client.overlay.selection.config.BlockPosSelectConfig;
@@ -12,6 +12,8 @@ import mod.grimmauld.schematicprinter.client.overlay.selection.config.BooleanSel
 import mod.grimmauld.schematicprinter.client.overlay.selection.config.IntSelectConfig;
 import mod.grimmauld.schematicprinter.client.overlay.selection.config.SchematicSelectConfig;
 import mod.grimmauld.schematicprinter.client.overlay.selection.schematicTools.*;
+import mod.grimmauld.schematicprinter.client.overlay.selection.tools.ClearTool;
+import mod.grimmauld.schematicprinter.client.overlay.selection.tools.FillTool;
 import mod.grimmauld.schematicprinter.client.schematics.SchematicHandler;
 import mod.grimmauld.schematicprinter.render.SuperRenderTypeBuffer;
 import net.minecraft.client.Minecraft;
@@ -98,13 +100,13 @@ public class SchematicPrinterClient {
 
 		SelectOverlay schematicOverlay = new SelectOverlay("Schematics")
 			.addOption(new SchematicSelectConfig("schematic", SchematicPrinter.MODID + ".schematic.selected"))
-			.addOption(new SelectItem(SchematicPrinter.MODID + ".schematic.tool.deploy", new DeployTool()))
-			.addOption(new SelectItem(SchematicPrinter.MODID + ".schematic.tool.clear", new ClearTool()))
-			.addOption(new SelectItem(SchematicPrinter.MODID + ".schematic.tool.flip", new FlipTool()))
-			.addOption(new SelectItem(SchematicPrinter.MODID + ".schematic.tool.rotate", new RotateTool()))
-			.addOption(new SelectItem(SchematicPrinter.MODID + ".schematic.tool.move_xz", new MoveTool()))
-			.addOption(new SelectItem(SchematicPrinter.MODID + ".schematic.tool.move_y", new MoveVerticalTool()))
-			.addOption(new SelectItem(SchematicPrinter.MODID + ".schematic.tool.print", new InstantPrintTool()))
+			.addOption(new SelectEventListener(SchematicPrinter.MODID + ".schematic.tool.deploy", new DeployTool()))
+			.addOption(new SelectEventListener(SchematicPrinter.MODID + ".schematic.tool.clear", new ClearSchematicSelectionTool()))
+			.addOption(new SelectEventListener(SchematicPrinter.MODID + ".schematic.tool.flip", new FlipTool()))
+			.addOption(new SelectEventListener(SchematicPrinter.MODID + ".schematic.tool.rotate", new RotateTool()))
+			.addOption(new SelectEventListener(SchematicPrinter.MODID + ".schematic.tool.move_xz", new MoveTool()))
+			.addOption(new SelectEventListener(SchematicPrinter.MODID + ".schematic.tool.move_y", new MoveVerticalTool()))
+			.addOption(new SelectEventListener(SchematicPrinter.MODID + ".schematic.tool.print", new InstantPrintTool()))
 			.register();
 
 		SelectOverlay overlayMain = new SelectOverlay(SchematicPrinter.MODID + ".overlay.main")
@@ -112,6 +114,8 @@ public class SchematicPrinterClient {
 			.addOption(pos1)
 			.addOption(pos2)
 			.addOption(new SelectSchematicSave(SchematicPrinter.MODID + ".schematic.save", pos1, pos2))
+			.addOption(new ClearTool("clear", pos1, pos2))
+			.addOption(new FillTool("fill", pos1, pos2))
 			.addOption(new BooleanSelectConfig("testbool1", "testBoolean", false))
 			.addOption(new IntSelectConfig("testint1", "testInt", 0, 42, 100))
 			.addOption(new SelectOpenOverlay(SchematicPrinter.MODID + ".schematics", schematicOverlay))

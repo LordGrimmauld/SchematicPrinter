@@ -4,6 +4,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import mcp.MethodsReturnNonnullByDefault;
 import mod.grimmauld.schematicprinter.client.Manager;
 import mod.grimmauld.schematicprinter.client.overlay.SelectOverlay;
+import mod.grimmauld.schematicprinter.client.overlay.selection.SelectEventListener;
 import mod.grimmauld.schematicprinter.client.overlay.selection.SelectItem;
 import mod.grimmauld.schematicprinter.client.overlay.selection.schematicTools.EmptySchematicTool;
 import mod.grimmauld.schematicprinter.client.overlay.selection.schematicTools.ISchematicTool;
@@ -132,8 +133,8 @@ public class SchematicHandler {
 	private Optional<ISchematicTool> getActiveTool() {
 		SelectItem selectItem = Manager.getActiveOverlay().orElse(SelectOverlay.EMPTY)
 			.getActiveSelectItem().orElse(null);
-		if (selectItem != null && selectItem.listener instanceof ISchematicTool)
-			return Optional.of((ISchematicTool) selectItem.listener);
+		if (selectItem instanceof SelectEventListener && ((SelectEventListener) selectItem).listener instanceof ISchematicTool)
+			return Optional.of((ISchematicTool) ((SelectEventListener) selectItem).listener);
 		return Optional.empty();
 	}
 

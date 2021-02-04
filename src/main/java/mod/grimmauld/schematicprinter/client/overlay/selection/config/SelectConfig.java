@@ -18,7 +18,7 @@ public abstract class SelectConfig extends SelectItem {
 	private final Set<Consumer<SelectConfig>> onChangedListeners = new HashSet<>();
 
 	public SelectConfig(String key, @Nullable IOverlayEventListener listener, ITextComponent description) {
-		super(description, listener);
+		super(description);
 		this.key = key;
 	}
 

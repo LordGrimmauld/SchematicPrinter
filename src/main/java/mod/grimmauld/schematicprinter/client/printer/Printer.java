@@ -14,43 +14,40 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.PriorityQueue;
+import java.util.Queue;
+import java.util.stream.Stream;
 
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT)
 @SuppressWarnings("unused")
 public class Printer {
-	public static final Set<BlockInformation> printQueue = new HashSet<>();
 	private static final Minecraft MC = Minecraft.getInstance();
+	private static final Queue<BlockInformation> printQueue = new PriorityQueue<>();
 	private static boolean shouldPrint = false;
 	private static boolean receivedEndFeedback = true;
 
 	@SubscribeEvent
 	public static void tick(TickEvent.ClientTickEvent event) {
-		if (MC.world == null || MC.player == null || !shouldPrint)
+		if (shouldPrint)
+			print();
+	}
+
+	private static void print() {
+		if (MC.world == null || MC.player == null)
 			return;
 
-		printQueue.removeAll(printQueue.stream().limit(10).map(inf -> {
-			if (MC.world.getBlockState(inf.pos) == inf.state)
-				return inf;
-
+		BlockInformation inf = printQueue.poll();
+		while (inf != null) {
 			// canPlace
 			if (!MC.world.func_226663_a_(inf.state, inf.pos, ISelectionContext.forEntity(MC.player)))
-				return inf;
-
-			if (MC.isSingleplayer() && MC.player.isCreative())
-				MC.world.setBlockState(inf.pos, inf.state);
-			else
-				MC.player.sendChatMessage(inf.getPrintCommand());
-			return inf;
-		}).collect(Collectors.toSet()));
-
-		if (printQueue.isEmpty())
-			stopPrinting();
+				return;
+			MC.player.sendChatMessage(inf.getPrintCommand());
+			inf = printQueue.poll();
+		}
+		stopPrinting();
 	}
 
 	@SubscribeEvent(receiveCanceled = true)
@@ -92,6 +89,12 @@ public class Printer {
 		}
 	}
 
+	private static Stream<BlockInformation> getFilteredOf(Stream<BlockInformation> test) {
+		if (MC.world == null)
+			return Stream.empty();
+		return test.filter(inf -> MC.world.getBlockState(inf.pos) != inf.state);
+	}
+
 	@SubscribeEvent
 	public static void onPlayerJoinWorld(PlayerEvent.PlayerLoggedInEvent event) {
 		printQueue.clear();
@@ -101,9 +104,7 @@ public class Printer {
 
 	public static void startPrinting() {
 		receivedEndFeedback = true;
-		if (MC.world != null)
-			printQueue.removeAll(printQueue.stream().filter(inf -> MC.world.getBlockState(inf.pos) == inf.state).collect(Collectors.toSet()));
-		if (printQueue.isEmpty())
+		if (printQueue.peek() == null)
 			return;
 		shouldPrint = true;
 		if (MC.player == null)
@@ -122,5 +123,16 @@ public class Printer {
 		MC.player.sendChatMessage("/gamerule logAdminCommands true");
 		MC.player.sendChatMessage("/gamerule sendCommandFeedback true");
 		receivedEndFeedback = false;
+	}
+
+	public static void add(BlockInformation blockInformation) {
+		if (MC.world != null && MC.world.getBlockState(blockInformation.pos) != blockInformation.state)
+			printQueue.add(blockInformation);
+	}
+
+	public static void addAll(Stream<BlockInformation> blocks) {
+		if (MC.world == null)
+			return;
+		blocks.filter(inf -> MC.world.getBlockState(inf.pos) != inf.state).forEach(printQueue::add);
 	}
 }

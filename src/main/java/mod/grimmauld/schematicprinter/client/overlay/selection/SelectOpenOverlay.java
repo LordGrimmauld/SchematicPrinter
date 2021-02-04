@@ -14,7 +14,7 @@ public class SelectOpenOverlay extends SelectItem {
 	private final SelectOverlay toOpen;
 
 	public SelectOpenOverlay(ITextComponent description, SelectOverlay toOpen) {
-		super(description, null);
+		super(description);
 		this.toOpen = toOpen;
 	}
 

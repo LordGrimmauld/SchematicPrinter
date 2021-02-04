@@ -13,6 +13,8 @@ import net.minecraft.util.text.TranslationTextComponent;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -24,7 +26,7 @@ public abstract class SelectBox extends SelectItem {
 	private AABBOutline outline = null;
 
 	public SelectBox(ITextComponent description, int color, BlockPosSelectConfig pos1, BlockPosSelectConfig pos2) {
-		super(description, null);
+		super(description);
 		this.color = color;
 		this.pos1 = pos1;
 		this.pos2 = pos2;
@@ -72,5 +74,15 @@ public abstract class SelectBox extends SelectItem {
 		if (blockPos1 == null || blockPos2 == null)
 			return null;
 		return new AxisAlignedBB(blockPos1, blockPos2).expand(1, 1, 1);
+	}
+
+	protected Stream<BlockPos> getPositions() {
+		AxisAlignedBB bb = getBoundingBox();
+		if (bb == null)
+			return Stream.empty();
+		return IntStream.range(((int) bb.minX), ((int) bb.maxX)).boxed().flatMap(x ->
+			IntStream.range(((int) bb.minZ), ((int) bb.maxZ)).boxed().flatMap(z ->
+				IntStream.range(((int) bb.minY), ((int) bb.maxY)).mapToObj(y ->
+					new BlockPos(x, y, z))));
 	}
 }
