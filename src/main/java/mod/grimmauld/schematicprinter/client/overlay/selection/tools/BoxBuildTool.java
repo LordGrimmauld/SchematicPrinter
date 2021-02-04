@@ -6,28 +6,38 @@ import mod.grimmauld.schematicprinter.client.overlay.selection.SelectBox;
 import mod.grimmauld.schematicprinter.client.overlay.selection.config.BlockPosSelectConfig;
 import mod.grimmauld.schematicprinter.client.printer.BlockInformation;
 import mod.grimmauld.schematicprinter.client.printer.Printer;
+import net.minecraft.block.BlockState;
 import net.minecraft.util.text.ITextComponent;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public abstract class BoxBuildTool extends SelectBox {
-	public BoxBuildTool(ITextComponent description, int color, BlockPosSelectConfig pos1, BlockPosSelectConfig pos2) {
+public class BoxBuildTool extends SelectBox {
+	private final Supplier<Optional<BlockState>> stateGen;
+
+	public BoxBuildTool(ITextComponent description, Supplier<Optional<BlockState>> stateGen, int color, BlockPosSelectConfig pos1, BlockPosSelectConfig pos2) {
 		super(description, color, pos1, pos2);
+		this.stateGen = stateGen;
 	}
 
-	public BoxBuildTool(String description, BlockPosSelectConfig pos1, BlockPosSelectConfig pos2) {
+	public BoxBuildTool(String description, Supplier<Optional<BlockState>> stateGen, BlockPosSelectConfig pos1, BlockPosSelectConfig pos2) {
 		super(description, pos1, pos2);
+		this.stateGen = stateGen;
 	}
-
-	protected abstract Stream<BlockInformation> putBlocksInBox();
 
 	@Override
 	public void onEnter(SelectOverlay screen) {
 		super.onEnter(screen);
-		Printer.addAll(putBlocksInBox());
+		Printer.addAll(putBlocksInBox(stateGen));
 		Printer.startPrinting();
+	}
+
+	protected Stream<BlockInformation> putBlocksInBox(Supplier<Optional<BlockState>> stateGen) {
+		return getPositions().flatMap(pos -> stateGen.get()
+			.map(Stream::of).orElseGet(Stream::empty).map(state -> new BlockInformation(pos, state)));
 	}
 }

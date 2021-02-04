@@ -22,7 +22,7 @@ public class CollectionOutline extends Outline {
 
 	@Override
 	public void render(MatrixStack ms, SuperRenderTypeBuffer buffer) {
-		edges.forEach(line -> this.renderAACuboidLine(ms, buffer, line.first, line.second));
+		edges.forEach(line -> this.renderAACuboidLine(ms, buffer, line.getFirst(), line.getSecond()));
 	}
 
 	public CollectionOutline withPositions(Collection<BlockPos> positions) {
