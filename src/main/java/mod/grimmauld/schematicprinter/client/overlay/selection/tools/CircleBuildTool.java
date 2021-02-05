@@ -42,7 +42,9 @@ public class CircleBuildTool extends AbstractSelectTool {
 	@Nullable
 	@Override
 	protected Outline getUpdatedOutline() {
-		return new CollectionOutline().withPositions(getPositions());
+		if (outline != null)
+			return outline;
+		return new CollectionOutline().withPositions(getBaseLayerPositions()).extendedUpwards(height.value);
 	}
 
 	@Override
@@ -52,8 +54,7 @@ public class CircleBuildTool extends AbstractSelectTool {
 		Printer.startPrinting();
 	}
 
-	@Override
-	protected Stream<BlockPos> getPositions() {
+	private Stream<BlockPos> getBaseLayerPositions() {
 		BlockPos anchorPos = anchor.getPos();
 		if (anchorPos == null)
 			return Stream.empty();
@@ -61,8 +62,12 @@ public class CircleBuildTool extends AbstractSelectTool {
 		return IntStream.range(-radius.value, +radius.value + 1).boxed().flatMap(x ->
 			IntStream.range(-radius.value, +radius.value + 1)
 				.filter(z -> x * x + z * z - Math.abs(x) - Math.abs(z) < radius.value * radius.value)
-				.boxed().flatMap(z -> IntStream.range(0, height.value).mapToObj(y ->
-				anchorPos.add(x, y, z))));
+			.mapToObj(z -> anchorPos.add(x, 0, z)));
+	}
+
+	@Override
+	protected Stream<BlockPos> getPositions() {
+		return getBaseLayerPositions().flatMap(pos -> IntStream.range(0, height.value).mapToObj(y -> pos.add(0, y, 0)));
 	}
 
 	protected Stream<BlockInformation> putBlocksInBox(Supplier<Optional<BlockState>> stateGen) {

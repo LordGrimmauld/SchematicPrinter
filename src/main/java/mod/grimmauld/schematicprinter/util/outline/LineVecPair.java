@@ -5,8 +5,8 @@ import net.minecraft.util.math.Vec3d;
 import java.util.Objects;
 
 public class LineVecPair {
-	public final Vec3d first;
-	public final Vec3d second;
+	public Vec3d first;
+	public Vec3d second;
 
 	private LineVecPair(Vec3d from, Vec3d to) {
 		if (from.hashCode() < to.hashCode()) {
@@ -46,5 +46,16 @@ public class LineVecPair {
 
 	public Vec3d getSecond() {
 		return second;
+	}
+
+	public double getMaxY() {
+		return Math.max(first.y, second.y);
+	}
+
+	public void extendUpwards(int value, double maxY) {
+		if (first.y == maxY)
+			first = first.add(0, value, 0);
+		if (second.y == maxY)
+			second = second.add(0, value, 0);
 	}
 }

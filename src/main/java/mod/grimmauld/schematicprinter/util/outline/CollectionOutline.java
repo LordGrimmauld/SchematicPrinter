@@ -6,6 +6,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -14,6 +15,7 @@ import java.util.stream.Stream;
 public class CollectionOutline extends Outline {
 	private final Set<BlockPos> positions;
 	private final Set<LineVecPair> edges;
+	private int upwardsExtension = 1;
 
 	public CollectionOutline() {
 		this.positions = new HashSet<>();
@@ -54,6 +56,8 @@ public class CollectionOutline extends Outline {
 			addVertices(xYz, Xyz, xyz, XYZ, XyZ, xyZ);
 			addVertices(Xyz, xYz, XYz, xyZ, xYZ, XYZ);
 		}
+
+		edges.stream().max(Comparator.comparing(LineVecPair::getMaxY)).map(LineVecPair::getMaxY).ifPresent(maxY -> edges.forEach(edge -> edge.extendUpwards(upwardsExtension - 1, maxY)));
 	}
 
 	private void addVertices(Vec3d xyz, Vec3d xYz, Vec3d XYz, Vec3d xyZ, Vec3d xYZ, Vec3d XYZ) {
@@ -71,5 +75,15 @@ public class CollectionOutline extends Outline {
 			edges.remove(pair);
 		else
 			edges.add(pair);
+	}
+
+	@Override
+	public Outline extendedUpwards(int value) {
+		if (upwardsExtension != value) {
+			upwardsExtension = value;
+			recalculateVertices();
+		}
+
+		return super.extendedUpwards(value);
 	}
 }
