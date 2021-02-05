@@ -9,7 +9,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @MethodsReturnNonnullByDefault
 public class SelectOption extends SelectItem {
 	public SelectOption(String desc) {
-		super(desc, null);
+		super(desc);
 	}
 
 	@Override

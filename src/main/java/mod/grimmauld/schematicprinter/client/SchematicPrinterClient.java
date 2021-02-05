@@ -4,7 +4,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import mcp.MethodsReturnNonnullByDefault;
 import mod.grimmauld.schematicprinter.SchematicPrinter;
 import mod.grimmauld.schematicprinter.client.overlay.SelectOverlay;
-import mod.grimmauld.schematicprinter.client.overlay.selection.SelectItem;
+import mod.grimmauld.schematicprinter.client.overlay.selection.SelectEventListener;
 import mod.grimmauld.schematicprinter.client.overlay.selection.SelectOpenOverlay;
 import mod.grimmauld.schematicprinter.client.overlay.selection.SelectSchematicSave;
 import mod.grimmauld.schematicprinter.client.overlay.selection.config.BlockPosSelectConfig;
@@ -12,6 +12,9 @@ import mod.grimmauld.schematicprinter.client.overlay.selection.config.BooleanSel
 import mod.grimmauld.schematicprinter.client.overlay.selection.config.IntSelectConfig;
 import mod.grimmauld.schematicprinter.client.overlay.selection.config.SchematicSelectConfig;
 import mod.grimmauld.schematicprinter.client.overlay.selection.schematicTools.*;
+import mod.grimmauld.schematicprinter.client.overlay.selection.tools.BoxBuildTool;
+import mod.grimmauld.schematicprinter.client.overlay.selection.tools.BuildToolStateSupplier;
+import mod.grimmauld.schematicprinter.client.overlay.selection.tools.CircleBuildTool;
 import mod.grimmauld.schematicprinter.client.schematics.SchematicHandler;
 import mod.grimmauld.schematicprinter.render.SuperRenderTypeBuffer;
 import net.minecraft.client.Minecraft;
@@ -96,25 +99,46 @@ public class SchematicPrinterClient {
 		pos1 = new BlockPosSelectConfig("pos1", "pos1", TextFormatting.YELLOW);
 		pos2 = new BlockPosSelectConfig("pos2", "pos2", TextFormatting.LIGHT_PURPLE);
 
-		SelectOverlay schematicOverlay = new SelectOverlay("Schematics")
+
+		SelectOverlay schematicOverlay = new SelectOverlay(SchematicPrinter.MODID + ".schematics")
 			.addOption(new SchematicSelectConfig("schematic", SchematicPrinter.MODID + ".schematic.selected"))
-			.addOption(new SelectItem(SchematicPrinter.MODID + ".schematic.tool.deploy", new DeployTool()))
-			.addOption(new SelectItem(SchematicPrinter.MODID + ".schematic.tool.clear", new ClearTool()))
-			.addOption(new SelectItem(SchematicPrinter.MODID + ".schematic.tool.flip", new FlipTool()))
-			.addOption(new SelectItem(SchematicPrinter.MODID + ".schematic.tool.rotate", new RotateTool()))
-			.addOption(new SelectItem(SchematicPrinter.MODID + ".schematic.tool.move_xz", new MoveTool()))
-			.addOption(new SelectItem(SchematicPrinter.MODID + ".schematic.tool.move_y", new MoveVerticalTool()))
-			.addOption(new SelectItem(SchematicPrinter.MODID + ".schematic.tool.print", new InstantPrintTool()))
+			.addOption(new SelectEventListener(SchematicPrinter.MODID + ".schematic.tool.deploy", new DeployTool()))
+			.addOption(new SelectEventListener(SchematicPrinter.MODID + ".schematic.tool.clear", new ClearSchematicSelectionTool()))
+			.addOption(new SelectEventListener(SchematicPrinter.MODID + ".schematic.tool.flip", new FlipTool()))
+			.addOption(new SelectEventListener(SchematicPrinter.MODID + ".schematic.tool.rotate", new RotateTool()))
+			.addOption(new SelectEventListener(SchematicPrinter.MODID + ".schematic.tool.move_xz", new MoveTool()))
+			.addOption(new SelectEventListener(SchematicPrinter.MODID + ".schematic.tool.move_y", new MoveVerticalTool()))
+			.addOption(new SelectEventListener(SchematicPrinter.MODID + ".schematic.tool.print", new InstantPrintTool()))
 			.register();
 
-		SelectOverlay overlayMain = new SelectOverlay(SchematicPrinter.MODID + ".overlay.main")
-			.configureDirectOpen(true)
+
+		SelectOverlay fillTools = new SelectOverlay("Fill")
 			.addOption(pos1)
 			.addOption(pos2)
 			.addOption(new SelectSchematicSave(SchematicPrinter.MODID + ".schematic.save", pos1, pos2))
+			.addOption(new BoxBuildTool("clear", BuildToolStateSupplier.CLEAR, pos1, pos2))
+			.addOption(new BoxBuildTool("fill", BuildToolStateSupplier.FILL_FROM_PALETTE, pos1, pos2))
+			.register();
+
+
+		IntSelectConfig radius = new IntSelectConfig("radius", "radius", 0, 5, 100);
+		IntSelectConfig height = new IntSelectConfig("height", "height", 0, 1, 256);
+		SelectOverlay circleTools = new SelectOverlay("Fill")
+			.addOption(pos1)
+			.addOption(radius)
+			.addOption(height)
+			.addOption(new CircleBuildTool("fill circle", pos1, radius, height, BuildToolStateSupplier.FILL_FROM_PALETTE))
+			.addOption(new CircleBuildTool("clear circle", pos1, radius, height, BuildToolStateSupplier.CLEAR))
+			.register();
+
+
+		SelectOverlay overlayMain = new SelectOverlay(SchematicPrinter.MODID + ".overlay.main")
+			.configureDirectOpen(true)
 			.addOption(new BooleanSelectConfig("testbool1", "testBoolean", false))
 			.addOption(new IntSelectConfig("testint1", "testInt", 0, 42, 100))
 			.addOption(new SelectOpenOverlay(SchematicPrinter.MODID + ".schematics", schematicOverlay))
+			.addOption(new SelectOpenOverlay("Fill", fillTools))
+			.addOption(new SelectOpenOverlay("circle", circleTools))
 			.register();
 	}
 }

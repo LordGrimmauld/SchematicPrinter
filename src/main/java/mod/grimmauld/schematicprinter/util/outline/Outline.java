@@ -135,6 +135,10 @@ public abstract class Outline {
 		return this.params;
 	}
 
+	public Outline extendedUpwards(int value) {
+		return this;
+	}
+
 	public static class OutlineParams {
 		protected final boolean fadeLineWidth;
 		protected final int lightMapU;
