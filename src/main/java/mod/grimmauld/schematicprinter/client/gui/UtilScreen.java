@@ -16,7 +16,7 @@ public abstract class UtilScreen extends Screen {
 
 	protected int sWidth, sHeight;
 	protected int guiLeft, guiTop;
-	protected List<Widget> widgets;
+	protected final List<Widget> widgets;
 
 	protected UtilScreen() {
 		super(new StringTextComponent(""));

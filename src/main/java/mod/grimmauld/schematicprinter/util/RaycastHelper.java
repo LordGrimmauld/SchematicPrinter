@@ -11,6 +11,7 @@ import java.util.function.Predicate;
 
 public class RaycastHelper {
 	private static final Minecraft MC = Minecraft.getInstance();
+
 	public static BlockRayTraceResult rayTraceRange(World worldIn, PlayerEntity playerIn, double range) {
 		Vec3d origin = getTraceOrigin(playerIn);
 		Vec3d target = getTraceTarget(playerIn, range, origin);
@@ -153,6 +154,21 @@ public class RaycastHelper {
 		}
 	}
 
+	@Nullable
+	public static BlockPos getFocusedPosition() {
+		if (MC.player == null || MC.world == null)
+			return null;
+
+		BlockRayTraceResult trace = RaycastHelper.rayTraceRange(MC.world, MC.player, 75);
+		if (trace.getType() != RayTraceResult.Type.BLOCK)
+			return null;
+
+		BlockPos hit = new BlockPos(trace.getHitVec());
+		if (MC.world.getBlockState(hit).getMaterial().isReplaceable())
+			hit = hit.offset(trace.getFace().getOpposite());
+		return hit;
+	}
+
 	public static class PredicateTraceResult {
 		private BlockPos pos;
 		private Direction facing;
@@ -172,20 +188,5 @@ public class RaycastHelper {
 		public boolean missed() {
 			return this.pos == null;
 		}
-	}
-
-	@Nullable
-	public static BlockPos getFocusedPosition() {
-		if (MC.player == null || MC.world == null)
-			return null;
-
-		BlockRayTraceResult trace = RaycastHelper.rayTraceRange(MC.world, MC.player, 75);
-		if (trace.getType() != RayTraceResult.Type.BLOCK)
-			return null;
-
-		BlockPos hit = new BlockPos(trace.getHitVec());
-		if (MC.world.getBlockState(hit).getMaterial().isReplaceable())
-			hit = hit.offset(trace.getFace().getOpposite());
-		return hit;
 	}
 }

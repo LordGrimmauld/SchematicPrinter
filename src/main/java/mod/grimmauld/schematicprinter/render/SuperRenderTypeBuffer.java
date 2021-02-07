@@ -15,7 +15,7 @@ import java.util.SortedMap;
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public class SuperRenderTypeBuffer implements IRenderTypeBuffer {
-	static LazyValue<SuperRenderTypeBuffer> instance = new LazyValue<>(SuperRenderTypeBuffer::new);
+	static final LazyValue<SuperRenderTypeBuffer> instance = new LazyValue<>(SuperRenderTypeBuffer::new);
 	final SuperRenderTypeBufferPhase earlyBuffer = new SuperRenderTypeBufferPhase();
 	final SuperRenderTypeBufferPhase defaultBuffer = new SuperRenderTypeBufferPhase();
 	final SuperRenderTypeBufferPhase lateBuffer = new SuperRenderTypeBufferPhase();

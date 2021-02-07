@@ -16,7 +16,7 @@ public class IntSelectConfig extends SelectConfig {
 	public int value;
 
 	public IntSelectConfig(String key, ITextComponent description, int min, int defaultValue, int max) {
-		super(key, null, description);
+		super(description);
 		this.min = min;
 		this.value = defaultValue;
 		this.max = max;

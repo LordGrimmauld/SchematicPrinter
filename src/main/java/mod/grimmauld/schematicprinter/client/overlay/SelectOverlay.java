@@ -20,7 +20,10 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 import static net.minecraft.client.gui.AbstractGui.blit;
 
@@ -243,12 +246,6 @@ public class SelectOverlay {
 	public SelectOverlay register() {
 		Manager.overlays.add(this);
 		return this;
-	}
-
-	public Map<String, SelectConfig> getConfigs() {
-		Map<String, SelectConfig> configs = new HashMap<>();
-		this.options.stream().filter(option -> option instanceof SelectConfig).forEach(option -> configs.put(((SelectConfig) option).key, ((SelectConfig) option)));
-		return configs;
 	}
 
 	public void onScroll(InputEvent.MouseScrollEvent event) {

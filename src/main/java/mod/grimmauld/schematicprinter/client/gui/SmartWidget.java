@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class SmartWidget extends Widget {
-	protected List<String> toolTip = new LinkedList<>();
+	protected final List<String> toolTip = new LinkedList<>();
 
 	public SmartWidget(int xIn, int yIn, int widthIn, int heightIn) {
 		super(xIn, yIn, widthIn, heightIn, "");

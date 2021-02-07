@@ -19,13 +19,13 @@ import net.minecraftforge.client.event.InputEvent;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
-public class PaletteAddTool extends SelectItem {
+public class PaletteEditTool extends SelectItem {
 
-	public PaletteAddTool(ITextComponent description) {
+	public PaletteEditTool(ITextComponent description) {
 		super(description);
 	}
 
-	public PaletteAddTool(String description) {
+	public PaletteEditTool(String description) {
 		super(description);
 	}
 

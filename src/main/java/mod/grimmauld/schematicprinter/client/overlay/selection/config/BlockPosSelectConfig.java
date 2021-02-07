@@ -27,7 +27,7 @@ public class BlockPosSelectConfig extends SelectConfig {
 	private BlockPos pos = null;
 
 	public BlockPosSelectConfig(String key, ITextComponent description, TextFormatting color) {
-		super(key, null, description);
+		super(description);
 		this.color = color;
 	}
 

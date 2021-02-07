@@ -8,7 +8,7 @@ import java.util.List;
 
 public class IconButton extends Widget {
 	private final GuiIcons icon;
-	protected List<String> toolTip = new LinkedList<>();
+	protected final List<String> toolTip = new LinkedList<>();
 	protected boolean pressed;
 
 	public IconButton(int x, int y, GuiIcons icon) {
