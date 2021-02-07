@@ -88,4 +88,9 @@ public class PaletteLoadConfig extends SelectConfig {
 		String filename = getSelectedFile();
 		return new StringTextComponent(filename != null ? filename : "none");
 	}
+
+	@Override
+	public boolean shouldRenderPalette() {
+		return true;
+	}
 }

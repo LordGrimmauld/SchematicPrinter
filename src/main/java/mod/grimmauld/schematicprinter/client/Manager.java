@@ -2,6 +2,7 @@ package mod.grimmauld.schematicprinter.client;
 
 import mcp.MethodsReturnNonnullByDefault;
 import mod.grimmauld.schematicprinter.client.overlay.SelectOverlay;
+import mod.grimmauld.schematicprinter.client.overlay.selection.SelectItem;
 import mod.grimmauld.schematicprinter.client.palette.PaletteOverlay;
 import mod.grimmauld.schematicprinter.util.KeybindHelper;
 import net.minecraft.client.Minecraft;
@@ -62,7 +63,7 @@ public class Manager {
 		if (event.getType() != RenderGameOverlayEvent.ElementType.ALL)
 			return;
 		overlays.stream().filter(SelectOverlay::isVisible).forEach(selectScreen -> selectScreen.render(event));
-		paletteOverlay.render(event);
+		getActiveOverlay().flatMap(SelectOverlay::getActiveSelectItem).filter(SelectItem::shouldRenderPalette).ifPresent(selectItem -> paletteOverlay.render(event));
 	}
 
 	@SubscribeEvent
@@ -83,8 +84,8 @@ public class Manager {
 		if (!pressed)
 			return;
 
-		if (button == 1) { // FIXME add block place reference
-			Minecraft mc = Minecraft.getInstance();
+		Minecraft mc = Minecraft.getInstance();
+		if (button == mc.gameSettings.keyBindUseItem.getKey().getKeyCode()) {
 			if (mc.world == null || mc.player == null || mc.player.isSneaking())
 				return;
 			getActiveOverlay().flatMap(SelectOverlay::getActiveSelectItem).ifPresent(selectItem -> selectItem.onRightClick(event));
@@ -93,7 +94,6 @@ public class Manager {
 	}
 
 	@SubscribeEvent
-	// FIXME: Client only equivalent!
 	public static void onPlayerJoinWorld(ClientPlayerNetworkEvent.LoggedInEvent event) {
 		SchematicPrinterClient.schematicHandler.quitSchematic();
 	}

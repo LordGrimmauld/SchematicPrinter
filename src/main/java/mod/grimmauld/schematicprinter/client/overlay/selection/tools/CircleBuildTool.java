@@ -74,4 +74,9 @@ public class CircleBuildTool extends AbstractSelectTool {
 		return getPositions().flatMap(pos -> stateGen.get()
 			.map(Stream::of).orElseGet(Stream::empty).map(state -> new BlockInformation(pos, state)));
 	}
+
+	@Override
+	public boolean shouldRenderPalette() {
+		return stateGen == BuildToolStateSupplier.FILL_FROM_PALETTE;
+	}
 }

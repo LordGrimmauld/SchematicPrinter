@@ -64,4 +64,9 @@ public class PaletteSaveTool extends SelectItem {
 		TextHelper.sendStatus(MC.player, "palette.saved", filepath);
 		PaletteLoadConfig.INSTANCES.forEach(PaletteLoadConfig::refreshFiles);
 	}
+
+	@Override
+	public boolean shouldRenderPalette() {
+		return true;
+	}
 }

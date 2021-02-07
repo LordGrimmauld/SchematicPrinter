@@ -100,4 +100,9 @@ public class PaletteEditTool extends SelectItem {
 		outline.getParams()
 			.clearTextures();
 	}
+
+	@Override
+	public boolean shouldRenderPalette() {
+		return true;
+	}
 }

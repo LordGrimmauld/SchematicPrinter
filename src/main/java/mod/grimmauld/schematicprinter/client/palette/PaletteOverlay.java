@@ -24,11 +24,9 @@ import static net.minecraft.client.gui.AbstractGui.blit;
 public class PaletteOverlay {
 	private static final Minecraft MC = Minecraft.getInstance();
 
-	private final boolean shouldRender = true;
-
 
 	public void render(RenderGameOverlayEvent.Pre event) {
-		if (shouldRender && !PaletteManager.PALETTE.isEmpty()) {
+		if (!PaletteManager.PALETTE.isEmpty()) {
 			MatrixStack ms = new MatrixStack();
 			draw(ms);
 		}

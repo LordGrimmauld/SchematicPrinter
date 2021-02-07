@@ -3,6 +3,7 @@ package mod.grimmauld.schematicprinter.client.overlay.selection.palette;
 import mcp.MethodsReturnNonnullByDefault;
 import mod.grimmauld.schematicprinter.client.overlay.SelectOverlay;
 import mod.grimmauld.schematicprinter.client.overlay.selection.SelectItem;
+import mod.grimmauld.schematicprinter.client.overlay.selection.tools.BuildToolStateSupplier;
 import mod.grimmauld.schematicprinter.client.palette.PaletteManager;
 import net.minecraft.util.text.ITextComponent;
 
@@ -23,5 +24,10 @@ public class PaletteClearTool extends SelectItem {
 	public void onEnter(SelectOverlay screen) {
 		super.onEnter(screen);
 		PaletteManager.clearPalette();
+	}
+
+	@Override
+	public boolean shouldRenderPalette() {
+		return true;
 	}
 }
