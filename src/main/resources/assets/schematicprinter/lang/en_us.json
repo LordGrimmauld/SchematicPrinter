@@ -22,5 +22,6 @@
   "schematicprinter.screen.discard": "Discard",
   "schematicprinter.screen.confirm": "Confirm",
   "schematicprinter.screen.open_folder": "Open Folder",
-  "schematicprinter.screen.save_schematic.title": "Save Schematic..."
+  "schematicprinter.screen.save_schematic.title": "Save Schematic...",
+  "schematicprinter.palette_edit": "Edit Palette"
 }
