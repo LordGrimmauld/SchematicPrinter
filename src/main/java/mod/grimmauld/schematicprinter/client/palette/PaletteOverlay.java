@@ -4,9 +4,9 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
-import com.simibubi.create.foundation.utility.VirtualEmptyModelData;
 import mod.grimmauld.schematicprinter.client.ExtraTextures;
 import mod.grimmauld.schematicprinter.util.ColorHelper;
+import mod.grimmauld.schematicprinter.util.EmptyModelData;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
@@ -82,7 +82,7 @@ public class PaletteOverlay {
 			blockRenderer.getBlockModelRenderer()
 				.renderModel(ms.getLast(), vb, state, MC.getBlockRendererDispatcher()
 						.getModelForState(state), (float) rgb.x, (float) rgb.y, (float) rgb.z,
-					15728880, OverlayTexture.NO_OVERLAY, VirtualEmptyModelData.INSTANCE);
+					15728880, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
 			buffer.finish();
 			RenderSystem.popMatrix();
 			RenderSystem.pushMatrix();
