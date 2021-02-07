@@ -9,8 +9,6 @@ import mod.grimmauld.schematicprinter.util.RaycastHelper;
 import mod.grimmauld.schematicprinter.util.outline.AABBOutline;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -49,16 +47,9 @@ public class BlockPosSelectConfig extends SelectConfig {
 	@Override
 	public void onEnter(SelectOverlay screen) {
 		super.onEnter(screen);
-		if (MC.player == null || MC.world == null)
+		BlockPos hit = RaycastHelper.getFocusedPosition();
+		if (hit == null)
 			return;
-
-		BlockRayTraceResult trace = RaycastHelper.rayTraceRange(MC.world, MC.player, 75);
-		if (trace.getType() != RayTraceResult.Type.BLOCK)
-			return;
-
-		BlockPos hit = new BlockPos(trace.getHitVec());
-		if (MC.world.getBlockState(hit).getMaterial().isReplaceable())
-			hit = hit.offset(trace.getFace().getOpposite());
 		pos = hit;
 		outline = null;
 		onValueChanged();

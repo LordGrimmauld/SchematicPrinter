@@ -1,8 +1,8 @@
 package mod.grimmauld.schematicprinter.client.palette;
 
 import mcp.MethodsReturnNonnullByDefault;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.world.IWorld;
 
 import javax.annotation.Nullable;
@@ -11,26 +11,23 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public class PaletteManager {
-	private static final Map<BlockState, Integer> PALETTE = new HashMap<>();
-
-	static { // FIXME
-		addToPalette(Blocks.STONE.getDefaultState());
-	}
+	public static final Map<BlockState, Integer> PALETTE = new HashMap<>();
 
 	public static void clearPalette() {
 		PALETTE.clear();
 	}
 
 	public static void addToPalette(BlockState state) {
-		addToPalette(state, 1);
+		increaseWeight(state, 1);
 	}
 
-	public static void addToPalette(BlockState state, int weight) {
-		PALETTE.put(state, PALETTE.getOrDefault(state, 0) + weight);
+	public static void increaseWeight(BlockState state, int weight) {
+		PALETTE.put(state, Math.min(99, PALETTE.getOrDefault(state, 0) + weight));
 	}
 
 	public static void decreaseWeight(BlockState state) {
@@ -38,11 +35,17 @@ public class PaletteManager {
 	}
 
 	public static void decreaseWeight(BlockState state, int weight) {
-		int newWeight = PALETTE.getOrDefault(state, 0) - weight;
+		if (!PALETTE.containsKey(state))
+			return;
+		int newWeight = PALETTE.get(state) - Math.abs(weight);
 		if (newWeight > 0)
 			PALETTE.put(state, newWeight);
 		else
 			PALETTE.remove(state);
+	}
+
+	public static void decreaseWeight(Block block, int weight) {
+		PALETTE.keySet().stream().filter(state -> state.getBlock().equals(block)).collect(Collectors.toSet()).forEach(state -> decreaseWeight(state, weight));
 	}
 
 	public static void removeFromPalette(BlockState state) {
@@ -56,12 +59,27 @@ public class PaletteManager {
 	}
 
 	public static Optional<BlockState> getRandomBlockState(Random random) {
-		int choice = random.nextInt(PALETTE.values().stream().mapToInt(Integer::intValue).sum());
+		int weights = PALETTE.values().stream().mapToInt(Integer::intValue).sum();
+		if (weights == 0)
+			return Optional.empty();
+		int choice = random.nextInt(weights);
 		for (Map.Entry<BlockState, Integer> paletteBlock : PALETTE.entrySet()) {
 			choice -= paletteBlock.getValue();
 			if (choice < 0)
 				return Optional.of(paletteBlock.getKey());
 		}
 		return Optional.empty();
+	}
+
+	public static boolean containsState(BlockState state) {
+		return PALETTE.containsKey(state);
+	}
+
+	public static boolean containsBlock(Block block) {
+		return PALETTE.keySet().stream().map(BlockState::getBlock).anyMatch(block::equals);
+	}
+
+	public static void removeFromPalette(Block block) {
+		PALETTE.keySet().stream().filter(state -> state.getBlock().equals(block)).collect(Collectors.toSet()).forEach(PALETTE::remove);
 	}
 }

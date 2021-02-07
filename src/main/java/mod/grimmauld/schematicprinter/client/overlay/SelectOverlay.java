@@ -29,7 +29,7 @@ import static net.minecraft.client.gui.AbstractGui.blit;
 public class SelectOverlay {
 	public static final SelectOverlay EMPTY = new SelectOverlay("");
 
-	private static final Minecraft minecraft = Minecraft.getInstance();
+	private static final Minecraft MC = Minecraft.getInstance();
 	private final ITextComponent title;
 	public boolean canBeOpenedDirectly;
 	public List<SelectItem> options;
@@ -98,7 +98,7 @@ public class SelectOverlay {
 	}
 
 	public void open(@Nullable SelectOverlay previous) {
-		if (minecraft.currentScreen != null)
+		if (MC.currentScreen != null)
 			return;
 		this.previous = previous;
 		if (previous != null)
@@ -109,13 +109,12 @@ public class SelectOverlay {
 	}
 
 	public void render(RenderGameOverlayEvent.Pre event) {
-		draw(event.getPartialTicks());
+		if (visible)
+			draw(event.getPartialTicks());
 	}
 
 	private void draw(float partialTicks) {
-		if (!visible)
-			return;
-		MainWindow window = minecraft.getMainWindow();
+		MainWindow window = MC.getMainWindow();
 
 		int x = window.getScaledWidth() - menuWidth - 10;
 		int y = window.getScaledHeight() - menuHeight;
@@ -136,14 +135,14 @@ public class SelectOverlay {
 		RenderSystem.enableBlend();
 		RenderSystem.color4f(1, 1, 1, 3 / 4f);
 
-		minecraft.getTextureManager().bindTexture(ExtraTextures.GRAY.getLocation());
+		MC.getTextureManager().bindTexture(ExtraTextures.GRAY.getLocation());
 		blit(x, y, 0, 0, menuWidth, menuHeight, 16, 16);
 		RenderSystem.color4f(1, 1, 1, 1);
 
 		int yPos = y + 4;
 		int xPos = x + 4;
 
-		FontRenderer font = minecraft.fontRenderer;
+		FontRenderer font = MC.fontRenderer;
 
 		// TODO add Keybinds
 
@@ -187,7 +186,7 @@ public class SelectOverlay {
 	}
 
 	public void updateContents() {
-		int fontheight = minecraft.fontRenderer.FONT_HEIGHT;
+		int fontheight = MC.fontRenderer.FONT_HEIGHT;
 
 		this.menuWidth = 158;
 		this.menuHeight = 4;
@@ -198,7 +197,7 @@ public class SelectOverlay {
 		menuHeight += 4;
 
 		for (SelectItem option : options) {
-			menuHeight += 2 + fontheight * minecraft.fontRenderer.listFormattedStringToWidth(option.getDescription().getFormattedText(), menuWidth - 8).size();
+			menuHeight += 2 + fontheight * MC.fontRenderer.listFormattedStringToWidth(option.getDescription().getFormattedText(), menuWidth - 8).size();
 		}
 
 		adjustTarget();

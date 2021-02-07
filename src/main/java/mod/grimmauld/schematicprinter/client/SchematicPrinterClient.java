@@ -11,6 +11,7 @@ import mod.grimmauld.schematicprinter.client.overlay.selection.config.BlockPosSe
 import mod.grimmauld.schematicprinter.client.overlay.selection.config.BooleanSelectConfig;
 import mod.grimmauld.schematicprinter.client.overlay.selection.config.IntSelectConfig;
 import mod.grimmauld.schematicprinter.client.overlay.selection.config.SchematicSelectConfig;
+import mod.grimmauld.schematicprinter.client.overlay.selection.palette.PaletteAddTool;
 import mod.grimmauld.schematicprinter.client.overlay.selection.schematicTools.*;
 import mod.grimmauld.schematicprinter.client.overlay.selection.tools.BoxBuildTool;
 import mod.grimmauld.schematicprinter.client.overlay.selection.tools.BuildToolStateSupplier;
@@ -111,6 +112,13 @@ public class SchematicPrinterClient {
 			.addOption(new SelectEventListener(SchematicPrinter.MODID + ".schematic.tool.print", new InstantPrintTool()))
 			.register();
 
+		/*
+		SelectOverlay paletteEditOverlay = new SelectOverlay(SchematicPrinter.MODID + ".palette_edit")
+			.addOption(new PaletteAddTool("add"))
+			.register();
+
+		 */
+
 
 		SelectOverlay fillTools = new SelectOverlay("Fill")
 			.addOption(pos1)
@@ -137,6 +145,8 @@ public class SchematicPrinterClient {
 			.addOption(new BooleanSelectConfig("testbool1", "testBoolean", false))
 			.addOption(new IntSelectConfig("testint1", "testInt", 0, 42, 100))
 			.addOption(new SelectOpenOverlay(SchematicPrinter.MODID + ".schematics", schematicOverlay))
+			//.addOption(new SelectModifyPalette("modify palette"))
+			.addOption(new PaletteAddTool("add"))
 			.addOption(new SelectOpenOverlay("Fill", fillTools))
 			.addOption(new SelectOpenOverlay("circle", circleTools))
 			.register();
