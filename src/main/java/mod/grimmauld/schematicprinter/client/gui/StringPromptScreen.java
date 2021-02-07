@@ -65,7 +65,7 @@ public class StringPromptScreen extends UtilScreen {
 	@Override
 	public void renderWindow(MatrixStack ms, int mouseX, int mouseY, float partialTicks) {
 		GuiTextures.SCHEMATIC_PROMPT.draw(ms, this, guiLeft, guiTop);
-		font.func_243246_a(ms, title, guiLeft + (sWidth / 2) - (font.getStringWidth(title.getUnformattedComponentText()) / 2), guiTop + 3,
+		font.func_243246_a(ms, title, guiLeft + (sWidth / 2f) - (font.getStringWidth(title.getUnformattedComponentText()) / 2f), guiTop + 3,
 			0xffffff);
 	}
 

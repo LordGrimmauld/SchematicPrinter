@@ -62,7 +62,7 @@ public class CircleBuildTool extends AbstractSelectTool {
 		return IntStream.range(-radius.value, +radius.value + 1).boxed().flatMap(x ->
 			IntStream.range(-radius.value, +radius.value + 1)
 				.filter(z -> x * x + z * z - Math.abs(x) - Math.abs(z) < radius.value * radius.value)
-			.mapToObj(z -> anchorPos.add(x, 0, z)));
+				.mapToObj(z -> anchorPos.add(x, 0, z)));
 	}
 
 	@Override
@@ -73,5 +73,10 @@ public class CircleBuildTool extends AbstractSelectTool {
 	protected Stream<BlockInformation> putBlocksInBox(Supplier<Optional<BlockState>> stateGen) {
 		return getPositions().flatMap(pos -> stateGen.get()
 			.map(Stream::of).orElseGet(Stream::empty).map(state -> new BlockInformation(pos, state)));
+	}
+
+	@Override
+	public boolean shouldRenderPalette() {
+		return stateGen == BuildToolStateSupplier.FILL_FROM_PALETTE;
 	}
 }

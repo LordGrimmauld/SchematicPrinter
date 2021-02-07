@@ -48,4 +48,8 @@ public class SelectItem {
 
 	public void renderActive(MatrixStack ms, SuperRenderTypeBuffer buffer) {
 	}
+
+	public boolean shouldRenderPalette() {
+		return false;
+	}
 }

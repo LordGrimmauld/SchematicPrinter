@@ -16,7 +16,7 @@ public class RenderTypes extends RenderState {
 	}
 
 	public RenderTypes() {
-		super(null, null, null);
+		super("", () -> {}, () -> {});
 	}
 
 	public static RenderType getOutlineTranslucent(ResourceLocation texture, boolean cull) {

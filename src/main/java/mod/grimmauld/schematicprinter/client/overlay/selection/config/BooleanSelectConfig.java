@@ -13,7 +13,7 @@ public class BooleanSelectConfig extends SelectConfig {
 	public boolean value;
 
 	public BooleanSelectConfig(String key, ITextComponent description, boolean defaultValue) {
-		super(key, null, description);
+		super(description);
 		this.value = defaultValue;
 	}
 

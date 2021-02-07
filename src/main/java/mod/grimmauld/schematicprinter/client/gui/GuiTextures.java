@@ -16,10 +16,10 @@ public enum GuiTextures {
 
 	public static final int FONT_COLOR = 5726074;
 	public final ResourceLocation location;
-	public int width;
-	public int height;
-	public int startX;
-	public int startY;
+	public final int width;
+	public final int height;
+	public final int startX;
+	public final int startY;
 
 	GuiTextures(String location, int width, int height) {
 		this(location, 0, 0, width, height);

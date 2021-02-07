@@ -1,10 +1,12 @@
-package mod.grimmauld.schematicprinter.client.overlay.selection;
+package mod.grimmauld.schematicprinter.client.overlay.selection.schematicTools;
 
 import mcp.MethodsReturnNonnullByDefault;
 import mod.grimmauld.schematicprinter.SchematicPrinter;
 import mod.grimmauld.schematicprinter.client.gui.StringPromptScreen;
 import mod.grimmauld.schematicprinter.client.overlay.SelectOverlay;
+import mod.grimmauld.schematicprinter.client.overlay.selection.SelectBox;
 import mod.grimmauld.schematicprinter.client.overlay.selection.config.BlockPosSelectConfig;
+import mod.grimmauld.schematicprinter.client.overlay.selection.config.SchematicSelectConfig;
 import mod.grimmauld.schematicprinter.util.FileHelper;
 import mod.grimmauld.schematicprinter.util.TextHelper;
 import net.minecraft.block.Blocks;
@@ -77,5 +79,6 @@ public class SelectSchematicSave extends SelectBox {
 				IOUtils.closeQuietly(outputStream);
 		}
 		TextHelper.sendStatus(MC.player, "schematic.saved", filepath);
+		SchematicSelectConfig.INSTANCES.forEach(SchematicSelectConfig::refreshFiles);
 	}
 }

@@ -8,7 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class SmartWidget extends Widget {
-	protected List<ITextComponent> toolTip = new LinkedList<>();
+	protected final List<ITextComponent> toolTip = new LinkedList<>();
 
 	public SmartWidget(int xIn, int yIn, int widthIn, int heightIn) {
 		super(xIn, yIn, widthIn, heightIn, StringTextComponent.EMPTY);

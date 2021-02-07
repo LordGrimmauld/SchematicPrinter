@@ -1,14 +1,18 @@
 package mod.grimmauld.schematicprinter.util;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.*;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
 import java.util.function.Predicate;
 
 public class RaycastHelper {
+	private static final Minecraft MC = Minecraft.getInstance();
+
 	public static BlockRayTraceResult rayTraceRange(World worldIn, PlayerEntity playerIn, double range) {
 		Vector3d origin = getTraceOrigin(playerIn);
 		Vector3d target = getTraceTarget(playerIn, range, origin);
@@ -149,6 +153,21 @@ public class RaycastHelper {
 		} else {
 			return null;
 		}
+	}
+
+	@Nullable
+	public static BlockPos getFocusedPosition() {
+		if (MC.player == null || MC.world == null)
+			return null;
+
+		BlockRayTraceResult trace = RaycastHelper.rayTraceRange(MC.world, MC.player, 75);
+		if (trace.getType() != RayTraceResult.Type.BLOCK)
+			return null;
+
+		BlockPos hit = new BlockPos(trace.getHitVec());
+		if (MC.world.getBlockState(hit).getMaterial().isReplaceable())
+			hit = hit.offset(trace.getFace().getOpposite());
+		return hit;
 	}
 
 	public static class PredicateTraceResult {
