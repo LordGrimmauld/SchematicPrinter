@@ -1,7 +1,6 @@
 package mod.grimmauld.schematicprinter.client.overlay.selection.palette;
 
 import mcp.MethodsReturnNonnullByDefault;
-import mod.grimmauld.schematicprinter.SchematicPrinter;
 import mod.grimmauld.schematicprinter.client.gui.StringPromptScreen;
 import mod.grimmauld.schematicprinter.client.overlay.SelectOverlay;
 import mod.grimmauld.schematicprinter.client.overlay.selection.SelectItem;
@@ -20,14 +19,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
+import static mod.grimmauld.schematicprinter.util.TextHelper.translationComponent;
+
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class PaletteSaveTool extends SelectItem {
 	public PaletteSaveTool(ITextComponent description) {
-		super(description);
-	}
-
-	public PaletteSaveTool(String description) {
 		super(description);
 	}
 
@@ -36,7 +33,7 @@ public class PaletteSaveTool extends SelectItem {
 		super.onEnter(screen);
 		if (MC.player == null)
 			return;
-		MC.displayGuiScreen(new StringPromptScreen(this::saveAs, SchematicPrinter.MODID + ".screen.save_palette.title"));
+		MC.displayGuiScreen(new StringPromptScreen(this::saveAs, translationComponent("screen.save_palette.title")));
 	}
 
 	private void saveAs(String filename) {

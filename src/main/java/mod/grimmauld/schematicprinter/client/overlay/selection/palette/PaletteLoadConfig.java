@@ -7,7 +7,6 @@ import mod.grimmauld.schematicprinter.client.palette.PaletteManager;
 import mod.grimmauld.schematicprinter.util.FileHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -27,8 +26,8 @@ public class PaletteLoadConfig extends SelectConfig {
 	private final List<String> availablePalettes;
 	private int index;
 
-	public PaletteLoadConfig(String key, String description) {
-		super(new TranslationTextComponent(description));
+	public PaletteLoadConfig(ITextComponent description) {
+		super(description);
 		availablePalettes = new ArrayList<>();
 		refreshFiles();
 		index = 0;
@@ -49,11 +48,11 @@ public class PaletteLoadConfig extends SelectConfig {
 	}
 
 	public void refreshFiles() {
-		FileHelper.createFolderIfMissing("palettes");
+		FileHelper.createFolderIfMissing(FileHelper.palettesFilePath);
 		availablePalettes.clear();
 
 		try {
-			Files.list(Paths.get("palettes/"))
+			Files.list(Paths.get(FileHelper.palettesFilePath + "/"))
 				.filter(f -> !Files.isDirectory(f) && f.getFileName().toString().endsWith(".nbt")).forEach(path -> {
 				if (Files.isDirectory(path))
 					return;

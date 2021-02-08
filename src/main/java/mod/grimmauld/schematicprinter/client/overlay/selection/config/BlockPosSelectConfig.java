@@ -12,7 +12,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -26,17 +25,9 @@ public class BlockPosSelectConfig extends SelectConfig {
 	@Nullable
 	private BlockPos pos = null;
 
-	public BlockPosSelectConfig(String key, ITextComponent description, TextFormatting color) {
+	public BlockPosSelectConfig(ITextComponent description, TextFormatting color) {
 		super(description);
 		this.color = color;
-	}
-
-	public BlockPosSelectConfig(String key, String description) {
-		this(key, new TranslationTextComponent(description), TextFormatting.AQUA);
-	}
-
-	public BlockPosSelectConfig(String key, String description, TextFormatting color) {
-		this(key, new TranslationTextComponent(description), color);
 	}
 
 	@Override

@@ -8,7 +8,6 @@ import mod.grimmauld.schematicprinter.util.outline.Outline;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -31,8 +30,8 @@ public abstract class SelectBox extends AbstractSelectTool {
 		this.pos2.registerChangeListener(this::invalidateOutline);
 	}
 
-	public SelectBox(String description, BlockPosSelectConfig pos1, BlockPosSelectConfig pos2) {
-		this(new TranslationTextComponent(description), 0x6886c5, pos1, pos2);
+	public SelectBox(ITextComponent description, BlockPosSelectConfig pos1, BlockPosSelectConfig pos2) {
+		this(description, 0x6886c5, pos1, pos2);
 	}
 
 	@Nullable

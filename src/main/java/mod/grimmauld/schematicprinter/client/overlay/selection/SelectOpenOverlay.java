@@ -3,7 +3,6 @@ package mod.grimmauld.schematicprinter.client.overlay.selection;
 import mcp.MethodsReturnNonnullByDefault;
 import mod.grimmauld.schematicprinter.client.overlay.SelectOverlay;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -16,10 +15,6 @@ public class SelectOpenOverlay extends SelectItem {
 	public SelectOpenOverlay(ITextComponent description, SelectOverlay toOpen) {
 		super(description);
 		this.toOpen = toOpen;
-	}
-
-	public SelectOpenOverlay(String description, SelectOverlay toOpen) {
-		this(new TranslationTextComponent(description), toOpen);
 	}
 
 	@Override

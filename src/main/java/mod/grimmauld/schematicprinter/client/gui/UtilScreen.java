@@ -13,10 +13,9 @@ import java.util.List;
 @OnlyIn(Dist.CLIENT)
 public abstract class UtilScreen extends Screen {
 	protected static final Minecraft MC = Minecraft.getInstance();
-
+	protected final List<Widget> widgets;
 	protected int sWidth, sHeight;
 	protected int guiLeft, guiTop;
-	protected final List<Widget> widgets;
 
 	protected UtilScreen() {
 		super(new StringTextComponent(""));
@@ -34,11 +33,10 @@ public abstract class UtilScreen extends Screen {
 	public void render(int mouseX, int mouseY, float partialTicks) {
 		renderBackground();
 		renderWindow(mouseX, mouseY, partialTicks);
-		for (Widget widget : widgets)
+		for (Widget widget : widgets) {
 			widget.render(mouseX, mouseY, partialTicks);
-		renderWindowForeground(mouseX, mouseY, partialTicks);
-		for (Widget widget : widgets)
 			widget.renderToolTip(mouseX, mouseY);
+		}
 	}
 
 	@Override
@@ -101,15 +99,4 @@ public abstract class UtilScreen extends Screen {
 	}
 
 	protected abstract void renderWindow(int mouseX, int mouseY, float partialTicks);
-
-	protected void renderWindowForeground(int mouseX, int mouseY, float partialTicks) {
-		for (Widget widget : widgets) {
-			if (!widget.isHovered())
-				continue;
-
-			if (widget instanceof SmartWidget && !((SmartWidget) widget).getToolTip().isEmpty()) {
-				renderTooltip(((SmartWidget) widget).getToolTip(), mouseX, mouseY);
-			}
-		}
-	}
 }

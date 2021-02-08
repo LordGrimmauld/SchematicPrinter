@@ -25,10 +25,6 @@ public class PaletteEditTool extends SelectItem {
 		super(description);
 	}
 
-	public PaletteEditTool(String description) {
-		super(description);
-	}
-
 	@Override
 	public void onEnter(SelectOverlay screen) {
 		super.onEnter(screen);

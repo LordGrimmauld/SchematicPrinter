@@ -10,7 +10,7 @@ import mod.grimmauld.schematicprinter.util.outline.CollectionOutline;
 import mod.grimmauld.schematicprinter.util.outline.Outline;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.ITextComponent;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -27,8 +27,8 @@ public class CircleBuildTool extends AbstractSelectTool {
 	private final IntSelectConfig height;
 	private final Supplier<Optional<BlockState>> stateGen;
 
-	public CircleBuildTool(String description, BlockPosSelectConfig anchor, IntSelectConfig radius, IntSelectConfig height, Supplier<Optional<BlockState>> stateGen) {
-		super(new TranslationTextComponent(description), 0x6886c5);
+	public CircleBuildTool(ITextComponent description, BlockPosSelectConfig anchor, IntSelectConfig radius, IntSelectConfig height, Supplier<Optional<BlockState>> stateGen) {
+		super(description, 0x6886c5);
 		this.anchor = anchor;
 		this.radius = radius;
 		this.height = height;
