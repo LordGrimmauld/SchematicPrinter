@@ -43,5 +43,7 @@
   "schematicprinter.tools.circle": "Circle Tools",
   "schematicprinter.tools.box": "Box tools",
   "schematicprinter.circle.radius": "Radius",
-  "schematicprinter.circle.height": "Cylinder height"
+  "schematicprinter.circle.height": "Cylinder height",
+  "schematicprinter.sphere": "Sphere...",
+  "schematicprinter.tools.sphere": "Sphere Tools"
 }

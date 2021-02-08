@@ -40,15 +40,13 @@ public class Printer {
 		if (MC.world == null || MC.player == null)
 			return;
 
-		BlockInformation inf = printQueue.poll();
-		for (int i = 0; i < 100 && inf != null; i++) {
-			// canPlace
-			if (World.isOutsideBuildHeight(inf.pos))
-				continue;
-			if (!MC.world.func_226663_a_(inf.state, inf.pos, ISelectionContext.forEntity(MC.player)))
-				continue;
-			MC.player.sendChatMessage(inf.getPrintCommand());
-			inf = printQueue.poll();
+		for (int i = 0; i < 100; i++) {
+			BlockInformation inf = printQueue.poll();
+			if (inf == null)
+				break;
+			if (!World.isOutsideBuildHeight(inf.pos) && MC.world.func_226663_a_(inf.state, inf.pos, ISelectionContext.forEntity(MC.player)))
+				MC.player.sendChatMessage(inf.getPrintCommand());
+
 		}
 		if (printQueue.isEmpty())
 			stopPrinting();
