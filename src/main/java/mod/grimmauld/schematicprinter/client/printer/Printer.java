@@ -7,6 +7,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.event.TickEvent;
@@ -40,14 +41,17 @@ public class Printer {
 			return;
 
 		BlockInformation inf = printQueue.poll();
-		while (inf != null) {
+		for (int i = 0; i < 100 && inf != null; i++) {
 			// canPlace
+			if (World.isOutsideBuildHeight(inf.pos))
+				continue;
 			if (!MC.world.func_226663_a_(inf.state, inf.pos, ISelectionContext.forEntity(MC.player)))
-				return;
+				continue;
 			MC.player.sendChatMessage(inf.getPrintCommand());
 			inf = printQueue.poll();
 		}
-		stopPrinting();
+		if (printQueue.isEmpty())
+			stopPrinting();
 	}
 
 	@SubscribeEvent(receiveCanceled = true)
