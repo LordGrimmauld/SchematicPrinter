@@ -2,6 +2,7 @@ package mod.grimmauld.schematicprinter.client.palette;
 
 import mcp.MethodsReturnNonnullByDefault;
 import mod.grimmauld.schematicprinter.SchematicPrinter;
+import mod.grimmauld.schematicprinter.util.FileHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.*;
@@ -142,7 +143,7 @@ public class PaletteManager {
 			return;
 		InputStream stream = null;
 		try {
-			stream = Files.newInputStream(Paths.get("palettes/" + filename), StandardOpenOption.READ);
+			stream = Files.newInputStream(Paths.get(FileHelper.palettesFilePath + "/" + filename), StandardOpenOption.READ);
 			deserialize(CompressedStreamTools.readCompressed(stream));
 		} catch (IOException ignored) {
 		} finally {

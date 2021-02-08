@@ -24,7 +24,7 @@ public class BoxBuildTool extends SelectBox {
 		this.stateGen = stateGen;
 	}
 
-	public BoxBuildTool(String description, Supplier<Optional<BlockState>> stateGen, BlockPosSelectConfig pos1, BlockPosSelectConfig pos2) {
+	public BoxBuildTool(ITextComponent description, Supplier<Optional<BlockState>> stateGen, BlockPosSelectConfig pos1, BlockPosSelectConfig pos2) {
 		super(description, pos1, pos2);
 		this.stateGen = stateGen;
 	}

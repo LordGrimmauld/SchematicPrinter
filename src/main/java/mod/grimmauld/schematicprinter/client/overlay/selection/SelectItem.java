@@ -8,7 +8,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.client.event.InputEvent;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -21,10 +20,6 @@ public class SelectItem {
 
 	public SelectItem(ITextComponent description) {
 		this.description = description;
-	}
-
-	public SelectItem(String description) {
-		this(new TranslationTextComponent(description));
 	}
 
 	public void onEnter(SelectOverlay screen) {

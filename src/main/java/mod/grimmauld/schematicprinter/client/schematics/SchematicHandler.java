@@ -131,8 +131,7 @@ public class SchematicHandler {
 	}
 
 	private Optional<ISchematicTool> getActiveTool() {
-		SelectItem selectItem = Manager.getActiveOverlay().orElse(SelectOverlay.EMPTY)
-			.getActiveSelectItem().orElse(null);
+		SelectItem selectItem = Manager.getActiveOverlay().flatMap(SelectOverlay::getActiveSelectItem).orElse(null);
 		if (selectItem instanceof SelectEventListener && ((SelectEventListener) selectItem).listener instanceof ISchematicTool)
 			return Optional.of((ISchematicTool) ((SelectEventListener) selectItem).listener);
 		return Optional.empty();

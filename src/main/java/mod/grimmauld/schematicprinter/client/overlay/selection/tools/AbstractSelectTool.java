@@ -9,7 +9,6 @@ import mod.grimmauld.schematicprinter.render.SuperRenderTypeBuffer;
 import mod.grimmauld.schematicprinter.util.outline.Outline;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -26,10 +25,6 @@ public abstract class AbstractSelectTool extends SelectItem {
 		super(description);
 		this.color = color;
 		outline = null;
-	}
-
-	public AbstractSelectTool(String description) {
-		this(new TranslationTextComponent(description), 0x6886c5);
 	}
 
 	@Nullable

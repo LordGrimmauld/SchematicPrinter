@@ -17,11 +17,6 @@ public class SelectEventListener extends SelectItem {
 		this.listener = listener;
 	}
 
-	public SelectEventListener(String description, IOverlayEventListener listener) {
-		super(description);
-		this.listener = listener;
-	}
-
 	@Override
 	public void onOverlayOpen() {
 		super.onOverlayOpen();

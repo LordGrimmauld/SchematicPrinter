@@ -16,7 +16,6 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 
@@ -32,7 +31,6 @@ import static net.minecraft.client.gui.AbstractGui.blit;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class SelectOverlay {
-	public static final SelectOverlay EMPTY = new SelectOverlay("");
 
 	private static final Minecraft MC = Minecraft.getInstance();
 	private final ITextComponent title;
@@ -56,10 +54,6 @@ public class SelectOverlay {
 		canBeOpenedDirectly = false;
 		previous = null;
 		adjustTarget();
-	}
-
-	public SelectOverlay(String titleIn) {
-		this(new TranslationTextComponent(titleIn));
 	}
 
 	public void testAndClose(InputEvent event) {

@@ -37,6 +37,9 @@ import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import static mod.grimmauld.schematicprinter.util.TextHelper.translationComponent;
+import static mod.grimmauld.schematicprinter.util.TextHelper.translationKey;
+
 @Mod.EventBusSubscriber(value = Dist.CLIENT)
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -53,10 +56,10 @@ public class SchematicPrinterClient {
 	public static BlockPosSelectConfig pos2;
 
 	public static void init() {
-		TOOL_DEACTIVATE = new KeyBinding(SchematicPrinter.MODID + ".keybind.menu", Keyboard.O.getKeycode(), SchematicPrinter.NAME);
-		TOOL_SELECT = new KeyBinding(SchematicPrinter.MODID + ".keybind.select_tool", Keyboard.LALT.getKeycode(), SchematicPrinter.NAME);
-		TOOL_ACTIVATE = new KeyBinding(SchematicPrinter.MODID + ".keybind.activate_tool", Keyboard.ENTER.getKeycode(), SchematicPrinter.NAME);
-		TOOL_CONFIG = new KeyBinding(SchematicPrinter.MODID + ".keybind.config", Keyboard.CTRL.getKeycode(), SchematicPrinter.NAME);
+		TOOL_DEACTIVATE = new KeyBinding(translationKey("keybind.menu"), Keyboard.O.getKeycode(), SchematicPrinter.NAME);
+		TOOL_SELECT = new KeyBinding(translationKey("keybind.select_tool"), Keyboard.LALT.getKeycode(), SchematicPrinter.NAME);
+		TOOL_ACTIVATE = new KeyBinding(translationKey("keybind.activate_tool"), Keyboard.ENTER.getKeycode(), SchematicPrinter.NAME);
+		TOOL_CONFIG = new KeyBinding(translationKey("keybind.config"), Keyboard.CTRL.getKeycode(), SchematicPrinter.NAME);
 
 		ClientRegistry.registerKeyBinding(TOOL_DEACTIVATE);
 		ClientRegistry.registerKeyBinding(TOOL_SELECT);
@@ -99,57 +102,56 @@ public class SchematicPrinterClient {
 	}
 
 	private static void setupOverlay() {
-		pos1 = new BlockPosSelectConfig("pos1", "pos1", TextFormatting.YELLOW);
-		pos2 = new BlockPosSelectConfig("pos2", "pos2", TextFormatting.LIGHT_PURPLE);
+		pos1 = new BlockPosSelectConfig(translationComponent("pos1"), TextFormatting.YELLOW);
+		pos2 = new BlockPosSelectConfig(translationComponent("pos2"), TextFormatting.LIGHT_PURPLE);
 
 
-		SelectOverlay schematicOverlay = new SelectOverlay(SchematicPrinter.MODID + ".schematics")
-			.addOption(new SchematicSelectConfig("schematic", SchematicPrinter.MODID + ".schematic.selected"))
-			.addOption(new SelectEventListener(SchematicPrinter.MODID + ".schematic.tool.deploy", new DeployTool()))
-			.addOption(new SelectEventListener(SchematicPrinter.MODID + ".schematic.tool.clear", new ClearSchematicSelectionTool()))
-			.addOption(new SelectEventListener(SchematicPrinter.MODID + ".schematic.tool.flip", new FlipTool()))
-			.addOption(new SelectEventListener(SchematicPrinter.MODID + ".schematic.tool.rotate", new RotateTool()))
-			.addOption(new SelectEventListener(SchematicPrinter.MODID + ".schematic.tool.move_xz", new MoveTool()))
-			.addOption(new SelectEventListener(SchematicPrinter.MODID + ".schematic.tool.move_y", new MoveVerticalTool()))
-			.addOption(new SelectEventListener(SchematicPrinter.MODID + ".schematic.tool.print", new InstantPrintTool()))
+		SelectOverlay schematicOverlay = new SelectOverlay(translationComponent("schematics"))
+			.addOption(new SchematicSelectConfig(translationComponent("schematic.selected")))
+			.addOption(new SelectEventListener(translationComponent("schematic.tool.deploy"), new DeployTool()))
+			.addOption(new SelectEventListener(translationComponent("schematic.tool.clear"), new ClearSchematicSelectionTool()))
+			.addOption(new SelectEventListener(translationComponent("schematic.tool.flip"), new FlipTool()))
+			.addOption(new SelectEventListener(translationComponent("schematic.tool.rotate"), new RotateTool()))
+			.addOption(new SelectEventListener(translationComponent("schematic.tool.move_xz"), new MoveTool()))
+			.addOption(new SelectEventListener(translationComponent("schematic.tool.move_y"), new MoveVerticalTool()))
+			.addOption(new SelectEventListener(translationComponent("schematic.tool.print"), new InstantPrintTool()))
 			.register();
 
-		SelectOverlay paletteEditOverlay = new SelectOverlay(SchematicPrinter.MODID + ".palette_edit")
-			.addOption(new PaletteEditTool("edit"))
-			.addOption(new PaletteClearTool("clear"))
-			.addOption(new PaletteSaveTool("save"))
-			.addOption(new PaletteLoadConfig("palette", "load"))
+		SelectOverlay paletteEditOverlay = new SelectOverlay(translationComponent("palette_edit"))
+			.addOption(new PaletteEditTool(translationComponent("palette.modify")))
+			.addOption(new PaletteClearTool(translationComponent("palette.clear")))
+			.addOption(new PaletteSaveTool(translationComponent("palette.save")))
+			.addOption(new PaletteLoadConfig(translationComponent("palette.load")))
 			.register();
 
 
-		SelectOverlay fillTools = new SelectOverlay("Fill")
+		SelectOverlay boxTools = new SelectOverlay(translationComponent("tools.box"))
 			.addOption(pos1)
 			.addOption(pos2)
-			.addOption(new SelectSchematicSave(SchematicPrinter.MODID + ".schematic.save", pos1, pos2))
-			.addOption(new BoxBuildTool("clear", BuildToolStateSupplier.CLEAR, pos1, pos2))
-			.addOption(new BoxBuildTool("fill", BuildToolStateSupplier.FILL_FROM_PALETTE, pos1, pos2))
+			.addOption(new SelectSchematicSave(translationComponent("schematic.save"), pos1, pos2))
+			.addOption(new BoxBuildTool(translationComponent("tools.clear"), BuildToolStateSupplier.CLEAR, pos1, pos2))
+			.addOption(new BoxBuildTool(translationComponent("tools.fill_palette"), BuildToolStateSupplier.FILL_FROM_PALETTE, pos1, pos2))
 			.register();
 
 
-		IntSelectConfig radius = new IntSelectConfig("radius", "radius", 0, 5, 100);
-		IntSelectConfig height = new IntSelectConfig("height", "height", 0, 1, 256);
-		SelectOverlay circleTools = new SelectOverlay("Fill")
+		IntSelectConfig radius = new IntSelectConfig(translationComponent("circle.radius"), 0, 5, 100);
+		IntSelectConfig height = new IntSelectConfig(translationComponent("circle.height"), 0, 1, 256);
+		SelectOverlay circleTools = new SelectOverlay(translationComponent("tools.circle"))
 			.addOption(pos1)
 			.addOption(radius)
 			.addOption(height)
-			.addOption(new CircleBuildTool("fill circle", pos1, radius, height, BuildToolStateSupplier.FILL_FROM_PALETTE))
-			.addOption(new CircleBuildTool("clear circle", pos1, radius, height, BuildToolStateSupplier.CLEAR))
+			.addOption(new CircleBuildTool(translationComponent("tools.fill_palette"), pos1, radius, height, BuildToolStateSupplier.FILL_FROM_PALETTE))
+			.addOption(new CircleBuildTool(translationComponent("tools.clear"), pos1, radius, height, BuildToolStateSupplier.CLEAR))
 			.register();
 
 
-		SelectOverlay overlayMain = new SelectOverlay(SchematicPrinter.MODID + ".overlay.main")
+		SelectOverlay overlayMain = new SelectOverlay(translationComponent("overlay.main"))
 			.configureDirectOpen(true)
-			.addOption(new BooleanSelectConfig("testbool1", "testBoolean", false))
-			.addOption(new IntSelectConfig("testint1", "testInt", 0, 42, 100))
-			.addOption(new SelectOpenOverlay(SchematicPrinter.MODID + ".schematics", schematicOverlay))
-			.addOption(new SelectOpenOverlay("palette", paletteEditOverlay))
-			.addOption(new SelectOpenOverlay("Fill", fillTools))
-			.addOption(new SelectOpenOverlay("circle", circleTools))
+			.addOption(new BooleanSelectConfig(translationComponent("test_bool"), false))
+			.addOption(new SelectOpenOverlay(translationComponent("schematics"), schematicOverlay))
+			.addOption(new SelectOpenOverlay(translationComponent("palette"), paletteEditOverlay))
+			.addOption(new SelectOpenOverlay(translationComponent("box"), boxTools))
+			.addOption(new SelectOpenOverlay(translationComponent("round"), circleTools))
 			.register();
 	}
 }

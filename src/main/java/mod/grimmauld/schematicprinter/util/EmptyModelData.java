@@ -6,7 +6,7 @@ import net.minecraftforge.client.model.data.ModelProperty;
 public enum EmptyModelData implements IModelData {
 	INSTANCE;
 
-	private EmptyModelData() {
+	EmptyModelData() {
 	}
 
 	public boolean hasProperty(ModelProperty<?> prop) {

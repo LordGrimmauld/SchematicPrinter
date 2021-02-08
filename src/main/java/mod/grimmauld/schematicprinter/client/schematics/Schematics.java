@@ -1,6 +1,7 @@
 package mod.grimmauld.schematicprinter.client.schematics;
 
 import mcp.MethodsReturnNonnullByDefault;
+import mod.grimmauld.schematicprinter.util.FileHelper;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.world.gen.feature.template.Template;
@@ -21,7 +22,7 @@ public class Schematics {
 		InputStream stream = null;
 
 		try {
-			stream = Files.newInputStream(Paths.get("schematics/" + schematic), StandardOpenOption.READ);
+			stream = Files.newInputStream(Paths.get(FileHelper.schematicFilePath + "/" + schematic), StandardOpenOption.READ);
 			CompoundNBT nbt = CompressedStreamTools.readCompressed(stream);
 			Template t = new Template();
 			t.read(nbt);

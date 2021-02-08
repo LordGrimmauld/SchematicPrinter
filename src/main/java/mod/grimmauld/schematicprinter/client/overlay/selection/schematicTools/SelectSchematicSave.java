@@ -1,7 +1,6 @@
 package mod.grimmauld.schematicprinter.client.overlay.selection.schematicTools;
 
 import mcp.MethodsReturnNonnullByDefault;
-import mod.grimmauld.schematicprinter.SchematicPrinter;
 import mod.grimmauld.schematicprinter.client.gui.StringPromptScreen;
 import mod.grimmauld.schematicprinter.client.overlay.SelectOverlay;
 import mod.grimmauld.schematicprinter.client.overlay.selection.SelectBox;
@@ -14,6 +13,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.gen.feature.template.Template;
 import org.apache.commons.io.IOUtils;
 
@@ -25,10 +25,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
+import static mod.grimmauld.schematicprinter.util.TextHelper.translationComponent;
+
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class SelectSchematicSave extends SelectBox {
-	public SelectSchematicSave(String description, BlockPosSelectConfig pos1, BlockPosSelectConfig pos2) {
+	public SelectSchematicSave(ITextComponent description, BlockPosSelectConfig pos1, BlockPosSelectConfig pos2) {
 		super(description, pos1, pos2);
 	}
 
@@ -37,7 +39,7 @@ public class SelectSchematicSave extends SelectBox {
 		super.onEnter(screen);
 		if (MC.player == null)
 			return;
-		MC.displayGuiScreen(new StringPromptScreen(this::saveAs, SchematicPrinter.MODID + ".screen.save_schematic.title"));
+		MC.displayGuiScreen(new StringPromptScreen(this::saveAs, translationComponent("screen.save_schematic.title")));
 	}
 
 	private void saveAs(String filename) {
@@ -61,10 +63,9 @@ public class SelectSchematicSave extends SelectBox {
 
 		t.takeBlocksFromWorld(MC.world, origin, bounds, true, Blocks.AIR);
 
-		String folderPath = "schematics";
-		FileHelper.createFolderIfMissing(folderPath);
-		filename = FileHelper.findFirstValidFilename(filename, folderPath, "nbt");
-		String filepath = folderPath + "/" + filename;
+		FileHelper.createFolderIfMissing(FileHelper.schematicFilePath);
+		filename = FileHelper.findFirstValidFilename(filename, FileHelper.schematicFilePath, "nbt");
+		String filepath = FileHelper.schematicFilePath + "/" + filename;
 
 		Path path = Paths.get(filepath);
 		OutputStream outputStream = null;

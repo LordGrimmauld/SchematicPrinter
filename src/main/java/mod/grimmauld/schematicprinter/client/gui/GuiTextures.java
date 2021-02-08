@@ -14,7 +14,6 @@ public enum GuiTextures {
 	BUTTON_HOVER("widgets.png", 18, 0, 18, 18),
 	BUTTON_DOWN("widgets.png", 36, 0, 18, 18);
 
-	public static final int FONT_COLOR = 5726074;
 	public final ResourceLocation location;
 	public final int width;
 	public final int height;

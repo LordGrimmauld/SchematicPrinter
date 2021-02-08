@@ -2,34 +2,35 @@ package mod.grimmauld.schematicprinter.client.gui;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import mcp.MethodsReturnNonnullByDefault;
-import mod.grimmauld.schematicprinter.SchematicPrinter;
+import mod.grimmauld.schematicprinter.util.FileHelper;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.util.Util;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
 import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.nio.file.Paths;
 import java.util.function.Consumer;
 
+import static mod.grimmauld.schematicprinter.util.TextHelper.translationComponent;
+
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class StringPromptScreen extends UtilScreen {
 	private final ITextComponent title;
-	private final ITextComponent abortLabel = new TranslationTextComponent(SchematicPrinter.MODID + ".screen.discard");
-	private final ITextComponent confirmLabel = new TranslationTextComponent(SchematicPrinter.MODID + ".screen.confirm");
-	private final ITextComponent folder = new TranslationTextComponent(SchematicPrinter.MODID + ".screen.open_folder");
+	private final ITextComponent abortLabel = translationComponent("screen.discard");
+	private final ITextComponent confirmLabel = translationComponent("screen.confirm");
+	private final ITextComponent folder = translationComponent("screen.open_folder");
 	private final Consumer<String> onFinish;
 	private TextFieldWidget nameField;
 	private IconButton confirm;
 	private IconButton abort;
 	private IconButton folderButton;
 
-	public StringPromptScreen(Consumer<String> onFinish, String title) {
+	public StringPromptScreen(Consumer<String> onFinish, ITextComponent title) {
 		this.onFinish = onFinish;
-		this.title = new TranslationTextComponent(title);
+		this.title = title;
 	}
 
 	@Override
@@ -94,7 +95,7 @@ public class StringPromptScreen extends UtilScreen {
 		}
 		if (folderButton.isHovered()) {
 			Util.getOSType()
-				.openFile(Paths.get("schematics/")
+				.openFile(Paths.get(FileHelper.schematicFilePath + "/")
 					.toFile());
 		}
 		return super.mouseClicked(x, y, button);

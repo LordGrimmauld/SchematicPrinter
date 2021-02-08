@@ -9,6 +9,9 @@ import java.nio.file.Paths;
 import java.util.Locale;
 
 public class FileHelper {
+	public static final String schematicFilePath = "schematics";
+	public static final String palettesFilePath = "palettes";
+
 	public static void createFolderIfMissing(String name) {
 		Path path = Paths.get(name);
 		if (path.getParent() != null)

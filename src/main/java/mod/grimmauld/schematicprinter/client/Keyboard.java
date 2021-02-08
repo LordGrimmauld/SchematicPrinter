@@ -10,7 +10,6 @@ import static org.lwjgl.glfw.GLFW.*;
 @OnlyIn(Dist.CLIENT)
 public enum Keyboard {
 	LALT(GLFW_KEY_LEFT_ALT), // 342
-	L(76),
 	O(79),
 	ENTER(GLFW_KEY_ENTER), // 257
 	CTRL(GLFW_KEY_LEFT_CONTROL), // 341r

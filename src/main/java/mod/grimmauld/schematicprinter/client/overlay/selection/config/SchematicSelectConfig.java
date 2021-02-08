@@ -6,7 +6,6 @@ import mod.grimmauld.schematicprinter.client.overlay.SelectOverlay;
 import mod.grimmauld.schematicprinter.util.FileHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -26,11 +25,7 @@ public class SchematicSelectConfig extends SelectConfig {
 	private final List<String> availableSchematics;
 	private int index;
 
-	public SchematicSelectConfig(String key, String description) {
-		this(key, new TranslationTextComponent(description));
-	}
-
-	public SchematicSelectConfig(String key, ITextComponent description) {
+	public SchematicSelectConfig(ITextComponent description) {
 		super(description);
 		availableSchematics = new ArrayList<>();
 		refreshFiles();
@@ -53,11 +48,11 @@ public class SchematicSelectConfig extends SelectConfig {
 	}
 
 	public void refreshFiles() {
-		FileHelper.createFolderIfMissing("schematics");
+		FileHelper.createFolderIfMissing(FileHelper.schematicFilePath);
 		availableSchematics.clear();
 
 		try {
-			Files.list(Paths.get("schematics/"))
+			Files.list(Paths.get(FileHelper.schematicFilePath + "/"))
 				.filter(f -> !Files.isDirectory(f) && f.getFileName().toString().endsWith(".nbt")).forEach(path -> {
 				if (Files.isDirectory(path))
 					return;
