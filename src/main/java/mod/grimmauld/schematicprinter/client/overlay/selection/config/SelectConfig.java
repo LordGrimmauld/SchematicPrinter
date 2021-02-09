@@ -4,6 +4,7 @@ import mcp.MethodsReturnNonnullByDefault;
 import mod.grimmauld.schematicprinter.client.overlay.selection.SelectItem;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.common.MinecraftForge;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -34,6 +35,7 @@ public abstract class SelectConfig<T extends Comparable<? super T>> extends Sele
 
 	protected void onValueChanged() {
 		onChangedListeners.forEach(process -> process.accept(this));
+		MinecraftForge.EVENT_BUS.post(new SelectConfigChangedEvent<>(this));
 	}
 
 	public void registerChangeListener(Consumer<SelectConfig<? extends T>> listener) {
