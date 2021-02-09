@@ -15,6 +15,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public class SelectItem {
 	protected static final Minecraft MC = Minecraft.getInstance();
 	private final ITextComponent description;
+	private boolean shouldRenderPalette = false;
 
 	public SelectItem(ITextComponent description) {
 		this.description = description;
@@ -43,6 +44,11 @@ public class SelectItem {
 	}
 
 	public boolean shouldRenderPalette() {
-		return false;
+		return shouldRenderPalette;
+	}
+
+	public SelectItem shouldRenderPalette(boolean shouldRenderPalette) {
+		this.shouldRenderPalette = shouldRenderPalette;
+		return this;
 	}
 }

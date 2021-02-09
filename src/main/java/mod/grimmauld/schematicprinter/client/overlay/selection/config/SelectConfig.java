@@ -38,8 +38,9 @@ public abstract class SelectConfig<T extends Comparable<? super T>> extends Sele
 		MinecraftForge.EVENT_BUS.post(new SelectConfigChangedEvent<>(this));
 	}
 
-	public void registerChangeListener(Consumer<SelectConfig<? extends T>> listener) {
+	public SelectConfig<T> registerChangeListener(Consumer<SelectConfig<? extends T>> listener) {
 		onChangedListeners.add(listener);
+		return this;
 	}
 
 	@Nullable

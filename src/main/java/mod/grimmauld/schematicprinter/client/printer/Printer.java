@@ -1,6 +1,8 @@
 package mod.grimmauld.schematicprinter.client.printer;
 
 import mod.grimmauld.schematicprinter.SchematicPrinter;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.text.ITextComponent;
@@ -25,6 +27,9 @@ import java.util.stream.Stream;
 @Mod.EventBusSubscriber(value = Dist.CLIENT)
 @SuppressWarnings("unused")
 public class Printer {
+	public static boolean shouldReplaceTEs = true;
+	public static boolean shouldReplaceBlocks = true;
+
 	private static final Minecraft MC = Minecraft.getInstance();
 	private static final Queue<BlockInformation> printQueue = new PriorityQueue<>();
 	private static boolean shouldPrint = false;
@@ -44,12 +49,31 @@ public class Printer {
 			BlockInformation inf = printQueue.poll();
 			if (inf == null)
 				break;
-			if (!World.isOutsideBuildHeight(inf.pos) && MC.world.func_226663_a_(inf.state, inf.pos, ISelectionContext.forEntity(MC.player)))
+			if (canPlace(inf))
 				MC.player.sendChatMessage(inf.getPrintCommand());
 
 		}
 		if (printQueue.isEmpty())
 			stopPrinting();
+	}
+
+	private static boolean canPlace(BlockInformation inf) {
+		if (MC.world == null || MC.player == null)
+			return false;
+		if (World.isOutsideBuildHeight(inf.pos))
+			return false;
+		BlockState replaceState = MC.world.getBlockState(inf.pos);
+		if (replaceState.equals(inf.state))
+			return false;
+		if (!MC.world.func_226663_a_(inf.state, inf.pos, ISelectionContext.forEntity(MC.player)))
+			return false;
+		if (replaceState.isAir())
+			return true;
+		if (!shouldReplaceTEs && replaceState.hasTileEntity())
+			return false;
+		if (inf.state.getBlock() == Blocks.AIR)
+			return inf.overrideAir;
+		return shouldReplaceBlocks;
 	}
 
 	@SubscribeEvent(receiveCanceled = true)
