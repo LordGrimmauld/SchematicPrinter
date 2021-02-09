@@ -141,8 +141,6 @@ public abstract class Outline {
 
 	public static class OutlineParams {
 		protected final boolean fadeLineWidth;
-		protected final int lightMapU;
-		protected final int lightMapV;
 		protected Optional<ExtraTextures> faceTexture;
 		protected Optional<ExtraTextures> hightlightedFaceTexture;
 		protected Direction highlightedFace;
@@ -159,8 +157,6 @@ public abstract class Outline {
 			this.fadeLineWidth = true;
 			this.rgb = ColorHelper.getRGB(16777215);
 			int i = 15728880;
-			this.lightMapU = i >> 16 & '\uffff';
-			this.lightMapV = i & '\uffff';
 		}
 
 		public OutlineParams colored(int color) {

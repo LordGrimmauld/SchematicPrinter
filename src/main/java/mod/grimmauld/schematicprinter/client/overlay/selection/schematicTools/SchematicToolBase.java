@@ -3,6 +3,7 @@ package mod.grimmauld.schematicprinter.client.overlay.selection.schematicTools;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import mod.grimmauld.schematicprinter.client.ExtraTextures;
 import mod.grimmauld.schematicprinter.client.SchematicPrinterClient;
+import mod.grimmauld.schematicprinter.client.overlay.selection.SelectItem;
 import mod.grimmauld.schematicprinter.client.schematics.SchematicHandler;
 import mod.grimmauld.schematicprinter.client.schematics.SchematicMetaInf;
 import mod.grimmauld.schematicprinter.render.SuperRenderTypeBuffer;
@@ -17,8 +18,13 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraftforge.client.event.InputEvent;
 
-public abstract class SchematicToolBase implements ISchematicTool {
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
+public abstract class SchematicToolBase extends SelectItem {
 	protected SchematicHandler schematicHandler;
 	protected BlockPos selectedPos;
 	protected Vec3d chasingSelectedPos;
@@ -29,8 +35,13 @@ public abstract class SchematicToolBase implements ISchematicTool {
 	protected boolean renderSelectedFace;
 	protected Direction selectedFace;
 
+	public SchematicToolBase(ITextComponent description) {
+		super(description);
+	}
+
 	@Override
-	public void init() {
+	public void onOverlayOpen() {
+		super.onOverlayOpen();
 		schematicHandler = SchematicPrinterClient.schematicHandler;
 		selectedPos = null;
 		selectedFace = null;
@@ -39,7 +50,6 @@ public abstract class SchematicToolBase implements ISchematicTool {
 		lastChasingSelectedPos = Vec3d.ZERO;
 	}
 
-	@Override
 	public void updateSelection() {
 		updateTargetPos();
 
@@ -109,15 +119,12 @@ public abstract class SchematicToolBase implements ISchematicTool {
 			lastChasingSelectedPos = chasingSelectedPos = new Vec3d(selectedPos);
 	}
 
-	@Override
 	public void renderTool(MatrixStack ms, SuperRenderTypeBuffer buffer) {
 	}
 
-	@Override
 	public void renderOverlay(MatrixStack ms, IRenderTypeBuffer buffer) {
 	}
 
-	@Override
 	public void renderOnSchematic(MatrixStack ms, SuperRenderTypeBuffer buffer) {
 		if (schematicHandler == null)
 			schematicHandler = SchematicPrinterClient.schematicHandler;
@@ -143,11 +150,12 @@ public abstract class SchematicToolBase implements ISchematicTool {
 	}
 
 	@Override
-	public boolean handleActivated() {
-		return false;
+	public void onScroll(InputEvent.MouseScrollEvent event) {
+		super.onScroll(event);
+		if (SchematicPrinterClient.TOOL_CONFIG.isKeyDown())
+			event.setCanceled(handleMouseWheel(event.getScrollDelta()));
 	}
 
-	@Override
 	public boolean handleMouseWheel(double delta) {
 		return false;
 	}

@@ -62,7 +62,7 @@ public class StringPromptScreen extends UtilScreen {
 	}
 
 	@Override
-	public void renderWindow(int mouseX, int mouseY, float partialTicks) {
+	public void renderWindow() {
 		GuiTextures.SCHEMATIC_PROMPT.draw(this, guiLeft, guiTop);
 		font.drawStringWithShadow(title.getFormattedText(), guiLeft + (sWidth / 2f) - (font.getStringWidth(title.getFormattedText()) / 2f), guiTop + 3,
 			0xffffff);

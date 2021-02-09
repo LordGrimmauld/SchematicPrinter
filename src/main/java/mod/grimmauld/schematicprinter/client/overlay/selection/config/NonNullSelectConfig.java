@@ -4,7 +4,7 @@ import net.minecraft.util.text.ITextComponent;
 
 import javax.annotation.Nonnull;
 
-public abstract class NonNullSelectConfig<T extends Comparable<? super T>> extends SelectConfig<T>{
+public abstract class NonNullSelectConfig<T extends Comparable<? super T>> extends SelectConfig<T> {
 	public NonNullSelectConfig(ITextComponent description) {
 		super(description);
 	}

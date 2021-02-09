@@ -4,10 +4,8 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import mcp.MethodsReturnNonnullByDefault;
 import mod.grimmauld.schematicprinter.client.Manager;
 import mod.grimmauld.schematicprinter.client.overlay.SelectOverlay;
-import mod.grimmauld.schematicprinter.client.overlay.selection.SelectEventListener;
-import mod.grimmauld.schematicprinter.client.overlay.selection.SelectItem;
 import mod.grimmauld.schematicprinter.client.overlay.selection.schematicTools.EmptySchematicTool;
-import mod.grimmauld.schematicprinter.client.overlay.selection.schematicTools.ISchematicTool;
+import mod.grimmauld.schematicprinter.client.overlay.selection.schematicTools.SchematicToolBase;
 import mod.grimmauld.schematicprinter.client.printer.Printer;
 import mod.grimmauld.schematicprinter.render.SuperRenderTypeBuffer;
 import net.minecraft.client.Minecraft;
@@ -50,7 +48,7 @@ public class SchematicHandler {
 			activeSchematic.transformation.tick();
 		if (active)
 			renderers.forEach(SchematicRenderer::tick);
-		getActiveTool().ifPresent(ISchematicTool::updateSelection);
+		getActiveTool().ifPresent(SchematicToolBase::updateSelection);
 	}
 
 	private void setupRenderer() {
@@ -125,16 +123,12 @@ public class SchematicHandler {
 		return this.active;
 	}
 
-
 	public boolean isDeployed() {
 		return this.deployed;
 	}
 
-	private Optional<ISchematicTool> getActiveTool() {
-		SelectItem selectItem = Manager.getActiveOverlay().flatMap(SelectOverlay::getActiveSelectItem).orElse(null);
-		if (selectItem instanceof SelectEventListener && ((SelectEventListener) selectItem).listener instanceof ISchematicTool)
-			return Optional.of((ISchematicTool) ((SelectEventListener) selectItem).listener);
-		return Optional.empty();
+	private Optional<SchematicToolBase> getActiveTool() {
+		return Manager.getActiveOverlay().flatMap(SelectOverlay::getActiveSelectItem).filter(selectItem -> selectItem instanceof SchematicToolBase).map(selectItem -> (SchematicToolBase) selectItem);
 	}
 
 	public void setActiveSchematic(@Nullable String selectedFile) {

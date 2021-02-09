@@ -4,7 +4,6 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import mcp.MethodsReturnNonnullByDefault;
 import mod.grimmauld.schematicprinter.SchematicPrinter;
 import mod.grimmauld.schematicprinter.client.overlay.SelectOverlay;
-import mod.grimmauld.schematicprinter.client.overlay.selection.SelectEventListener;
 import mod.grimmauld.schematicprinter.client.overlay.selection.SelectOpenOverlay;
 import mod.grimmauld.schematicprinter.client.overlay.selection.config.BlockPosSelectConfig;
 import mod.grimmauld.schematicprinter.client.overlay.selection.config.BooleanSelectConfig;
@@ -109,14 +108,15 @@ public class SchematicPrinterClient {
 
 		SelectOverlay schematicOverlay = new SelectOverlay(translationComponent("schematics"))
 			.addOption(new SchematicSelectConfig(translationComponent("schematic.selected")))
-			.addOption(new SelectEventListener(translationComponent("schematic.tool.deploy"), new DeployTool()))
-			.addOption(new SelectEventListener(translationComponent("schematic.tool.clear"), new ClearSchematicSelectionTool()))
-			.addOption(new SelectEventListener(translationComponent("schematic.tool.flip"), new FlipTool()))
-			.addOption(new SelectEventListener(translationComponent("schematic.tool.rotate"), new RotateTool()))
-			.addOption(new SelectEventListener(translationComponent("schematic.tool.move_xz"), new MoveTool()))
-			.addOption(new SelectEventListener(translationComponent("schematic.tool.move_y"), new MoveVerticalTool()))
-			.addOption(new SelectEventListener(translationComponent("schematic.tool.print"), new InstantPrintTool()))
+			.addOption(new DeployTool(translationComponent("schematic.tool.deploy")))
+			.addOption(new ClearSchematicSelectionTool(translationComponent("schematic.tool.clear")))
+			.addOption(new FlipTool(translationComponent("schematic.tool.flip")))
+			.addOption(new RotateTool(translationComponent("schematic.tool.rotate")))
+			.addOption(new MoveTool(translationComponent("schematic.tool.move_xz")))
+			.addOption(new MoveVerticalTool(translationComponent("schematic.tool.move_y")))
+			.addOption(new InstantPrintTool(translationComponent("schematic.tool.print")))
 			.register();
+
 
 		SelectOverlay paletteEditOverlay = new SelectOverlay(translationComponent("palette_edit"))
 			.addOption(new PaletteEditTool(translationComponent("palette.modify")))
