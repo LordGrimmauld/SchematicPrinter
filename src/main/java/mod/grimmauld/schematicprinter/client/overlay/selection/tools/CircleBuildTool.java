@@ -44,7 +44,7 @@ public class CircleBuildTool extends AbstractSelectTool {
 	protected Outline getUpdatedOutline() {
 		if (outline != null)
 			return outline;
-		return new CollectionOutline().withPositions(getBaseLayerPositions()).extendedUpwards(height.value);
+		return new CollectionOutline().withPositions(getBaseLayerPositions()).extendedUpwards(height.getValue());
 	}
 
 	@Override
@@ -55,19 +55,19 @@ public class CircleBuildTool extends AbstractSelectTool {
 	}
 
 	private Stream<BlockPos> getBaseLayerPositions() {
-		BlockPos anchorPos = anchor.getPos();
+		BlockPos anchorPos = anchor.getValue();
 		if (anchorPos == null)
 			return Stream.empty();
 
-		return IntStream.range(-radius.value, +radius.value + 1).boxed().flatMap(x ->
-			IntStream.range(-radius.value, +radius.value + 1)
-				.filter(z -> x * x + z * z - Math.abs(x) - Math.abs(z) < radius.value * radius.value)
+		return IntStream.range(-radius.getValue(), +radius.getValue() + 1).boxed().flatMap(x ->
+			IntStream.range(-radius.getValue(), +radius.getValue() + 1)
+				.filter(z -> x * x + z * z - Math.abs(x) - Math.abs(z) < radius.getValue() * radius.getValue())
 				.mapToObj(z -> anchorPos.add(x, 0, z)));
 	}
 
 	@Override
 	protected Stream<BlockPos> getPositions() {
-		return getBaseLayerPositions().flatMap(pos -> IntStream.range(0, height.value).mapToObj(y -> pos.add(0, y, 0)));
+		return getBaseLayerPositions().flatMap(pos -> IntStream.range(0, height.getValue()).mapToObj(y -> pos.add(0, y, 0)));
 	}
 
 	protected Stream<BlockInformation> putBlocksInBox(Supplier<Optional<BlockState>> stateGen) {

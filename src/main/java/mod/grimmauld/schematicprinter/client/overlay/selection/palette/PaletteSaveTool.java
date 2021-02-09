@@ -59,7 +59,7 @@ public class PaletteSaveTool extends SelectItem {
 				IOUtils.closeQuietly(outputStream);
 		}
 		TextHelper.sendStatus(MC.player, "palette.saved", filepath);
-		PaletteLoadConfig.INSTANCES.forEach(PaletteLoadConfig::refreshFiles);
+		PaletteLoadConfig.refreshAllFiles();
 	}
 
 	@Override

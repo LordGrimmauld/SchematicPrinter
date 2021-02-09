@@ -46,14 +46,14 @@ public class SphereBuildTool extends AbstractSelectTool {
 
 	@Override
 	protected Stream<BlockPos> getPositions() {
-		BlockPos anchorPos = anchor.getPos();
+		BlockPos anchorPos = anchor.getValue();
 		if (anchorPos == null)
 			return Stream.empty();
 
-		return IntStream.range(-radius.value, +radius.value).boxed().flatMap(x ->
-			IntStream.range(-radius.value, +radius.value).boxed().flatMap(y ->
-				IntStream.range(-radius.value, +radius.value)
-					.filter(z -> x * x + y * y + z * z < radius.value * radius.value)
+		return IntStream.range(-radius.getValue(), +radius.getValue()).boxed().flatMap(x ->
+			IntStream.range(-radius.getValue(), +radius.getValue()).boxed().flatMap(y ->
+				IntStream.range(-radius.getValue(), +radius.getValue())
+					.filter(z -> x * x + y * y + z * z < radius.getValue() * radius.getValue())
 					.mapToObj(z -> anchorPos.add(x, y, z))));
 	}
 

@@ -40,7 +40,7 @@ public class Printer {
 		if (MC.world == null || MC.player == null)
 			return;
 
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < 500; i++) { // todo: Add config option
 			BlockInformation inf = printQueue.poll();
 			if (inf == null)
 				break;

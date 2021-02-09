@@ -5,7 +5,6 @@ import mod.grimmauld.schematicprinter.client.SchematicPrinterClient;
 import mod.grimmauld.schematicprinter.client.overlay.SelectOverlay;
 import mod.grimmauld.schematicprinter.util.FileHelper;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -20,8 +19,8 @@ import java.util.Set;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public class SchematicSelectConfig extends SelectConfig {
-	public static final Set<SchematicSelectConfig> INSTANCES = new HashSet<>();
+public class SchematicSelectConfig extends SelectConfig<String> {
+	private static final Set<SchematicSelectConfig> INSTANCES = new HashSet<>();
 	private final List<String> availableSchematics;
 	private int index;
 
@@ -30,9 +29,13 @@ public class SchematicSelectConfig extends SelectConfig {
 		availableSchematics = new ArrayList<>();
 		refreshFiles();
 		index = 0;
-		SchematicPrinterClient.schematicHandler.setActiveSchematic(getSelectedFile());
+		SchematicPrinterClient.schematicHandler.setActiveSchematic(getValue());
 		this.onValueChanged();
 		INSTANCES.add(this);
+	}
+
+	public static void refreshAllFiles() {
+		INSTANCES.forEach(SchematicSelectConfig::refreshFiles);
 	}
 
 	@Override
@@ -70,23 +73,18 @@ public class SchematicSelectConfig extends SelectConfig {
 	@Override
 	public void onScrolled(int amount) {
 		index += amount;
-		SchematicPrinterClient.schematicHandler.setActiveSchematic(getSelectedFile());
+		SchematicPrinterClient.schematicHandler.setActiveSchematic(getValue());
 		this.onValueChanged();
 	}
 
 	@Nullable
-	public String getSelectedFile() {
+	@Override
+	public String getValue() {
 		if (availableSchematics.isEmpty())
 			return null;
 		while (index < availableSchematics.size())
 			index += availableSchematics.size();
 		index %= availableSchematics.size();
 		return availableSchematics.get(index);
-	}
-
-	@Override
-	protected ITextComponent getState() {
-		String filename = getSelectedFile();
-		return new StringTextComponent(filename != null ? filename : "none");
 	}
 }

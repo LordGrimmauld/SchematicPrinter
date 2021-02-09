@@ -18,7 +18,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public class BlockPosSelectConfig extends SelectConfig {
+public class BlockPosSelectConfig extends SelectConfig<BlockPos> {
 	private final TextFormatting color;
 	@Nullable
 	private AABBOutline outline = null;
@@ -32,7 +32,7 @@ public class BlockPosSelectConfig extends SelectConfig {
 
 	@Override
 	public void onScrolled(int amount) {
-
+		// Todo: Add box movement
 	}
 
 	@Override
@@ -52,6 +52,12 @@ public class BlockPosSelectConfig extends SelectConfig {
 	}
 
 	@Override
+	@Nullable
+	public BlockPos getValue() {
+		return pos;
+	}
+
+	@Override
 	public void continuousRendering(MatrixStack ms, SuperRenderTypeBuffer buffer) {
 		super.continuousRendering(ms, buffer);
 		if (pos == null)
@@ -65,10 +71,5 @@ public class BlockPosSelectConfig extends SelectConfig {
 		outline.render(ms, buffer);
 		outline.getParams()
 			.clearTextures();
-	}
-
-	@Nullable
-	public BlockPos getPos() {
-		return pos;
 	}
 }

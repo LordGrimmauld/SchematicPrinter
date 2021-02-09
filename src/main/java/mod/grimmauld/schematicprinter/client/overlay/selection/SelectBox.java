@@ -49,8 +49,8 @@ public abstract class SelectBox extends AbstractSelectTool {
 
 	@Nullable
 	protected AxisAlignedBB getBoundingBox() {
-		BlockPos blockPos1 = pos1.getPos();
-		BlockPos blockPos2 = pos2.getPos();
+		BlockPos blockPos1 = pos1.getValue();
+		BlockPos blockPos2 = pos2.getValue();
 
 		if (blockPos1 == null || blockPos2 == null)
 			return null;
