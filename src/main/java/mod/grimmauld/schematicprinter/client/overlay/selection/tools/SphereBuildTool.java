@@ -2,8 +2,8 @@ package mod.grimmauld.schematicprinter.client.overlay.selection.tools;
 
 import mcp.MethodsReturnNonnullByDefault;
 import mod.grimmauld.schematicprinter.client.overlay.SelectOverlay;
-import mod.grimmauld.schematicprinter.client.overlay.selection.config.BlockPosSelectConfig;
-import mod.grimmauld.schematicprinter.client.overlay.selection.config.IntSelectConfig;
+import mod.grimmauld.schematicprinter.client.overlay.selection.config.NonNullSelectConfig;
+import mod.grimmauld.schematicprinter.client.overlay.selection.config.SelectConfig;
 import mod.grimmauld.schematicprinter.client.printer.BlockInformation;
 import mod.grimmauld.schematicprinter.client.printer.Printer;
 import mod.grimmauld.schematicprinter.util.outline.CollectionOutline;
@@ -22,11 +22,11 @@ import java.util.stream.Stream;
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public class SphereBuildTool extends AbstractSelectTool {
-	private final BlockPosSelectConfig anchor;
-	private final IntSelectConfig radius;
+	private final SelectConfig<BlockPos> anchor;
+	private final NonNullSelectConfig<Integer> radius;
 	private final Supplier<Optional<BlockState>> stateGen;
 
-	public SphereBuildTool(ITextComponent description, BlockPosSelectConfig anchor, IntSelectConfig radius, Supplier<Optional<BlockState>> stateGen) {
+	public SphereBuildTool(ITextComponent description, SelectConfig<BlockPos> anchor, NonNullSelectConfig<Integer> radius, Supplier<Optional<BlockState>> stateGen) {
 		super(description, 0x6886c5);
 		this.anchor = anchor;
 		this.radius = radius;

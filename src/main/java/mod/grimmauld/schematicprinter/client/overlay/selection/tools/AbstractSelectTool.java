@@ -48,7 +48,7 @@ public abstract class AbstractSelectTool extends SelectItem {
 
 	protected abstract Stream<BlockPos> getPositions();
 
-	protected void invalidateOutline(SelectConfig config) {
+	protected void invalidateOutline(SelectConfig<?> config) {
 		outline = null;
 	}
 }

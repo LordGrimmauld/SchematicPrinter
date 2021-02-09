@@ -4,9 +4,11 @@ import mcp.MethodsReturnNonnullByDefault;
 import mod.grimmauld.schematicprinter.client.overlay.SelectOverlay;
 import mod.grimmauld.schematicprinter.client.overlay.selection.SelectBox;
 import mod.grimmauld.schematicprinter.client.overlay.selection.config.BlockPosSelectConfig;
+import mod.grimmauld.schematicprinter.client.overlay.selection.config.SelectConfig;
 import mod.grimmauld.schematicprinter.client.printer.BlockInformation;
 import mod.grimmauld.schematicprinter.client.printer.Printer;
 import net.minecraft.block.BlockState;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -19,12 +21,12 @@ import java.util.stream.Stream;
 public class BoxBuildTool extends SelectBox {
 	private final Supplier<Optional<BlockState>> stateGen;
 
-	public BoxBuildTool(ITextComponent description, Supplier<Optional<BlockState>> stateGen, int color, BlockPosSelectConfig pos1, BlockPosSelectConfig pos2) {
+	public BoxBuildTool(ITextComponent description, Supplier<Optional<BlockState>> stateGen, int color, SelectConfig<BlockPos> pos1, SelectConfig<BlockPos> pos2) {
 		super(description, color, pos1, pos2);
 		this.stateGen = stateGen;
 	}
 
-	public BoxBuildTool(ITextComponent description, Supplier<Optional<BlockState>> stateGen, BlockPosSelectConfig pos1, BlockPosSelectConfig pos2) {
+	public BoxBuildTool(ITextComponent description, Supplier<Optional<BlockState>> stateGen, SelectConfig<BlockPos> pos1, SelectConfig<BlockPos> pos2) {
 		super(description, pos1, pos2);
 		this.stateGen = stateGen;
 	}

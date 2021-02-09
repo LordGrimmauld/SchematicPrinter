@@ -2,8 +2,8 @@ package mod.grimmauld.schematicprinter.client.overlay.selection.tools;
 
 import mcp.MethodsReturnNonnullByDefault;
 import mod.grimmauld.schematicprinter.client.overlay.SelectOverlay;
-import mod.grimmauld.schematicprinter.client.overlay.selection.config.BlockPosSelectConfig;
-import mod.grimmauld.schematicprinter.client.overlay.selection.config.IntSelectConfig;
+import mod.grimmauld.schematicprinter.client.overlay.selection.config.NonNullSelectConfig;
+import mod.grimmauld.schematicprinter.client.overlay.selection.config.SelectConfig;
 import mod.grimmauld.schematicprinter.client.printer.BlockInformation;
 import mod.grimmauld.schematicprinter.client.printer.Printer;
 import mod.grimmauld.schematicprinter.util.outline.CollectionOutline;
@@ -22,12 +22,12 @@ import java.util.stream.Stream;
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public class CircleBuildTool extends AbstractSelectTool {
-	private final BlockPosSelectConfig anchor;
-	private final IntSelectConfig radius;
-	private final IntSelectConfig height;
+	private final SelectConfig<BlockPos> anchor;
+	private final NonNullSelectConfig<Integer> radius;
+	private final NonNullSelectConfig<Integer> height;
 	private final Supplier<Optional<BlockState>> stateGen;
 
-	public CircleBuildTool(ITextComponent description, BlockPosSelectConfig anchor, IntSelectConfig radius, IntSelectConfig height, Supplier<Optional<BlockState>> stateGen) {
+	public CircleBuildTool(ITextComponent description, SelectConfig<BlockPos> anchor, NonNullSelectConfig<Integer> radius, NonNullSelectConfig<Integer> height, Supplier<Optional<BlockState>> stateGen) {
 		super(description, 0x6886c5);
 		this.anchor = anchor;
 		this.radius = radius;

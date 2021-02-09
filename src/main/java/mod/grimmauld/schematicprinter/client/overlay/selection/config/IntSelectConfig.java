@@ -4,12 +4,11 @@ import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 
-import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class IntSelectConfig extends SelectConfig<Integer> {
+public class IntSelectConfig extends NonNullSelectConfig<Integer> {
 	private final int min;
 	private final int max;
 	private int value;
@@ -29,7 +28,6 @@ public class IntSelectConfig extends SelectConfig<Integer> {
 	}
 
 	@Override
-	@Nonnull
 	public Integer getValue() {
 		return value;
 	}
