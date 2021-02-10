@@ -1,6 +1,7 @@
 package mod.grimmauld.schematicprinter.client.printer;
 
 import mod.grimmauld.schematicprinter.SchematicPrinter;
+import mod.grimmauld.schematicprinter.util.LazyQueue;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
@@ -19,19 +20,16 @@ import net.minecraftforge.fml.common.Mod;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.PriorityQueue;
-import java.util.Queue;
 import java.util.stream.Stream;
 
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT)
 @SuppressWarnings("unused")
 public class Printer {
+	private static final Minecraft MC = Minecraft.getInstance();
+	private static final LazyQueue<BlockInformation> printQueue = new LazyQueue<>();
 	public static boolean shouldReplaceTEs = true;
 	public static boolean shouldReplaceBlocks = true;
-
-	private static final Minecraft MC = Minecraft.getInstance();
-	private static final Queue<BlockInformation> printQueue = new PriorityQueue<>();
 	private static boolean shouldPrint = false;
 	private static boolean receivedEndFeedback = true;
 
@@ -45,14 +43,11 @@ public class Printer {
 		if (MC.world == null || MC.player == null)
 			return;
 
-		for (int i = 0; i < 500; i++) { // todo: Add config option
-			BlockInformation inf = printQueue.poll();
-			if (inf == null)
-				break;
+		printQueue.runForN(inf -> {
 			if (canPlace(inf))
 				MC.player.sendChatMessage(inf.getPrintCommand());
+		}, 500);
 
-		}
 		if (printQueue.isEmpty())
 			stopPrinting();
 	}
@@ -130,7 +125,7 @@ public class Printer {
 
 	public static void startPrinting() {
 		receivedEndFeedback = true;
-		if (printQueue.peek() == null)
+		if (printQueue.isEmpty())
 			return;
 		shouldPrint = true;
 		if (MC.player == null)
@@ -159,6 +154,6 @@ public class Printer {
 	public static void addAll(Stream<BlockInformation> blocks) {
 		if (MC.world == null)
 			return;
-		blocks.filter(inf -> MC.world.getBlockState(inf.pos) != inf.state).forEach(printQueue::add);
+		printQueue.addAll(blocks);
 	}
 }
