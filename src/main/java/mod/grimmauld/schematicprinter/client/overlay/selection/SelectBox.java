@@ -62,9 +62,9 @@ public abstract class SelectBox extends AbstractSelectTool {
 		AxisAlignedBB bb = getBoundingBox();
 		if (bb == null)
 			return Stream.empty();
-		return IntStream.range(((int) bb.minX), ((int) bb.maxX)).boxed().flatMap(x ->
-			IntStream.range(((int) bb.minZ), ((int) bb.maxZ)).boxed().flatMap(z ->
-				IntStream.range(((int) bb.minY), ((int) bb.maxY)).mapToObj(y ->
+		return IntStream.range(((int) bb.minY), ((int) bb.maxY)).boxed().flatMap(y ->
+			IntStream.range(((int) bb.minX), ((int) bb.maxX)).boxed().flatMap(x ->
+				IntStream.range(((int) bb.minZ), ((int) bb.maxZ)).mapToObj(z ->
 					new BlockPos(x, y, z))));
 	}
 }

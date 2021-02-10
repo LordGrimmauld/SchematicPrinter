@@ -4,7 +4,6 @@ import mcp.MethodsReturnNonnullByDefault;
 import mod.grimmauld.schematicprinter.client.overlay.SelectOverlay;
 import mod.grimmauld.schematicprinter.client.overlay.selection.config.NonNullSelectConfig;
 import mod.grimmauld.schematicprinter.client.overlay.selection.config.SelectConfig;
-import mod.grimmauld.schematicprinter.client.printer.BlockInformation;
 import mod.grimmauld.schematicprinter.client.printer.Printer;
 import mod.grimmauld.schematicprinter.util.outline.CollectionOutline;
 import mod.grimmauld.schematicprinter.util.outline.Outline;
@@ -50,8 +49,8 @@ public class SphereBuildTool extends AbstractSelectTool {
 		if (anchorPos == null)
 			return Stream.empty();
 
-		return IntStream.range(-radius.getValue(), +radius.getValue()).boxed().flatMap(x ->
-			IntStream.range(-radius.getValue(), +radius.getValue()).boxed().flatMap(y ->
+		return IntStream.range(-radius.getValue(), +radius.getValue()).boxed().flatMap(y ->
+			IntStream.range(-radius.getValue(), +radius.getValue()).boxed().flatMap(x ->
 				IntStream.range(-radius.getValue(), +radius.getValue())
 					.filter(z -> x * x + y * y + z * z < radius.getValue() * radius.getValue())
 					.mapToObj(z -> anchorPos.add(x, y, z))));
@@ -62,11 +61,6 @@ public class SphereBuildTool extends AbstractSelectTool {
 		super.onEnter(screen);
 		Printer.addAll(putBlocksInBox(stateGen));
 		Printer.startPrinting();
-	}
-
-	protected Stream<BlockInformation> putBlocksInBox(Supplier<Optional<BlockState>> stateGen) {
-		return getPositions().flatMap(pos -> stateGen.get()
-			.map(Stream::of).orElseGet(Stream::empty).map(state -> new BlockInformation(pos, state)));
 	}
 
 	@Override

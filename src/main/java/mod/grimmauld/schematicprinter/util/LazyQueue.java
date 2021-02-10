@@ -5,6 +5,7 @@ import com.google.common.collect.Iterators;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public class LazyQueue<T> {
@@ -23,10 +24,18 @@ public class LazyQueue<T> {
 		addAll(Stream.of(elements));
 	}
 
-	public void runForN(Consumer<T> action, int n) {
+	public void runForN(Consumer<T> action, int n, Predicate<T> shouldRun) {
 		for (int i = 0; i < n && queue.hasNext(); i++) {
-			action.accept(queue.next());
+			T next = queue.next();
+			if (shouldRun.test(next))
+				action.accept(next);
+			else
+				i--;
 		}
+	}
+
+	public void runForN(Consumer<T> action, int n) {
+		runForN(action, n, t -> true);
 	}
 
 	public void clear() {

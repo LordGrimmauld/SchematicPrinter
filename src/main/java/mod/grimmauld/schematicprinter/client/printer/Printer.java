@@ -11,6 +11,7 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.event.TickEvent;
@@ -43,10 +44,7 @@ public class Printer {
 		if (MC.world == null || MC.player == null)
 			return;
 
-		printQueue.runForN(inf -> {
-			if (canPlace(inf))
-				MC.player.sendChatMessage(inf.getPrintCommand());
-		}, 500);
+		printQueue.runForN(inf -> MC.player.sendChatMessage(inf.getPrintCommand()), 512, Printer::canPlace);
 
 		if (printQueue.isEmpty())
 			stopPrinting();
@@ -56,6 +54,8 @@ public class Printer {
 		if (MC.world == null || MC.player == null)
 			return false;
 		if (World.isOutsideBuildHeight(inf.pos))
+			return false;
+		if (MC.world.getWorldInfo().getGenerator() == WorldType.DEBUG_ALL_BLOCK_STATES)
 			return false;
 		BlockState replaceState = MC.world.getBlockState(inf.pos);
 		if (replaceState.equals(inf.state))
@@ -147,8 +147,7 @@ public class Printer {
 	}
 
 	public static void add(BlockInformation blockInformation) {
-		if (MC.world != null && MC.world.getBlockState(blockInformation.pos) != blockInformation.state)
-			printQueue.add(blockInformation);
+		printQueue.add(blockInformation);
 	}
 
 	public static void addAll(Stream<BlockInformation> blocks) {

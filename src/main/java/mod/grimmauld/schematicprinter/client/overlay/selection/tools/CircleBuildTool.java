@@ -4,7 +4,6 @@ import mcp.MethodsReturnNonnullByDefault;
 import mod.grimmauld.schematicprinter.client.overlay.SelectOverlay;
 import mod.grimmauld.schematicprinter.client.overlay.selection.config.NonNullSelectConfig;
 import mod.grimmauld.schematicprinter.client.overlay.selection.config.SelectConfig;
-import mod.grimmauld.schematicprinter.client.printer.BlockInformation;
 import mod.grimmauld.schematicprinter.client.printer.Printer;
 import mod.grimmauld.schematicprinter.util.outline.CollectionOutline;
 import mod.grimmauld.schematicprinter.util.outline.Outline;
@@ -67,12 +66,7 @@ public class CircleBuildTool extends AbstractSelectTool {
 
 	@Override
 	protected Stream<BlockPos> getPositions() {
-		return getBaseLayerPositions().flatMap(pos -> IntStream.range(0, height.getValue()).mapToObj(y -> pos.add(0, y, 0)));
-	}
-
-	protected Stream<BlockInformation> putBlocksInBox(Supplier<Optional<BlockState>> stateGen) {
-		return getPositions().flatMap(pos -> stateGen.get()
-			.map(Stream::of).orElseGet(Stream::empty).map(state -> new BlockInformation(pos, state)));
+		return IntStream.range(0, height.getValue()).boxed().flatMap(y -> getBaseLayerPositions().map(pos -> pos.add(0, y, 0)));
 	}
 
 	@Override
