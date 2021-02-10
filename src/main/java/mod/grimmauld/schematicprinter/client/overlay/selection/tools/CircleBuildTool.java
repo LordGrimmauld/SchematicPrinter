@@ -43,7 +43,7 @@ public class CircleBuildTool extends AbstractSelectTool {
 	protected Outline getUpdatedOutline() {
 		if (outline != null)
 			return outline;
-		return new CollectionOutline().withPositions(getBaseLayerPositions()).extendedUpwards(height.getValue());
+		return new CollectionOutline().withPositions(getBaseLayerPositions(), 4 * radius.getValue() * radius.getValue()).extendedUpwards(height.getValue());
 	}
 
 	@Override

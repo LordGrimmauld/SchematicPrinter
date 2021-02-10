@@ -40,7 +40,7 @@ public class SphereBuildTool extends AbstractSelectTool {
 	protected Outline getUpdatedOutline() {
 		if (outline != null)
 			return outline;
-		return new CollectionOutline().withPositions(getPositions());
+		return new CollectionOutline().withPositions(getPositions(), 6 * radius.getValue() * radius.getValue() * radius.getValue());
 	}
 
 	@Override
