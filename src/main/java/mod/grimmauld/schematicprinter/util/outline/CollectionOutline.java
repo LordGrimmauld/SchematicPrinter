@@ -22,9 +22,7 @@ public class CollectionOutline extends Outline {
 		long startTime = System.currentTimeMillis();
 		while (edgesToProcess.hasNext() && (System.currentTimeMillis() - startTime) < 40) {
 			LineVecPair line = edgesToProcess.next();
-			if (edges.contains(line))
-				edges.remove(line);
-			else
+			if (!edges.remove(line))
 				edges.add(line);
 		}
 
@@ -38,9 +36,6 @@ public class CollectionOutline extends Outline {
 	public CollectionOutline withPositions(Stream<BlockPos> positions, int initialCap) {
 		edges = new HashSet<>(initialCap);
 		edgesToProcess = positions.flatMap(this::addVerticeForPos).iterator();
-
-
-
 		return this;
 	}
 

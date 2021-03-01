@@ -114,7 +114,10 @@ public class SchematicHandler {
 		if (this.activeSchematic == null || !deployed)
 			return;
 
-		activeSchematic.structure.addBlocksToWorld(placementWorld.getValue(), activeSchematic.transformation.getAnchor(), activeSchematic.transformation.toSettings());
+		PlacementDetectWorld world = placementWorld.getValue();
+		world.clearBuffer();
+		activeSchematic.structure.addBlocksToWorld(world, activeSchematic.transformation.getAnchor(), activeSchematic.transformation.toSettings());
+		world.printBuffer();
 		quitSchematic();
 		Printer.startPrinting();
 	}

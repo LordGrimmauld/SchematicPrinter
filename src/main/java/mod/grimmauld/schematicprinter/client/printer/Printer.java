@@ -146,10 +146,6 @@ public class Printer {
 		receivedEndFeedback = false;
 	}
 
-	public static void add(BlockInformation blockInformation) {
-		printQueue.add(blockInformation);
-	}
-
 	public static void addAll(Stream<BlockInformation> blocks) {
 		if (MC.world == null)
 			return;
