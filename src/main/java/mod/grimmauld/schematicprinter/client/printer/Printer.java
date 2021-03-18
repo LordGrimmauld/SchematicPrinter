@@ -42,12 +42,13 @@ public class Printer {
 		BlockInformation inf = printQueue.poll();
 		while (inf != null) {
 			// canPlace
-			if (!MC.world.placedBlockCollides(inf.state, inf.pos, ISelectionContext.forEntity(MC.player)))
+			if (!MC.world.func_226663_a_(inf.state, inf.pos, ISelectionContext.forEntity(MC.player)))
 				return;
 			MC.player.sendChatMessage(inf.getPrintCommand());
 			inf = printQueue.poll();
 		}
-		stopPrinting();
+		if (printQueue.isEmpty())
+			stopPrinting();
 	}
 
 	@SubscribeEvent(receiveCanceled = true)

@@ -18,6 +18,7 @@ import mod.grimmauld.schematicprinter.client.overlay.selection.schematicTools.*;
 import mod.grimmauld.schematicprinter.client.overlay.selection.tools.BoxBuildTool;
 import mod.grimmauld.schematicprinter.client.overlay.selection.tools.BuildToolStateSupplier;
 import mod.grimmauld.schematicprinter.client.overlay.selection.tools.CircleBuildTool;
+import mod.grimmauld.schematicprinter.client.overlay.selection.tools.SphereBuildTool;
 import mod.grimmauld.schematicprinter.client.schematics.SchematicHandler;
 import mod.grimmauld.schematicprinter.render.SuperRenderTypeBuffer;
 import net.minecraft.client.Minecraft;
@@ -144,6 +145,13 @@ public class SchematicPrinterClient {
 			.addOption(new CircleBuildTool(translationComponent("tools.clear"), pos1, radius, height, BuildToolStateSupplier.CLEAR))
 			.register();
 
+		SelectOverlay sphereTools = new SelectOverlay(translationComponent("tools.sphere"))
+			.addOption(pos1)
+			.addOption(radius)
+			.addOption(new SphereBuildTool(translationComponent("tools.fill_palette"), pos1, radius, BuildToolStateSupplier.FILL_FROM_PALETTE))
+			.addOption(new SphereBuildTool(translationComponent("tools.clear"), pos1, radius, BuildToolStateSupplier.CLEAR))
+			.register();
+
 
 		SelectOverlay overlayMain = new SelectOverlay(translationComponent("overlay.main"))
 			.configureDirectOpen(true)
@@ -152,6 +160,7 @@ public class SchematicPrinterClient {
 			.addOption(new SelectOpenOverlay(translationComponent("palette"), paletteEditOverlay))
 			.addOption(new SelectOpenOverlay(translationComponent("box"), boxTools))
 			.addOption(new SelectOpenOverlay(translationComponent("round"), circleTools))
+			.addOption(new SelectOpenOverlay(translationComponent("sphere"), sphereTools))
 			.register();
 	}
 }
