@@ -9,6 +9,7 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import java.util.HashSet;
+import java.util.Set;
 
 @MethodsReturnNonnullByDefault
 public class PlacementDetectWorld extends SchematicWorld {
@@ -27,7 +28,7 @@ public class PlacementDetectWorld extends SchematicWorld {
 	}
 
 	public void printBuffer() {
-		Printer.addAll(bufferedSchematic.stream());
+		Printer.addAll(((Set<BlockInformation>) bufferedSchematic.clone()).stream());
 		bufferedSchematic.clear();
 	}
 
