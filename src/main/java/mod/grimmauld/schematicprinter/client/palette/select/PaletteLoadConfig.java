@@ -2,10 +2,10 @@ package mod.grimmauld.schematicprinter.client.palette.select;
 
 import mcp.MethodsReturnNonnullByDefault;
 import mod.grimmauld.schematicprinter.client.SchematicPrinterClient;
-import mod.grimmauld.schematicprinter.client.api.overlay.SelectOverlay;
-import mod.grimmauld.schematicprinter.client.api.overlay.selection.config.SelectConfig;
 import mod.grimmauld.schematicprinter.client.palette.PaletteManager;
 import mod.grimmauld.schematicprinter.util.FileHelper;
+import mod.grimmauld.sidebaroverlay.api.overlay.SelectOverlay;
+import mod.grimmauld.sidebaroverlay.api.overlay.selection.config.SelectConfig;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 

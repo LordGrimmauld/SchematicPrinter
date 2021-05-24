@@ -1,6 +1,6 @@
 package mod.grimmauld.schematicprinter.util.interpolation;
 
-import mod.grimmauld.schematicprinter.util.AngleHelper;
+import mod.grimmauld.sidebaroverlay.util.AngleHelper;
 
 public class InterpolatedChasingAngle extends InterpolatedChasingValue {
 	public InterpolatedChasingAngle() {

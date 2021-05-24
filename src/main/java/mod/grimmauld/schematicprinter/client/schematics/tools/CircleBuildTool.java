@@ -1,13 +1,13 @@
-package mod.grimmauld.schematicprinter.client.api.overlay.selection.tools;
+package mod.grimmauld.schematicprinter.client.schematics.tools;
 
 import mcp.MethodsReturnNonnullByDefault;
 import mod.grimmauld.schematicprinter.client.SchematicPrinterClient;
-import mod.grimmauld.schematicprinter.client.api.overlay.SelectOverlay;
-import mod.grimmauld.schematicprinter.client.api.overlay.selection.config.NonNullSelectConfig;
-import mod.grimmauld.schematicprinter.client.api.overlay.selection.config.SelectConfig;
 import mod.grimmauld.schematicprinter.client.printer.Printer;
 import mod.grimmauld.schematicprinter.util.outline.CollectionOutline;
-import mod.grimmauld.schematicprinter.util.outline.Outline;
+import mod.grimmauld.sidebaroverlay.api.overlay.SelectOverlay;
+import mod.grimmauld.sidebaroverlay.api.overlay.selection.config.NonNullSelectConfig;
+import mod.grimmauld.sidebaroverlay.api.overlay.selection.config.SelectConfig;
+import mod.grimmauld.sidebaroverlay.util.outline.Outline;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;

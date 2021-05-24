@@ -2,11 +2,11 @@ package mod.grimmauld.schematicprinter.client.schematics.select;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import mcp.MethodsReturnNonnullByDefault;
-import mod.grimmauld.schematicprinter.client.ExtraTextures;
-import mod.grimmauld.schematicprinter.client.api.overlay.SelectOverlay;
 import mod.grimmauld.schematicprinter.client.schematics.SchematicMetaInf;
-import mod.grimmauld.schematicprinter.render.SuperRenderTypeBuffer;
-import mod.grimmauld.schematicprinter.util.outline.AABBOutline;
+import mod.grimmauld.sidebaroverlay.api.overlay.SelectOverlay;
+import mod.grimmauld.sidebaroverlay.render.ExtraTextures;
+import mod.grimmauld.sidebaroverlay.render.SuperRenderTypeBuffer;
+import mod.grimmauld.sidebaroverlay.util.outline.AABBOutline;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;

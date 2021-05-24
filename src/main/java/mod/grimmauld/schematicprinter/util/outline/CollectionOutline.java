@@ -1,7 +1,8 @@
 package mod.grimmauld.schematicprinter.util.outline;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import mod.grimmauld.schematicprinter.render.SuperRenderTypeBuffer;
+import mod.grimmauld.sidebaroverlay.render.SuperRenderTypeBuffer;
+import mod.grimmauld.sidebaroverlay.util.outline.Outline;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 

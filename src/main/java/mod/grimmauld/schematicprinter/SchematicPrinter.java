@@ -1,6 +1,5 @@
 package mod.grimmauld.schematicprinter;
 
-import mod.grimmauld.schematicprinter.client.Manager;
 import mod.grimmauld.schematicprinter.client.SchematicPrinterClient;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
@@ -17,7 +16,6 @@ public class SchematicPrinter {
 	public static final String NAME = "Schematic Printer";
 
 	public SchematicPrinter() {
-		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> FMLJavaModLoadingContext.get().getModEventBus().addListener(Manager::init));
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> FMLJavaModLoadingContext.get().getModEventBus().addListener(SchematicPrinterClient::setupOverlay));
 	}
 }

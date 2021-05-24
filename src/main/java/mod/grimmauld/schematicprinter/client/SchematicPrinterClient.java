@@ -2,18 +2,6 @@ package mod.grimmauld.schematicprinter.client;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import mcp.MethodsReturnNonnullByDefault;
-import mod.grimmauld.schematicprinter.client.api.RegisterOverlayEvent;
-import mod.grimmauld.schematicprinter.client.api.overlay.SelectOverlay;
-import mod.grimmauld.schematicprinter.client.api.overlay.selection.SelectItem;
-import mod.grimmauld.schematicprinter.client.api.overlay.selection.SelectOpenOverlay;
-import mod.grimmauld.schematicprinter.client.api.overlay.selection.config.BlockPosSelectConfig;
-import mod.grimmauld.schematicprinter.client.api.overlay.selection.config.BooleanSelectConfig;
-import mod.grimmauld.schematicprinter.client.api.overlay.selection.config.IntSelectConfig;
-import mod.grimmauld.schematicprinter.client.api.overlay.selection.config.SchematicSelectConfig;
-import mod.grimmauld.schematicprinter.client.api.overlay.selection.tools.BoxBuildTool;
-import mod.grimmauld.schematicprinter.client.api.overlay.selection.tools.BuildToolStateSupplier;
-import mod.grimmauld.schematicprinter.client.api.overlay.selection.tools.CircleBuildTool;
-import mod.grimmauld.schematicprinter.client.api.overlay.selection.tools.SphereBuildTool;
 import mod.grimmauld.schematicprinter.client.palette.PaletteOverlay;
 import mod.grimmauld.schematicprinter.client.palette.select.PaletteClearTool;
 import mod.grimmauld.schematicprinter.client.palette.select.PaletteEditTool;
@@ -22,17 +10,30 @@ import mod.grimmauld.schematicprinter.client.palette.select.PaletteSaveTool;
 import mod.grimmauld.schematicprinter.client.printer.Printer;
 import mod.grimmauld.schematicprinter.client.schematics.SchematicHandler;
 import mod.grimmauld.schematicprinter.client.schematics.select.*;
-import mod.grimmauld.schematicprinter.render.SuperRenderTypeBuffer;
+import mod.grimmauld.schematicprinter.client.schematics.tools.*;
+import mod.grimmauld.sidebaroverlay.Manager;
+import mod.grimmauld.sidebaroverlay.SidebarOverlay;
+import mod.grimmauld.sidebaroverlay.api.overlay.SelectOverlay;
+import mod.grimmauld.sidebaroverlay.api.overlay.selection.SelectItem;
+import mod.grimmauld.sidebaroverlay.api.overlay.selection.SelectOpenOverlay;
+import mod.grimmauld.sidebaroverlay.api.overlay.selection.config.BlockPosSelectConfig;
+import mod.grimmauld.sidebaroverlay.api.overlay.selection.config.BooleanSelectConfig;
+import mod.grimmauld.sidebaroverlay.api.overlay.selection.config.IntSelectConfig;
+import mod.grimmauld.sidebaroverlay.render.SuperRenderTypeBuffer;
+import mod.grimmauld.sidebaroverlay.util.TextHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -63,8 +64,6 @@ public class SchematicPrinterClient {
 		ms.translate(-view.getX(), -view.getY(), -view.getZ());
 		SuperRenderTypeBuffer buffer = SuperRenderTypeBuffer.getInstance();
 		schematicHandler.render(ms, buffer);
-		Manager.getActiveOverlay().ifPresent(overlay -> overlay.options.forEach(selectItem -> selectItem.continuousRendering(ms, buffer)));
-		Manager.getActiveOverlay().flatMap(SelectOverlay::getActiveSelectItem).ifPresent(selectItem -> selectItem.renderActive(ms, buffer));
 		buffer.draw();
 
 		ms.pop();
@@ -77,7 +76,7 @@ public class SchematicPrinterClient {
 		}
 	}
 
-	public static void setupOverlay(RegisterOverlayEvent event) {
+	public static void setupOverlay(InterModEnqueueEvent event) {
 		pos1 = new BlockPosSelectConfig(translationComponent("pos1"), TextFormatting.YELLOW);
 		pos2 = new BlockPosSelectConfig(translationComponent("pos2"), TextFormatting.LIGHT_PURPLE);
 
@@ -140,11 +139,18 @@ public class SchematicPrinterClient {
 			.register();
 
 
-		event.overlayMain
+		SelectOverlay overlayMain = new SelectOverlay(TextHelper.translationComponent("overlay.main"))
 			.addOption(new SelectOpenOverlay(translationComponent("schematics"), schematicOverlay))
 			.addOption(new SelectOpenOverlay(translationComponent("settings"), printerSettingsOverlay))
 			.addOption(new SelectOpenOverlay(translationComponent("box"), boxTools))
 			.addOption(new SelectOpenOverlay(translationComponent("round"), circleTools))
-			.addOption(new SelectOpenOverlay(translationComponent("sphere"), sphereTools));
+			.addOption(new SelectOpenOverlay(translationComponent("sphere"), sphereTools))
+			.register();
+		InterModComms.sendTo(SidebarOverlay.MODID, Manager.IMC_ADD_OVERLAY_ENTRY, () -> new SelectOpenOverlay(translationComponent("building"), overlayMain));
+	}
+
+	@SubscribeEvent
+	public static void onPlayerJoinWorld(ClientPlayerNetworkEvent.LoggedInEvent event) {
+		schematicHandler.quitSchematic();
 	}
 }

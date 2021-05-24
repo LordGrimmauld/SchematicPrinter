@@ -49,5 +49,6 @@
   "schematicprinter.replace_blocks": "Replace Blocks",
   "schematicprinter.printer_settings_edit": "Placement Settings",
   "schematicprinter.settings": "Placement Settings...",
-  "schematicprinter.tools.sphere": "Sphere Tools"
+  "schematicprinter.tools.sphere": "Sphere Tools",
+  "schematicprinter.building" : "Building..."
 }

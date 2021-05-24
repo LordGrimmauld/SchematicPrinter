@@ -2,12 +2,12 @@ package mod.grimmauld.schematicprinter.client.schematics;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import mcp.MethodsReturnNonnullByDefault;
-import mod.grimmauld.schematicprinter.client.Manager;
-import mod.grimmauld.schematicprinter.client.api.overlay.SelectOverlay;
 import mod.grimmauld.schematicprinter.client.printer.Printer;
 import mod.grimmauld.schematicprinter.client.schematics.select.EmptySchematicTool;
 import mod.grimmauld.schematicprinter.client.schematics.select.SchematicToolBase;
-import mod.grimmauld.schematicprinter.render.SuperRenderTypeBuffer;
+import mod.grimmauld.sidebaroverlay.Manager;
+import mod.grimmauld.sidebaroverlay.api.overlay.SelectOverlay;
+import mod.grimmauld.sidebaroverlay.render.SuperRenderTypeBuffer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.util.LazyValue;
@@ -131,7 +131,7 @@ public class SchematicHandler {
 	}
 
 	private Optional<SchematicToolBase> getActiveTool() {
-		return Manager.getActiveOverlay().flatMap(SelectOverlay::getActiveSelectItem).filter(selectItem -> selectItem instanceof SchematicToolBase).map(selectItem -> (SchematicToolBase) selectItem);
+		return Manager.getActiveOverlay().flatMap(SelectOverlay::getActiveSelectItem).filter(SchematicToolBase.class::isInstance).map(SchematicToolBase.class::cast);
 	}
 
 	public void setActiveSchematic(@Nullable String selectedFile) {

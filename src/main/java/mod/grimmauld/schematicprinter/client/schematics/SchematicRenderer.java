@@ -1,9 +1,9 @@
 package mod.grimmauld.schematicprinter.client.schematics;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import mod.grimmauld.schematicprinter.render.SuperByteBuffer;
-import mod.grimmauld.schematicprinter.render.SuperRenderTypeBuffer;
 import mod.grimmauld.schematicprinter.util.TERenderHelper;
+import mod.grimmauld.sidebaroverlay.render.SuperByteBuffer;
+import mod.grimmauld.sidebaroverlay.render.SuperRenderTypeBuffer;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;

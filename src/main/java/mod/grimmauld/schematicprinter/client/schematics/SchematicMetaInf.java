@@ -1,7 +1,7 @@
 package mod.grimmauld.schematicprinter.client.schematics;
 
 import mcp.MethodsReturnNonnullByDefault;
-import mod.grimmauld.schematicprinter.util.outline.AABBOutline;
+import mod.grimmauld.sidebaroverlay.util.outline.AABBOutline;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.gen.feature.template.PlacementSettings;

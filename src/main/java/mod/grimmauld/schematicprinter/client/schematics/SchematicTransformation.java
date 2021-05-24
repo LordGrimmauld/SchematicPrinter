@@ -1,9 +1,9 @@
 package mod.grimmauld.schematicprinter.client.schematics;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import mod.grimmauld.schematicprinter.util.VecHelper;
 import mod.grimmauld.schematicprinter.util.interpolation.InterpolatedChasingAngle;
 import mod.grimmauld.schematicprinter.util.interpolation.InterpolatedChasingValue;
+import mod.grimmauld.sidebaroverlay.util.VecHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Mirror;

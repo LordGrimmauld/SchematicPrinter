@@ -1,4 +1,4 @@
-package mod.grimmauld.schematicprinter.client.api.overlay.selection.tools;
+package mod.grimmauld.schematicprinter.client.schematics.tools;
 
 import mod.grimmauld.schematicprinter.client.palette.PaletteManager;
 import net.minecraft.block.BlockState;

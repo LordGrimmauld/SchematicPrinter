@@ -2,9 +2,9 @@ package mod.grimmauld.schematicprinter.client.schematics.select;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import mcp.MethodsReturnNonnullByDefault;
-import mod.grimmauld.schematicprinter.client.api.overlay.SelectOverlay;
 import mod.grimmauld.schematicprinter.client.schematics.SchematicMetaInf;
-import mod.grimmauld.schematicprinter.render.SuperRenderTypeBuffer;
+import mod.grimmauld.sidebaroverlay.api.overlay.SelectOverlay;
+import mod.grimmauld.sidebaroverlay.render.SuperRenderTypeBuffer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -14,7 +14,7 @@ import net.minecraft.util.text.ITextComponent;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
-import static mod.grimmauld.schematicprinter.client.Manager.TOOL_CONFIG;
+import static mod.grimmauld.sidebaroverlay.Manager.TOOL_CONFIG;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault

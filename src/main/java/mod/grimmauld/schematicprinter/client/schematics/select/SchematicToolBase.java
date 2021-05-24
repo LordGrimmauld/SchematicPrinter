@@ -1,15 +1,15 @@
 package mod.grimmauld.schematicprinter.client.schematics.select;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import mod.grimmauld.schematicprinter.client.ExtraTextures;
 import mod.grimmauld.schematicprinter.client.SchematicPrinterClient;
-import mod.grimmauld.schematicprinter.client.api.overlay.selection.SelectItem;
 import mod.grimmauld.schematicprinter.client.schematics.SchematicHandler;
 import mod.grimmauld.schematicprinter.client.schematics.SchematicMetaInf;
-import mod.grimmauld.schematicprinter.render.SuperRenderTypeBuffer;
-import mod.grimmauld.schematicprinter.util.RaycastHelper;
-import mod.grimmauld.schematicprinter.util.VecHelper;
-import mod.grimmauld.schematicprinter.util.outline.AABBOutline;
+import mod.grimmauld.sidebaroverlay.api.overlay.selection.SelectItem;
+import mod.grimmauld.sidebaroverlay.render.ExtraTextures;
+import mod.grimmauld.sidebaroverlay.render.SuperRenderTypeBuffer;
+import mod.grimmauld.sidebaroverlay.util.RaycastHelper;
+import mod.grimmauld.sidebaroverlay.util.VecHelper;
+import mod.grimmauld.sidebaroverlay.util.outline.AABBOutline;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
@@ -23,7 +23,7 @@ import net.minecraftforge.client.event.InputEvent;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
-import static mod.grimmauld.schematicprinter.client.Manager.TOOL_CONFIG;
+import static mod.grimmauld.sidebaroverlay.Manager.TOOL_CONFIG;
 
 @ParametersAreNonnullByDefault
 public abstract class SchematicToolBase extends SelectItem {
