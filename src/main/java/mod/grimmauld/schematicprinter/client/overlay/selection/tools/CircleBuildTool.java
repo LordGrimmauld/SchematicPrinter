@@ -2,9 +2,8 @@ package mod.grimmauld.schematicprinter.client.overlay.selection.tools;
 
 import mcp.MethodsReturnNonnullByDefault;
 import mod.grimmauld.schematicprinter.client.overlay.SelectOverlay;
-import mod.grimmauld.schematicprinter.client.overlay.selection.config.BlockPosSelectConfig;
-import mod.grimmauld.schematicprinter.client.overlay.selection.config.IntSelectConfig;
-import mod.grimmauld.schematicprinter.client.printer.BlockInformation;
+import mod.grimmauld.schematicprinter.client.overlay.selection.config.NonNullSelectConfig;
+import mod.grimmauld.schematicprinter.client.overlay.selection.config.SelectConfig;
 import mod.grimmauld.schematicprinter.client.printer.Printer;
 import mod.grimmauld.schematicprinter.util.outline.CollectionOutline;
 import mod.grimmauld.schematicprinter.util.outline.Outline;
@@ -22,12 +21,12 @@ import java.util.stream.Stream;
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public class CircleBuildTool extends AbstractSelectTool {
-	private final BlockPosSelectConfig anchor;
-	private final IntSelectConfig radius;
-	private final IntSelectConfig height;
+	private final SelectConfig<BlockPos> anchor;
+	private final NonNullSelectConfig<Integer> radius;
+	private final NonNullSelectConfig<Integer> height;
 	private final Supplier<Optional<BlockState>> stateGen;
 
-	public CircleBuildTool(ITextComponent description, BlockPosSelectConfig anchor, IntSelectConfig radius, IntSelectConfig height, Supplier<Optional<BlockState>> stateGen) {
+	public CircleBuildTool(ITextComponent description, SelectConfig<BlockPos> anchor, NonNullSelectConfig<Integer> radius, NonNullSelectConfig<Integer> height, Supplier<Optional<BlockState>> stateGen) {
 		super(description, 0x6886c5);
 		this.anchor = anchor;
 		this.radius = radius;
@@ -44,7 +43,7 @@ public class CircleBuildTool extends AbstractSelectTool {
 	protected Outline getUpdatedOutline() {
 		if (outline != null)
 			return outline;
-		return new CollectionOutline().withPositions(getBaseLayerPositions()).extendedUpwards(height.value);
+		return new CollectionOutline().withPositions(getBaseLayerPositions(), 4 * radius.getValue() * radius.getValue()).extendedUpwards(height.getValue());
 	}
 
 	@Override
@@ -55,24 +54,19 @@ public class CircleBuildTool extends AbstractSelectTool {
 	}
 
 	private Stream<BlockPos> getBaseLayerPositions() {
-		BlockPos anchorPos = anchor.getPos();
+		BlockPos anchorPos = anchor.getValue();
 		if (anchorPos == null)
 			return Stream.empty();
 
-		return IntStream.range(-radius.value, +radius.value + 1).boxed().flatMap(x ->
-			IntStream.range(-radius.value, +radius.value + 1)
-				.filter(z -> x * x + z * z - Math.abs(x) - Math.abs(z) < radius.value * radius.value)
+		return IntStream.range(-radius.getValue(), +radius.getValue() + 1).boxed().flatMap(x ->
+			IntStream.range(-radius.getValue(), +radius.getValue() + 1)
+				.filter(z -> x * x + z * z - Math.abs(x) - Math.abs(z) < radius.getValue() * radius.getValue())
 				.mapToObj(z -> anchorPos.add(x, 0, z)));
 	}
 
 	@Override
 	protected Stream<BlockPos> getPositions() {
-		return getBaseLayerPositions().flatMap(pos -> IntStream.range(0, height.value).mapToObj(y -> pos.add(0, y, 0)));
-	}
-
-	protected Stream<BlockInformation> putBlocksInBox(Supplier<Optional<BlockState>> stateGen) {
-		return getPositions().flatMap(pos -> stateGen.get()
-			.map(Stream::of).orElseGet(Stream::empty).map(state -> new BlockInformation(pos, state)));
+		return IntStream.range(0, height.getValue()).boxed().flatMap(y -> getBaseLayerPositions().map(pos -> pos.add(0, y, 0)));
 	}
 
 	@Override

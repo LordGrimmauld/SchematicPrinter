@@ -1,12 +1,16 @@
 package mod.grimmauld.schematicprinter.client.printer;
 
 import mod.grimmauld.schematicprinter.SchematicPrinter;
+import mod.grimmauld.schematicprinter.util.LazyQueue;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.event.TickEvent;
@@ -16,8 +20,6 @@ import net.minecraftforge.fml.common.Mod;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.PriorityQueue;
-import java.util.Queue;
 import java.util.stream.Stream;
 
 
@@ -25,7 +27,9 @@ import java.util.stream.Stream;
 @SuppressWarnings("unused")
 public class Printer {
 	private static final Minecraft MC = Minecraft.getInstance();
-	private static final Queue<BlockInformation> printQueue = new PriorityQueue<>();
+	private static final LazyQueue<BlockInformation> printQueue = new LazyQueue<>();
+	public static boolean shouldReplaceTEs = true;
+	public static boolean shouldReplaceBlocks = true;
 	private static boolean shouldPrint = false;
 	private static boolean receivedEndFeedback = true;
 
@@ -39,16 +43,31 @@ public class Printer {
 		if (MC.world == null || MC.player == null)
 			return;
 
-		BlockInformation inf = printQueue.poll();
-		while (inf != null) {
-			// canPlace
-			if (!MC.world.func_226663_a_(inf.state, inf.pos, ISelectionContext.forEntity(MC.player)))
-				return;
-			MC.player.sendChatMessage(inf.getPrintCommand());
-			inf = printQueue.poll();
-		}
+		printQueue.runForN(inf -> MC.player.sendChatMessage(inf.getPrintCommand()), 512, Printer::canPlace);
+
 		if (printQueue.isEmpty())
 			stopPrinting();
+	}
+
+	private static boolean canPlace(BlockInformation inf) {
+		if (MC.world == null || MC.player == null)
+			return false;
+		if (World.isOutsideBuildHeight(inf.pos))
+			return false;
+		// if (MC.world.getWorldInfo().getGenerator() == WorldType.DEBUG_ALL_BLOCK_STATES)
+		// 	return false;
+		BlockState replaceState = MC.world.getBlockState(inf.pos);
+		if (replaceState.equals(inf.state))
+			return false;
+		if (!MC.world.placedBlockCollides(inf.state, inf.pos, ISelectionContext.forEntity(MC.player)))
+			return false;
+		if (replaceState.isAir())
+			return true;
+		if (!shouldReplaceTEs && replaceState.hasTileEntity())
+			return false;
+		if (inf.state.getBlock() == Blocks.AIR)
+			return inf.overrideAir;
+		return shouldReplaceBlocks;
 	}
 
 	@SubscribeEvent(receiveCanceled = true)
@@ -105,7 +124,7 @@ public class Printer {
 
 	public static void startPrinting() {
 		receivedEndFeedback = true;
-		if (printQueue.peek() == null)
+		if (printQueue.isEmpty())
 			return;
 		shouldPrint = true;
 		if (MC.player == null)
@@ -126,14 +145,9 @@ public class Printer {
 		receivedEndFeedback = false;
 	}
 
-	public static void add(BlockInformation blockInformation) {
-		if (MC.world != null && MC.world.getBlockState(blockInformation.pos) != blockInformation.state)
-			printQueue.add(blockInformation);
-	}
-
 	public static void addAll(Stream<BlockInformation> blocks) {
 		if (MC.world == null)
 			return;
-		blocks.filter(inf -> MC.world.getBlockState(inf.pos) != inf.state).forEach(printQueue::add);
+		printQueue.addAll(blocks);
 	}
 }

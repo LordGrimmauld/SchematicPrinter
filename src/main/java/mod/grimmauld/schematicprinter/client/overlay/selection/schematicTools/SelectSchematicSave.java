@@ -80,6 +80,6 @@ public class SelectSchematicSave extends SelectBox {
 				IOUtils.closeQuietly(outputStream);
 		}
 		TextHelper.sendStatus(MC.player, "schematic.saved", filepath);
-		SchematicSelectConfig.INSTANCES.forEach(SchematicSelectConfig::refreshFiles);
+		SchematicSelectConfig.refreshAllFiles();
 	}
 }

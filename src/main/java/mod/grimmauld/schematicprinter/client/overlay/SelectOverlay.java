@@ -214,13 +214,13 @@ public class SelectOverlay {
 		return Optional.of(options.get(selectedOptionIndex % options.size()));
 	}
 
-	public Optional<SelectConfig> getActiveSelectConfig() {
+	public Optional<SelectConfig<?>> getActiveSelectConfig() {
 		if (!this.visible || options.isEmpty())
 			return Optional.empty();
 		SelectItem item = options.get(selectedOptionIndex % options.size());
 		if (!(item instanceof SelectConfig))
 			return Optional.empty();
-		return Optional.of(((SelectConfig) item));
+		return Optional.of(((SelectConfig<?>) item));
 	}
 
 	public void advanceSelectionIndex(int i) {

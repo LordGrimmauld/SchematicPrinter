@@ -6,7 +6,6 @@ import mod.grimmauld.schematicprinter.client.overlay.selection.config.SelectConf
 import mod.grimmauld.schematicprinter.client.palette.PaletteManager;
 import mod.grimmauld.schematicprinter.util.FileHelper;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -21,8 +20,8 @@ import java.util.Set;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class PaletteLoadConfig extends SelectConfig {
-	public static final Set<PaletteLoadConfig> INSTANCES = new HashSet<>();
+public class PaletteLoadConfig extends SelectConfig<String> {
+	private static final Set<PaletteLoadConfig> INSTANCES = new HashSet<>();
 	private final List<String> availablePalettes;
 	private int index;
 
@@ -35,6 +34,10 @@ public class PaletteLoadConfig extends SelectConfig {
 		INSTANCES.add(this);
 	}
 
+	public static void refreshAllFiles() {
+		INSTANCES.forEach(PaletteLoadConfig::refreshFiles);
+	}
+
 	@Override
 	public void onOverlayOpen() {
 		super.onOverlayOpen();
@@ -44,7 +47,7 @@ public class PaletteLoadConfig extends SelectConfig {
 	@Override
 	public void onEnter(SelectOverlay screen) {
 		super.onEnter(screen);
-		PaletteManager.loadFromFile(getSelectedFile());
+		PaletteManager.loadFromFile(getValue());
 	}
 
 	public void refreshFiles() {
@@ -73,19 +76,14 @@ public class PaletteLoadConfig extends SelectConfig {
 	}
 
 	@Nullable
-	public String getSelectedFile() {
+	@Override
+	public String getValue() {
 		if (availablePalettes.isEmpty())
 			return null;
 		while (index < availablePalettes.size())
 			index += availablePalettes.size();
 		index %= availablePalettes.size();
 		return availablePalettes.get(index);
-	}
-
-	@Override
-	protected ITextComponent getState() {
-		String filename = getSelectedFile();
-		return new StringTextComponent(filename != null ? filename : "none");
 	}
 
 	@Override

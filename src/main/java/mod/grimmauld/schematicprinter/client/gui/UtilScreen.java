@@ -33,7 +33,7 @@ public abstract class UtilScreen extends Screen {
 	@Override
 	public void render(MatrixStack ms, int mouseX, int mouseY, float partialTicks) {
 		renderBackground(ms);
-		renderWindow(ms, mouseX, mouseY, partialTicks);
+		renderWindow(ms);
 		for (Widget widget : widgets) {
 			widget.render(ms, mouseX, mouseY, partialTicks);
 			widget.renderToolTip(ms, mouseX, mouseY);
@@ -99,5 +99,5 @@ public abstract class UtilScreen extends Screen {
 		return false;
 	}
 
-	protected abstract void renderWindow(MatrixStack ms, int mouseX, int mouseY, float partialTicks);
+	protected abstract void renderWindow(MatrixStack ms);
 }

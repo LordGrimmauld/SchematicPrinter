@@ -39,7 +39,7 @@ public class TERenderHelper {
 				} catch (Exception var13) {
 					iterator.remove();
 					ResourceLocation teName = tileEntity.getType().getRegistryName();
-					SchematicPrinter.LOGGER.error("TileEntity " + (teName != null ? teName.toString() : "null") + " didn't want to render while moved.\n", var13);
+					SchematicPrinter.LOGGER.error("TileEntity " + (teName != null ? teName.toString() : "null") + " didn't want to render on a schematic.\n", var13);
 				}
 			}
 		}

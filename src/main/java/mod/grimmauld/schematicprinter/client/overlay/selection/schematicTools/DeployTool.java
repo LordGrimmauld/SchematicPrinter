@@ -1,7 +1,9 @@
 package mod.grimmauld.schematicprinter.client.overlay.selection.schematicTools;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import mcp.MethodsReturnNonnullByDefault;
 import mod.grimmauld.schematicprinter.client.SchematicPrinterClient;
+import mod.grimmauld.schematicprinter.client.overlay.SelectOverlay;
 import mod.grimmauld.schematicprinter.client.schematics.SchematicMetaInf;
 import mod.grimmauld.schematicprinter.render.SuperRenderTypeBuffer;
 import net.minecraft.client.Minecraft;
@@ -9,11 +11,20 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.util.text.ITextComponent;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class DeployTool extends SchematicToolBase {
+	public DeployTool(ITextComponent description) {
+		super(description);
+	}
+
 	@Override
-	public void init() {
-		super.init();
+	public void onOverlayOpen() {
+		super.onOverlayOpen();
 		selectionRange = -1;
 	}
 
@@ -75,16 +86,16 @@ public class DeployTool extends SchematicToolBase {
 	}
 
 	@Override
-	public boolean handleActivated() {
+	public void onEnter(SelectOverlay screen) {
+		super.onEnter(screen);
 		SchematicMetaInf inf = schematicHandler.activeSchematic;
 		if (selectedPos == null || inf == null)
-			return super.handleActivated();
+			return;
 		Vector3d center = inf.bounds
 			.getCenter();
 		BlockPos target = selectedPos.add(-((int) center.x), 0, -((int) center.z));
 		inf.transformation
 			.moveTo(target);
 		schematicHandler.deploy();
-		return true;
 	}
 }

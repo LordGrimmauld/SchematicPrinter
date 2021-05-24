@@ -4,7 +4,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import mcp.MethodsReturnNonnullByDefault;
 import mod.grimmauld.schematicprinter.SchematicPrinter;
 import mod.grimmauld.schematicprinter.client.overlay.SelectOverlay;
-import mod.grimmauld.schematicprinter.client.overlay.selection.SelectEventListener;
+import mod.grimmauld.schematicprinter.client.overlay.selection.SelectItem;
 import mod.grimmauld.schematicprinter.client.overlay.selection.SelectOpenOverlay;
 import mod.grimmauld.schematicprinter.client.overlay.selection.config.BlockPosSelectConfig;
 import mod.grimmauld.schematicprinter.client.overlay.selection.config.BooleanSelectConfig;
@@ -19,6 +19,7 @@ import mod.grimmauld.schematicprinter.client.overlay.selection.tools.BoxBuildToo
 import mod.grimmauld.schematicprinter.client.overlay.selection.tools.BuildToolStateSupplier;
 import mod.grimmauld.schematicprinter.client.overlay.selection.tools.CircleBuildTool;
 import mod.grimmauld.schematicprinter.client.overlay.selection.tools.SphereBuildTool;
+import mod.grimmauld.schematicprinter.client.printer.Printer;
 import mod.grimmauld.schematicprinter.client.schematics.SchematicHandler;
 import mod.grimmauld.schematicprinter.render.SuperRenderTypeBuffer;
 import net.minecraft.client.Minecraft;
@@ -109,14 +110,15 @@ public class SchematicPrinterClient {
 
 		SelectOverlay schematicOverlay = new SelectOverlay(translationComponent("schematics"))
 			.addOption(new SchematicSelectConfig(translationComponent("schematic.selected")))
-			.addOption(new SelectEventListener(translationComponent("schematic.tool.deploy"), new DeployTool()))
-			.addOption(new SelectEventListener(translationComponent("schematic.tool.clear"), new ClearSchematicSelectionTool()))
-			.addOption(new SelectEventListener(translationComponent("schematic.tool.flip"), new FlipTool()))
-			.addOption(new SelectEventListener(translationComponent("schematic.tool.rotate"), new RotateTool()))
-			.addOption(new SelectEventListener(translationComponent("schematic.tool.move_xz"), new MoveTool()))
-			.addOption(new SelectEventListener(translationComponent("schematic.tool.move_y"), new MoveVerticalTool()))
-			.addOption(new SelectEventListener(translationComponent("schematic.tool.print"), new InstantPrintTool()))
+			.addOption(new DeployTool(translationComponent("schematic.tool.deploy")))
+			.addOption(new ClearSchematicSelectionTool(translationComponent("schematic.tool.clear")))
+			.addOption(new FlipTool(translationComponent("schematic.tool.flip")))
+			.addOption(new RotateTool(translationComponent("schematic.tool.rotate")))
+			.addOption(new MoveTool(translationComponent("schematic.tool.move_xz")))
+			.addOption(new MoveVerticalTool(translationComponent("schematic.tool.move_y")))
+			.addOption(new InstantPrintTool(translationComponent("schematic.tool.print")))
 			.register();
+
 
 		SelectOverlay paletteEditOverlay = new SelectOverlay(translationComponent("palette_edit"))
 			.addOption(new PaletteEditTool(translationComponent("palette.modify")))
@@ -124,12 +126,21 @@ public class SchematicPrinterClient {
 			.addOption(new PaletteSaveTool(translationComponent("palette.save")))
 			.addOption(new PaletteLoadConfig(translationComponent("palette.load")))
 			.register();
+		SelectItem paletteEditOverlayOpen = new SelectOpenOverlay(translationComponent("palette"), paletteEditOverlay).shouldRenderPalette(true);
+
+		SelectOverlay printerSettingsOverlay = new SelectOverlay(translationComponent("printer_settings_edit"))
+			.addOption(new BooleanSelectConfig(translationComponent("replace_tes"), Printer.shouldReplaceTEs)
+				.registerChangeListener(config -> Printer.shouldReplaceTEs = config.getValue()))
+			.addOption(new BooleanSelectConfig(translationComponent("replace_blocks"), Printer.shouldReplaceBlocks)
+				.registerChangeListener(config -> Printer.shouldReplaceBlocks = config.getValue()))
+			.register();
 
 
 		SelectOverlay boxTools = new SelectOverlay(translationComponent("tools.box"))
 			.addOption(pos1)
 			.addOption(pos2)
 			.addOption(new SelectSchematicSave(translationComponent("schematic.save"), pos1, pos2))
+			.addOption(paletteEditOverlayOpen)
 			.addOption(new BoxBuildTool(translationComponent("tools.clear"), BuildToolStateSupplier.CLEAR, pos1, pos2))
 			.addOption(new BoxBuildTool(translationComponent("tools.fill_palette"), BuildToolStateSupplier.FILL_FROM_PALETTE, pos1, pos2))
 			.register();
@@ -141,6 +152,7 @@ public class SchematicPrinterClient {
 			.addOption(pos1)
 			.addOption(radius)
 			.addOption(height)
+			.addOption(paletteEditOverlayOpen)
 			.addOption(new CircleBuildTool(translationComponent("tools.fill_palette"), pos1, radius, height, BuildToolStateSupplier.FILL_FROM_PALETTE))
 			.addOption(new CircleBuildTool(translationComponent("tools.clear"), pos1, radius, height, BuildToolStateSupplier.CLEAR))
 			.register();
@@ -148,6 +160,7 @@ public class SchematicPrinterClient {
 		SelectOverlay sphereTools = new SelectOverlay(translationComponent("tools.sphere"))
 			.addOption(pos1)
 			.addOption(radius)
+			.addOption(paletteEditOverlayOpen)
 			.addOption(new SphereBuildTool(translationComponent("tools.fill_palette"), pos1, radius, BuildToolStateSupplier.FILL_FROM_PALETTE))
 			.addOption(new SphereBuildTool(translationComponent("tools.clear"), pos1, radius, BuildToolStateSupplier.CLEAR))
 			.register();
@@ -155,9 +168,8 @@ public class SchematicPrinterClient {
 
 		SelectOverlay overlayMain = new SelectOverlay(translationComponent("overlay.main"))
 			.configureDirectOpen(true)
-			.addOption(new BooleanSelectConfig(translationComponent("test_bool"), false))
 			.addOption(new SelectOpenOverlay(translationComponent("schematics"), schematicOverlay))
-			.addOption(new SelectOpenOverlay(translationComponent("palette"), paletteEditOverlay))
+			.addOption(new SelectOpenOverlay(translationComponent("settings"), printerSettingsOverlay))
 			.addOption(new SelectOpenOverlay(translationComponent("box"), boxTools))
 			.addOption(new SelectOpenOverlay(translationComponent("round"), circleTools))
 			.addOption(new SelectOpenOverlay(translationComponent("sphere"), sphereTools))

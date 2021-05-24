@@ -1,7 +1,7 @@
 package mod.grimmauld.schematicprinter.client.overlay.selection;
 
 import mcp.MethodsReturnNonnullByDefault;
-import mod.grimmauld.schematicprinter.client.overlay.selection.config.BlockPosSelectConfig;
+import mod.grimmauld.schematicprinter.client.overlay.selection.config.SelectConfig;
 import mod.grimmauld.schematicprinter.client.overlay.selection.tools.AbstractSelectTool;
 import mod.grimmauld.schematicprinter.util.outline.AABBOutline;
 import mod.grimmauld.schematicprinter.util.outline.Outline;
@@ -17,10 +17,10 @@ import java.util.stream.Stream;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public abstract class SelectBox extends AbstractSelectTool {
-	protected final BlockPosSelectConfig pos1;
-	protected final BlockPosSelectConfig pos2;
+	protected final SelectConfig<BlockPos> pos1;
+	protected final SelectConfig<BlockPos> pos2;
 
-	public SelectBox(ITextComponent description, int color, BlockPosSelectConfig pos1, BlockPosSelectConfig pos2) {
+	public SelectBox(ITextComponent description, int color, SelectConfig<BlockPos> pos1, SelectConfig<BlockPos> pos2) {
 		super(description, color);
 
 		this.pos1 = pos1;
@@ -30,7 +30,7 @@ public abstract class SelectBox extends AbstractSelectTool {
 		this.pos2.registerChangeListener(this::invalidateOutline);
 	}
 
-	public SelectBox(ITextComponent description, BlockPosSelectConfig pos1, BlockPosSelectConfig pos2) {
+	public SelectBox(ITextComponent description, SelectConfig<BlockPos> pos1, SelectConfig<BlockPos> pos2) {
 		this(description, 0x6886c5, pos1, pos2);
 	}
 
@@ -49,8 +49,8 @@ public abstract class SelectBox extends AbstractSelectTool {
 
 	@Nullable
 	protected AxisAlignedBB getBoundingBox() {
-		BlockPos blockPos1 = pos1.getPos();
-		BlockPos blockPos2 = pos2.getPos();
+		BlockPos blockPos1 = pos1.getValue();
+		BlockPos blockPos2 = pos2.getValue();
 
 		if (blockPos1 == null || blockPos2 == null)
 			return null;
@@ -62,9 +62,9 @@ public abstract class SelectBox extends AbstractSelectTool {
 		AxisAlignedBB bb = getBoundingBox();
 		if (bb == null)
 			return Stream.empty();
-		return IntStream.range(((int) bb.minX), ((int) bb.maxX)).boxed().flatMap(x ->
-			IntStream.range(((int) bb.minZ), ((int) bb.maxZ)).boxed().flatMap(z ->
-				IntStream.range(((int) bb.minY), ((int) bb.maxY)).mapToObj(y ->
+		return IntStream.range(((int) bb.minY), ((int) bb.maxY)).boxed().flatMap(y ->
+			IntStream.range(((int) bb.minX), ((int) bb.maxX)).boxed().flatMap(x ->
+				IntStream.range(((int) bb.minZ), ((int) bb.maxZ)).mapToObj(z ->
 					new BlockPos(x, y, z))));
 	}
 }

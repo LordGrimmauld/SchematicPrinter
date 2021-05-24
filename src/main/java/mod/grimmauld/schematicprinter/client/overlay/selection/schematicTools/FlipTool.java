@@ -1,7 +1,9 @@
 package mod.grimmauld.schematicprinter.client.overlay.selection.schematicTools;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import mcp.MethodsReturnNonnullByDefault;
 import mod.grimmauld.schematicprinter.client.ExtraTextures;
+import mod.grimmauld.schematicprinter.client.overlay.SelectOverlay;
 import mod.grimmauld.schematicprinter.client.schematics.SchematicMetaInf;
 import mod.grimmauld.schematicprinter.render.SuperRenderTypeBuffer;
 import mod.grimmauld.schematicprinter.util.outline.AABBOutline;
@@ -9,20 +11,29 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.text.ITextComponent;
 
-public class FlipTool extends PlacementToolBase {
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
+public class FlipTool extends SchematicToolBase {
+
 	private final AABBOutline outline = new AABBOutline(new AxisAlignedBB(BlockPos.ZERO));
 
+	public FlipTool(ITextComponent description) {
+		super(description);
+	}
+
 	@Override
-	public void init() {
-		super.init();
+	public void onOverlayOpen() {
+		super.onOverlayOpen();
 		renderSelectedFace = false;
 	}
 
 	@Override
-	public boolean handleActivated() {
+	public void onEnter(SelectOverlay screen) {
 		mirror();
-		return true;
 	}
 
 	@Override

@@ -1,20 +1,30 @@
 package mod.grimmauld.schematicprinter.client.overlay.selection.schematicTools;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import mcp.MethodsReturnNonnullByDefault;
+import mod.grimmauld.schematicprinter.client.overlay.SelectOverlay;
 import mod.grimmauld.schematicprinter.client.schematics.SchematicMetaInf;
 import mod.grimmauld.schematicprinter.render.SuperRenderTypeBuffer;
 import mod.grimmauld.schematicprinter.util.outline.LineOutline;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.text.ITextComponent;
 
-public class RotateTool extends PlacementToolBase {
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
+public class RotateTool extends SchematicToolBase {
 	private final LineOutline line = new LineOutline();
 
+	public RotateTool(ITextComponent description) {
+		super(description);
+	}
+
 	@Override
-	public boolean handleActivated() {
+	public void onEnter(SelectOverlay screen) {
 		if (schematicHandler.activeSchematic != null)
 			schematicHandler.activeSchematic.transformation
 				.rotate90(true);
-		return true;
 	}
 
 	@Override

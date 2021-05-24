@@ -3,8 +3,6 @@ package mod.grimmauld.schematicprinter.util.outline;
 
 import net.minecraft.util.math.vector.Vector3d;
 
-import java.util.Objects;
-
 public class LineVecPair {
 	public Vector3d first;
 	public Vector3d second;
@@ -25,7 +23,7 @@ public class LineVecPair {
 
 	@Override
 	public int hashCode() {
-		return (this.first == null ? 0 : this.first.hashCode()) ^ (this.second == null ? 0 : this.second.hashCode());
+		return (this.first == null ? 0 : this.first.hashCode() << 5) ^ (this.second == null ? 0 : this.second.hashCode());
 	}
 
 	@Override
@@ -33,7 +31,8 @@ public class LineVecPair {
 		if (this == o) return true;
 		if (!(o instanceof LineVecPair)) return false;
 		LineVecPair that = (LineVecPair) o;
-		return Objects.equals(first, that.first) && Objects.equals(second, that.second);
+		return first.x == that.first.x && first.y == that.first.y && first.z == that.first.z &&
+			second.x == that.second.x && second.y == that.second.y && second.z == that.second.z;
 	}
 
 	@Override
