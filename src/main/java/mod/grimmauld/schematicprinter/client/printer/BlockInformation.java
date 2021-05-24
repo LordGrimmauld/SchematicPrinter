@@ -12,8 +12,8 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public class BlockInformation implements Comparable<BlockInformation> {
 	public final BlockState state;
 	public final BlockPos pos;
-	public boolean overrideAir = true;
 	private final LazyValue<String> printCommand;
+	public boolean overrideAir = true;
 
 	public BlockInformation(BlockPos pos, BlockState state) {
 		this.pos = pos;

@@ -10,8 +10,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class IconButton extends Widget {
-	private final GuiIcons icon;
 	protected final List<ITextComponent> toolTip = new LinkedList<>();
+	private final GuiIcons icon;
 	protected boolean pressed;
 
 	public IconButton(int x, int y, GuiIcons icon) {

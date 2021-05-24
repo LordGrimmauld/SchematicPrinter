@@ -1,23 +1,31 @@
 package mod.grimmauld.schematicprinter.client;
 
 import mcp.MethodsReturnNonnullByDefault;
-import mod.grimmauld.schematicprinter.client.overlay.SelectOverlay;
-import mod.grimmauld.schematicprinter.client.overlay.selection.SelectItem;
-import mod.grimmauld.schematicprinter.client.palette.PaletteOverlay;
+import mod.grimmauld.schematicprinter.SchematicPrinter;
+import mod.grimmauld.schematicprinter.client.api.Keyboard;
+import mod.grimmauld.schematicprinter.client.api.RegisterOverlayEvent;
+import mod.grimmauld.schematicprinter.client.api.overlay.SelectOverlay;
 import mod.grimmauld.schematicprinter.util.KeybindHelper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+
+import static mod.grimmauld.schematicprinter.util.TextHelper.translationComponent;
+import static mod.grimmauld.schematicprinter.util.TextHelper.translationKey;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT)
 @MethodsReturnNonnullByDefault
@@ -26,7 +34,28 @@ import java.util.Set;
 public class Manager {
 	public static final boolean shouldCloseOnEsc = false;
 	public static final Set<SelectOverlay> overlays = new HashSet<>();
-	public static final PaletteOverlay paletteOverlay = new PaletteOverlay();
+
+	public static KeyBinding TOOL_CONFIG;
+	public static KeyBinding TOOL_DEACTIVATE;
+	public static KeyBinding TOOL_SELECT;
+	public static KeyBinding TOOL_ACTIVATE;
+
+	public static void init(FMLClientSetupEvent event) {
+		TOOL_DEACTIVATE = new KeyBinding(translationKey("keybind.menu"), Keyboard.O.getKeycode(), SchematicPrinter.NAME);
+		TOOL_SELECT = new KeyBinding(translationKey("keybind.select_tool"), Keyboard.LALT.getKeycode(), SchematicPrinter.NAME);
+		TOOL_ACTIVATE = new KeyBinding(translationKey("keybind.activate_tool"), Keyboard.ENTER.getKeycode(), SchematicPrinter.NAME);
+		TOOL_CONFIG = new KeyBinding(translationKey("keybind.config"), Keyboard.CTRL.getKeycode(), SchematicPrinter.NAME);
+
+		ClientRegistry.registerKeyBinding(TOOL_DEACTIVATE);
+		ClientRegistry.registerKeyBinding(TOOL_SELECT);
+		ClientRegistry.registerKeyBinding(TOOL_ACTIVATE);
+		ClientRegistry.registerKeyBinding(TOOL_CONFIG);
+
+		SelectOverlay overlayMain = new SelectOverlay(translationComponent("overlay.main"))
+			.configureDirectOpen(true);
+		FMLJavaModLoadingContext.get().getModEventBus().post(new RegisterOverlayEvent(overlayMain));
+		overlayMain.register();
+	}
 
 	@SubscribeEvent
 	public static void onKeyPressed(InputEvent.KeyInputEvent event) {
@@ -37,7 +66,7 @@ public class Manager {
 
 	private static void testKeybinds(InputEvent event) {
 		Optional<SelectOverlay> activeOverlay = getActiveOverlay();
-		if (KeybindHelper.eventActivatesKeybind(event, SchematicPrinterClient.TOOL_ACTIVATE)) {
+		if (KeybindHelper.eventActivatesKeybind(event, TOOL_ACTIVATE)) {
 			SelectOverlay activeSelectOverlay = activeOverlay.orElse(null);
 			if (activeSelectOverlay != null) {
 				activeSelectOverlay.select();
@@ -63,7 +92,7 @@ public class Manager {
 		if (event.getType() != RenderGameOverlayEvent.ElementType.ALL)
 			return;
 		overlays.stream().filter(SelectOverlay::isVisible).forEach(selectScreen -> selectScreen.render(event));
-		getActiveOverlay().flatMap(SelectOverlay::getActiveSelectItem).filter(SelectItem::shouldRenderPalette).ifPresent(selectItem -> paletteOverlay.render(event));
+		getActiveOverlay().flatMap(SelectOverlay::getActiveSelectItem).ifPresent(selectItem -> selectItem.renderExtra(event));
 	}
 
 	@SubscribeEvent
