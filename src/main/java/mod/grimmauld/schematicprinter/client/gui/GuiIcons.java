@@ -23,7 +23,7 @@ public class GuiIcons {
 
 	@OnlyIn(Dist.CLIENT)
 	public void bind() {
-		Minecraft.getInstance().getTextureManager().bindTexture(ICON_ATLAS);
+		Minecraft.getInstance().getTextureManager().bind(ICON_ATLAS);
 	}
 
 	@OnlyIn(Dist.CLIENT)

@@ -9,7 +9,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 public class BuildToolStateSupplier {
-	public static final Supplier<Optional<BlockState>> CLEAR = () -> Optional.of(Blocks.AIR.getDefaultState());
+	public static final Supplier<Optional<BlockState>> CLEAR = () -> Optional.of(Blocks.AIR.defaultBlockState());
 	private static final Minecraft MC = Minecraft.getInstance();
-	public static final Supplier<Optional<BlockState>> FILL_FROM_PALETTE = () -> PaletteManager.getRandomBlockState(MC.world);
+	public static final Supplier<Optional<BlockState>> FILL_FROM_PALETTE = () -> PaletteManager.getRandomBlockState(MC.level);
 }

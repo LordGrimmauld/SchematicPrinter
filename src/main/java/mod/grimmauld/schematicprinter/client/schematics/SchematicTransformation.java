@@ -32,8 +32,8 @@ public class SchematicTransformation {
 		int frontBack = settings.getMirror() == Mirror.FRONT_BACK ? -1 : 1;
 		this.getScaleFB().setStart((float) frontBack);
 		this.getScaleLR().setStart((float) leftRight);
-		this.xOrigin = bounds.getXSize() / 2.0D;
-		this.zOrigin = bounds.getZSize() / 2.0D;
+		this.xOrigin = bounds.getXsize() / 2.0D;
+		this.zOrigin = bounds.getZsize() / 2.0D;
 		int r = -(settings.getRotation().ordinal() * 90);
 		this.rotation.setStart((float) r);
 		Vector3d vec = this.fromAnchor(anchor);
@@ -43,7 +43,7 @@ public class SchematicTransformation {
 	}
 
 	public void applyGLTransformations(MatrixStack ms) {
-		float pt = Minecraft.getInstance().getRenderPartialTicks();
+		float pt = Minecraft.getInstance().getFrameTime();
 		ms.translate(this.x.get(pt), this.y.get(pt), this.z.get(pt));
 		Vector3d rotationOffset = this.getRotationOffset(true);
 		float fb = this.getScaleFB().get(pt);
@@ -51,7 +51,7 @@ public class SchematicTransformation {
 		float rot = this.rotation.get(pt) + (float) (fb < 0.0F && lr < 0.0F ? 180 : 0);
 		ms.translate(this.xOrigin, 0.0D, this.zOrigin);
 		ms.translate(rotationOffset.x, rotationOffset.y, rotationOffset.z);
-		ms.rotate(Vector3f.YP.rotationDegrees(rot));
+		ms.mulPose(Vector3f.YP.rotationDegrees(rot));
 		ms.translate(-rotationOffset.x, -rotationOffset.y, -rotationOffset.z);
 		ms.scale(Math.abs(fb), 1.0F, Math.abs(lr));
 		ms.translate(-this.xOrigin, 0.0D, -this.zOrigin);
@@ -75,13 +75,13 @@ public class SchematicTransformation {
 	}
 
 	public Vector3d toLocalSpace(Vector3d vec) {
-		float pt = Minecraft.getInstance().getRenderPartialTicks();
+		float pt = Minecraft.getInstance().getFrameTime();
 		Vector3d rotationOffset = this.getRotationOffset(true);
 		vec = vec.subtract(this.x.get(pt), this.y.get(pt), this.z.get(pt));
 		vec = vec.subtract(this.xOrigin + rotationOffset.x, 0.0D, this.zOrigin + rotationOffset.z);
 		vec = VecHelper.rotate(vec, -this.rotation.get(pt), Direction.Axis.Y);
 		vec = vec.add(rotationOffset.x, 0.0D, rotationOffset.z);
-		vec = vec.mul(this.getScaleFB().get(pt), 1.0D, this.getScaleLR().get(pt));
+		vec = vec.multiply(this.getScaleFB().get(pt), 1.0D, this.getScaleLR().get(pt));
 		vec = vec.add(this.xOrigin, 0.0D, this.zOrigin);
 		return vec;
 	}
@@ -131,7 +131,7 @@ public class SchematicTransformation {
 		Vector3d rotationOffset = this.getRotationOffset(false);
 		vec = vec.subtract(this.xOrigin, 0.0D, this.zOrigin);
 		vec = vec.subtract(rotationOffset.x, 0.0D, rotationOffset.z);
-		vec = vec.mul(this.getScaleFB().getTarget(), 1.0D, this.getScaleLR().getTarget());
+		vec = vec.multiply(this.getScaleFB().getTarget(), 1.0D, this.getScaleLR().getTarget());
 		vec = VecHelper.rotate(vec, this.rotation.getTarget(), Direction.Axis.Y);
 		vec = vec.add(this.xOrigin, 0.0D, this.zOrigin);
 		vec = vec.add(this.x.getTarget(), this.y.getTarget(), this.z.getTarget());
@@ -143,10 +143,10 @@ public class SchematicTransformation {
 		Vector3d rotationOffset = this.getRotationOffset(false);
 		vec = vec.subtract(this.xOrigin, 0.0D, this.zOrigin);
 		vec = vec.subtract(rotationOffset.x, 0.0D, rotationOffset.z);
-		vec = vec.mul(this.getScaleFB().getTarget(), 1.0D, this.getScaleLR().getTarget());
+		vec = vec.multiply(this.getScaleFB().getTarget(), 1.0D, this.getScaleLR().getTarget());
 		vec = VecHelper.rotate(vec, this.rotation.getTarget(), Direction.Axis.Y);
 		vec = vec.add(this.xOrigin, 0.0D, this.zOrigin);
-		return Vector3d.copy(pos.subtract(new BlockPos(vec.x, vec.y, vec.z)));
+		return Vector3d.atLowerCornerOf(pos.subtract(new BlockPos(vec.x, vec.y, vec.z)));
 	}
 
 	public int getRotationTarget() {
@@ -158,7 +158,7 @@ public class SchematicTransformation {
 	}
 
 	public float getCurrentRotation() {
-		float pt = Minecraft.getInstance().getRenderPartialTicks();
+		float pt = Minecraft.getInstance().getFrameTime();
 		return this.rotation.get(pt);
 	}
 

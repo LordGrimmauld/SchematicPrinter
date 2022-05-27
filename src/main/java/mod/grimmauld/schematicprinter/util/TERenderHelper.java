@@ -19,8 +19,8 @@ import java.util.Iterator;
 
 public class TERenderHelper {
 	public static void renderTileEntities(World world, Iterable<TileEntity> customRenderTEs, MatrixStack ms, MatrixStack localTransform, IRenderTypeBuffer buffer) {
-		float pt = Minecraft.getInstance().getRenderPartialTicks();
-		Matrix4f matrix = localTransform.getLast().getMatrix();
+		float pt = Minecraft.getInstance().getFrameTime();
+		Matrix4f matrix = localTransform.last().pose();
 		for (Iterator<TileEntity> iterator = customRenderTEs.iterator(); iterator.hasNext(); ) {
 			TileEntity tileEntity = iterator.next();
 			TileEntityRenderer<TileEntity> renderer = TileEntityRendererDispatcher.instance.getRenderer(tileEntity);
@@ -28,14 +28,14 @@ public class TERenderHelper {
 				iterator.remove();
 			} else {
 				try {
-					BlockPos pos = tileEntity.getPos();
-					ms.push();
+					BlockPos pos = tileEntity.getBlockPos();
+					ms.pushPose();
 					ms.translate(pos.getX(), pos.getY(), pos.getZ());
 					Vector4f vec = new Vector4f((float) pos.getX() + 0.5F, (float) pos.getY() + 0.5F, (float) pos.getZ() + 0.5F, 1.0F);
 					vec.transform(matrix);
-					BlockPos lightPos = new BlockPos(vec.getX(), vec.getY(), vec.getZ());
-					renderer.render(tileEntity, pt, ms, buffer, WorldRenderer.getCombinedLight(world, lightPos), OverlayTexture.NO_OVERLAY);
-					ms.pop();
+					BlockPos lightPos = new BlockPos(vec.x(), vec.y(), vec.z());
+					renderer.render(tileEntity, pt, ms, buffer, WorldRenderer.getLightColor(world, lightPos), OverlayTexture.NO_OVERLAY);
+					ms.popPose();
 				} catch (Exception var13) {
 					iterator.remove();
 					ResourceLocation teName = tileEntity.getType().getRegistryName();

@@ -38,7 +38,7 @@ public class DeployTool extends SchematicToolBase {
 				.length() / 2);
 			selectionRange = MathHelper.clamp(selectionRange, 1, 100);
 		}
-		selectIgnoreBlocks = TOOL_CONFIG.isPressed();
+		selectIgnoreBlocks = TOOL_CONFIG.consumeClick();
 		super.updateSelection();
 	}
 
@@ -50,9 +50,9 @@ public class DeployTool extends SchematicToolBase {
 		if (selectedPos == null || inf == null)
 			return;
 
-		ms.push();
+		ms.pushPose();
 		float pt = Minecraft.getInstance()
-			.getRenderPartialTicks();
+			.getFrameTime();
 		double x = MathHelper.lerp(pt, lastChasingSelectedPos.x, chasingSelectedPos.x);
 		double y = MathHelper.lerp(pt, lastChasingSelectedPos.y, chasingSelectedPos.y);
 		double z = MathHelper.lerp(pt, lastChasingSelectedPos.z, chasingSelectedPos.z);
@@ -61,20 +61,20 @@ public class DeployTool extends SchematicToolBase {
 		Vector3d rotationOffset = inf.transformation.getRotationOffset(true);
 		int centerX = (int) center.x;
 		int centerZ = (int) center.z;
-		double xOrigin = inf.bounds.getXSize() / 2f;
-		double zOrigin = inf.bounds.getZSize() / 2f;
+		double xOrigin = inf.bounds.getXsize() / 2f;
+		double zOrigin = inf.bounds.getZsize() / 2f;
 		Vector3d origin = new Vector3d(xOrigin, 0, zOrigin);
 
 		ms.translate(x - centerX, y, z - centerZ);
 		ms.translate(origin.x, origin.y, origin.z);
 		ms.translate(rotationOffset.x, rotationOffset.y, rotationOffset.z);
-		ms.rotate(Vector3f.YP.rotationDegrees(inf.transformation.getCurrentRotation()));
+		ms.mulPose(Vector3f.YP.rotationDegrees(inf.transformation.getCurrentRotation()));
 		ms.translate(-rotationOffset.x, -rotationOffset.y, -rotationOffset.z);
 		ms.translate(-origin.x, -origin.y, -origin.z);
 		inf.outline.render(ms, buffer);
 		inf.outline.getParams()
 			.clearTextures();
-		ms.pop();
+		ms.popPose();
 	}
 
 	@Override
@@ -94,7 +94,7 @@ public class DeployTool extends SchematicToolBase {
 			return;
 		Vector3d center = inf.bounds
 			.getCenter();
-		BlockPos target = selectedPos.add(-((int) center.x), 0, -((int) center.z));
+		BlockPos target = selectedPos.offset(-((int) center.x), 0, -((int) center.z));
 		inf.transformation
 			.moveTo(target);
 		schematicHandler.deploy();

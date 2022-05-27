@@ -32,7 +32,7 @@ public class SchematicRenderer {
 	}
 
 	private static int getLayerCount() {
-		return RenderType.getBlockRenderTypes()
+		return RenderType.chunkBufferLayers()
 			.size();
 	}
 
@@ -51,7 +51,7 @@ public class SchematicRenderer {
 		if (!active)
 			return;
 		Minecraft mc = Minecraft.getInstance();
-		if (mc.world == null || mc.player == null || !changed)
+		if (mc.level == null || mc.player == null || !changed)
 			return;
 
 		redraw(mc);
@@ -61,8 +61,8 @@ public class SchematicRenderer {
 	public void render(MatrixStack ms, SuperRenderTypeBuffer buffer) {
 		if (!active)
 			return;
-		buffer.getBuffer(RenderType.getSolid());
-		for (RenderType layer : RenderType.getBlockRenderTypes()) {
+		buffer.getBuffer(RenderType.solid());
+		for (RenderType layer : RenderType.chunkBufferLayers()) {
 			if (!usedBlockRenderLayers.contains(layer))
 				continue;
 			SuperByteBuffer superByteBuffer = bufferCache.get(layer);
@@ -77,20 +77,20 @@ public class SchematicRenderer {
 		startedBufferBuilders.clear();
 
 		final SchematicWorld blockAccess = schematic;
-		final BlockRendererDispatcher blockRendererDispatcher = minecraft.getBlockRendererDispatcher();
+		final BlockRendererDispatcher blockRendererDispatcher = minecraft.getBlockRenderer();
 
 		List<BlockState> blockstates = new LinkedList<>();
 		Map<RenderType, BufferBuilder> buffers = new HashMap<>();
 		MatrixStack ms = new MatrixStack();
 
-		BlockPos.getAllInBox(blockAccess.getBounds())
+		BlockPos.betweenClosedStream(blockAccess.getBounds())
 			.forEach(localPos -> {
-				ms.push();
+				ms.pushPose();
 				ms.translate(localPos.getX(), localPos.getY(), localPos.getZ());
-				BlockPos pos = localPos.add(anchor);
+				BlockPos pos = localPos.offset(anchor);
 				BlockState state = blockAccess.getBlockState(pos);
 
-				for (RenderType blockRenderLayer : RenderType.getBlockRenderTypes()) {
+				for (RenderType blockRenderLayer : RenderType.chunkBufferLayers()) {
 					if (!RenderTypeLookup.canRenderInLayer(state, blockRenderLayer))
 						continue;
 					ForgeHooksClient.setRenderLayer(blockRenderLayer);
@@ -101,22 +101,22 @@ public class SchematicRenderer {
 					if (startedBufferBuilders.add(blockRenderLayer))
 						bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
 					if (blockRendererDispatcher.renderModel(state, pos, blockAccess, ms, bufferBuilder, true,
-						minecraft.world.rand, EmptyModelData.INSTANCE)) {
+						minecraft.level.random, EmptyModelData.INSTANCE)) {
 						usedBlockRenderLayers.add(blockRenderLayer);
 					}
 					blockstates.add(state);
 				}
 
 				ForgeHooksClient.setRenderLayer(null);
-				ms.pop();
+				ms.popPose();
 			});
 
 		// finishDrawing
-		for (RenderType layer : RenderType.getBlockRenderTypes()) {
+		for (RenderType layer : RenderType.chunkBufferLayers()) {
 			if (!startedBufferBuilders.contains(layer))
 				continue;
 			BufferBuilder buf = buffers.get(layer);
-			buf.finishDrawing();
+			buf.end();
 			bufferCache.put(layer, new SuperByteBuffer(buf));
 		}
 	}

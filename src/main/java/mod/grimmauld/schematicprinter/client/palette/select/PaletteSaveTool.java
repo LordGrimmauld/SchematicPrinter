@@ -35,7 +35,7 @@ public class PaletteSaveTool extends SelectItem {
 		super.onEnter(screen);
 		if (MC.player == null)
 			return;
-		MC.displayGuiScreen(new StringPromptScreen(this::saveAs, translationComponent("screen.save_palette.title")));
+		MC.setScreen(new StringPromptScreen(this::saveAs, translationComponent("screen.save_palette.title")));
 	}
 
 	private void saveAs(String filename) {

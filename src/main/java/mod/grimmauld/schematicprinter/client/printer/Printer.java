@@ -40,26 +40,26 @@ public class Printer {
 	}
 
 	private static void print() {
-		if (MC.world == null || MC.player == null)
+		if (MC.level == null || MC.player == null)
 			return;
 
-		printQueue.runForN(inf -> MC.player.sendChatMessage(inf.getPrintCommand()), 512, Printer::canPlace);
+		printQueue.runForN(inf -> MC.player.chat(inf.getPrintCommand()), 512, Printer::canPlace);
 
 		if (printQueue.isEmpty())
 			stopPrinting();
 	}
 
 	private static boolean canPlace(BlockInformation inf) {
-		if (MC.world == null || MC.player == null)
+		if (MC.level == null || MC.player == null)
 			return false;
 		if (World.isOutsideBuildHeight(inf.pos))
 			return false;
 		// if (MC.world.getWorldInfo().getGenerator() == WorldType.DEBUG_ALL_BLOCK_STATES)
 		// 	return false;
-		BlockState replaceState = MC.world.getBlockState(inf.pos);
+		BlockState replaceState = MC.level.getBlockState(inf.pos);
 		if (replaceState.equals(inf.state))
 			return false;
-		if (!MC.world.placedBlockCollides(inf.state, inf.pos, ISelectionContext.forEntity(MC.player)))
+		if (!MC.level.isUnobstructed(inf.state, inf.pos, ISelectionContext.of(MC.player)))
 			return false;
 		if (replaceState.isAir())
 			return true;
@@ -89,13 +89,13 @@ public class Printer {
 				}
 				if (test.equals("parsing.int.expected")) {
 					MC.player
-						.sendChatMessage("/me is printing a structure with " + SchematicPrinter.NAME);
-					MC.player.sendChatMessage("/gamerule sendCommandFeedback false");
-					MC.player.sendChatMessage("/gamerule logAdminCommands false");
+						.chat("/me is printing a structure with " + SchematicPrinter.NAME);
+					MC.player.chat("/gamerule sendCommandFeedback false");
+					MC.player.chat("/gamerule logAdminCommands false");
 					event.setCanceled(true);
 					return;
 				}
-				Object[] args = ((TranslationTextComponent) iTextComponent).getFormatArgs();
+				Object[] args = ((TranslationTextComponent) iTextComponent).getArgs();
 				if (!receivedEndFeedback && test.equals("commands.gamerule.set") && args.length == 2
 					&& args[0].equals("sendCommandFeedback") && args[1].equals("true")) {
 					receivedEndFeedback = true;
@@ -110,9 +110,9 @@ public class Printer {
 	}
 
 	private static Stream<BlockInformation> getFilteredOf(Stream<BlockInformation> test) {
-		if (MC.world == null)
+		if (MC.level == null)
 			return Stream.empty();
-		return test.filter(inf -> MC.world.getBlockState(inf.pos) != inf.state);
+		return test.filter(inf -> MC.level.getBlockState(inf.pos) != inf.state);
 	}
 
 	@SubscribeEvent
@@ -129,9 +129,9 @@ public class Printer {
 		shouldPrint = true;
 		if (MC.player == null)
 			return;
-		MC.player.sendStatusMessage(new StringTextComponent("Printing Structure..."), true);
-		MC.player.sendChatMessage("/gamerule sendCommandFeedback false");
-		MC.player.sendChatMessage("/gamerule logAdminCommands false");
+		MC.player.displayClientMessage(new StringTextComponent("Printing Structure..."), true);
+		MC.player.chat("/gamerule sendCommandFeedback false");
+		MC.player.chat("/gamerule logAdminCommands false");
 	}
 
 	public static void stopPrinting() {
@@ -139,14 +139,14 @@ public class Printer {
 		printQueue.clear();
 		if (MC.player == null)
 			return;
-		MC.player.sendStatusMessage(new StringTextComponent("Printing done"), true);
-		MC.player.sendChatMessage("/gamerule logAdminCommands true");
-		MC.player.sendChatMessage("/gamerule sendCommandFeedback true");
+		MC.player.displayClientMessage(new StringTextComponent("Printing done"), true);
+		MC.player.chat("/gamerule logAdminCommands true");
+		MC.player.chat("/gamerule sendCommandFeedback true");
 		receivedEndFeedback = false;
 	}
 
 	public static void addAll(Stream<BlockInformation> blocks) {
-		if (MC.world == null)
+		if (MC.level == null)
 			return;
 		printQueue.addAll(blocks);
 	}

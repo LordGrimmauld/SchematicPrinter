@@ -21,7 +21,7 @@ public class PlacementDetectWorld extends SchematicWorld {
 	}
 
 	@Override
-	public boolean setBlockState(@Nonnull BlockPos pos, @Nonnull BlockState state, int arg2) {
+	public boolean setBlock(@Nonnull BlockPos pos, @Nonnull BlockState state, int arg2) {
 		pos = pos.subtract(anchor);
 		bufferedSchematic.add(new BlockInformation(pos, state).setOverrideAir(Printer.shouldReplaceBlocks));
 		return true;

@@ -55,7 +55,7 @@ public class SphereBuildTool extends AbstractSelectTool {
 			IntStream.range(-radius.getValue(), +radius.getValue()).boxed().flatMap(x ->
 				IntStream.range(-radius.getValue(), +radius.getValue())
 					.filter(z -> x * x + y * y + z * z < radius.getValue() * radius.getValue())
-					.mapToObj(z -> anchorPos.add(x, y, z))));
+					.mapToObj(z -> anchorPos.offset(x, y, z))));
 	}
 
 	@Override

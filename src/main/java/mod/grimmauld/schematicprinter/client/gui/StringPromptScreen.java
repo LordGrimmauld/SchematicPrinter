@@ -41,9 +41,9 @@ public class StringPromptScreen extends UtilScreen {
 
 		nameField = new TextFieldWidget(font, guiLeft + 49, guiTop + 26, 131, 10, StringTextComponent.EMPTY);
 		nameField.setTextColor(-1);
-		nameField.setDisabledTextColour(-1);
-		nameField.setEnableBackgroundDrawing(false);
-		nameField.setMaxStringLength(35);
+		nameField.setTextColorUneditable(-1);
+		nameField.setBordered(false);
+		nameField.setMaxLength(35);
 		nameField.changeFocus(true);
 
 		abort = new IconButton(guiLeft + 180, guiTop + 53, GuiIcons.I_TRASH);
@@ -66,7 +66,7 @@ public class StringPromptScreen extends UtilScreen {
 	@Override
 	public void renderWindow(MatrixStack ms) {
 		GuiTextures.SCHEMATIC_PROMPT.draw(ms, this, guiLeft, guiTop);
-		font.func_243246_a(ms, title, guiLeft + (sWidth / 2f) - (font.getStringWidth(title.getUnformattedComponentText()) / 2f), guiTop + 3,
+		font.drawShadow(ms, title, guiLeft + (sWidth / 2f) - (font.width(title.getContents()) / 2f), guiTop + 3,
 			0xffffff);
 	}
 
@@ -77,7 +77,7 @@ public class StringPromptScreen extends UtilScreen {
 			return true;
 		}
 		if (keyCode == 256 && this.shouldCloseOnEsc()) {
-			this.onClose();
+			this.removed();
 			return true;
 		}
 		return nameField.keyPressed(keyCode, p_keyPressed_2_, p_keyPressed_3_);
@@ -90,11 +90,11 @@ public class StringPromptScreen extends UtilScreen {
 			return true;
 		}
 		if (abort.isHovered() && MC.player != null) {
-			MC.player.closeScreen();
+			MC.player.closeContainer();
 			return true;
 		}
 		if (folderButton.isHovered()) {
-			Util.getOSType()
+			Util.getPlatform()
 				.openFile(Paths.get(FileHelper.schematicFilePath + "/")
 					.toFile());
 		}
@@ -102,8 +102,8 @@ public class StringPromptScreen extends UtilScreen {
 	}
 
 	private void confirm() {
-		onFinish.accept(nameField.getText());
+		onFinish.accept(nameField.getValue());
 		if (MC.player != null)
-			MC.player.closeScreen();
+			MC.player.closeContainer();
 	}
 }

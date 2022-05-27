@@ -63,12 +63,12 @@ public class CircleBuildTool extends AbstractSelectTool {
 		return IntStream.range(-radius.getValue(), +radius.getValue() + 1).boxed().flatMap(x ->
 			IntStream.range(-radius.getValue(), +radius.getValue() + 1)
 				.filter(z -> x * x + z * z - Math.abs(x) - Math.abs(z) < radius.getValue() * radius.getValue())
-				.mapToObj(z -> anchorPos.add(x, 0, z)));
+				.mapToObj(z -> anchorPos.offset(x, 0, z)));
 	}
 
 	@Override
 	protected Stream<BlockPos> getPositions() {
-		return IntStream.range(0, height.getValue()).boxed().flatMap(y -> getBaseLayerPositions().map(pos -> pos.add(0, y, 0)));
+		return IntStream.range(0, height.getValue()).boxed().flatMap(y -> getBaseLayerPositions().map(pos -> pos.offset(0, y, 0)));
 	}
 
 	@Override

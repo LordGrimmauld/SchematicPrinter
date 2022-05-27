@@ -44,7 +44,7 @@ public abstract class SelectBox extends AbstractSelectTool {
 		if (bb == null)
 			return outline;
 
-		return new AABBOutline(bb.grow(.01));
+		return new AABBOutline(bb.inflate(.01));
 	}
 
 	@Nullable
@@ -54,7 +54,7 @@ public abstract class SelectBox extends AbstractSelectTool {
 
 		if (blockPos1 == null || blockPos2 == null)
 			return null;
-		return new AxisAlignedBB(blockPos1, blockPos2).expand(1, 1, 1);
+		return new AxisAlignedBB(blockPos1, blockPos2).expandTowards(1, 1, 1);
 	}
 
 	@Override

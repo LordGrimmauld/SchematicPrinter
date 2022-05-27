@@ -57,13 +57,13 @@ public class SchematicWorld extends WrappedWorld implements IServerWorld {
 	}
 
 	@Override
-	public boolean addEntity(Entity entityIn) {
+	public boolean addFreshEntity(Entity entityIn) {
 		if (entityIn instanceof ItemFrameEntity)
-			((ItemFrameEntity) entityIn).getDisplayedItem()
+			((ItemFrameEntity) entityIn).getItem()
 				.setTag(null);
 		if (entityIn instanceof ArmorStandEntity) {
 			ArmorStandEntity armorStandEntity = (ArmorStandEntity) entityIn;
-			armorStandEntity.getEquipmentAndArmor()
+			armorStandEntity.getAllSlots()
 				.forEach(stack -> stack.setTag(null));
 		}
 
@@ -75,7 +75,7 @@ public class SchematicWorld extends WrappedWorld implements IServerWorld {
 	}
 
 	@Override
-	public TileEntity getTileEntity(BlockPos pos) {
+	public TileEntity getBlockEntity(BlockPos pos) {
 		if (isOutsideBuildHeight(pos))
 			return null;
 		if (tileEntities.containsKey(pos))
@@ -88,7 +88,7 @@ public class SchematicWorld extends WrappedWorld implements IServerWorld {
 			try {
 				TileEntity tileEntity = blockState.createTileEntity(this);
 				if (tileEntity != null) {
-					tileEntity.setWorldAndPos(this, pos);
+					tileEntity.setLevelAndPosition(this, pos);
 					tileEntities.put(pos, tileEntity);
 					renderedTileEntities.add(tileEntity);
 				}
@@ -104,15 +104,15 @@ public class SchematicWorld extends WrappedWorld implements IServerWorld {
 	public BlockState getBlockState(BlockPos globalPos) {
 		BlockPos pos = globalPos.subtract(anchor);
 
-		if (pos.getY() - bounds.minY == -1 && !renderMode)
-			return Blocks.GRASS_BLOCK.getDefaultState();
-		if (getBounds().isVecInside(pos) && blocks.containsKey(pos)) {
+		if (pos.getY() - bounds.y0 == -1 && !renderMode)
+			return Blocks.GRASS_BLOCK.defaultBlockState();
+		if (getBounds().isInside(pos) && blocks.containsKey(pos)) {
 			BlockState blockState = blocks.get(pos);
-			if (blockState.func_235903_d_(BlockStateProperties.LIT).isPresent())
-				blockState = blockState.with(BlockStateProperties.LIT, false);
+			if (blockState.getOptionalValue(BlockStateProperties.LIT).isPresent())
+				blockState = blockState.setValue(BlockStateProperties.LIT, false);
 			return blockState;
 		}
-		return Blocks.AIR.getDefaultState();
+		return Blocks.AIR.defaultBlockState();
 	}
 
 	public Map<BlockPos, BlockState> getBlockMap() {
@@ -125,62 +125,62 @@ public class SchematicWorld extends WrappedWorld implements IServerWorld {
 	}
 
 	@Override
-	public int getLightFor(LightType lightTypeIn, BlockPos blockPosIn) {
+	public int getBrightness(LightType lightTypeIn, BlockPos blockPosIn) {
 		return 10;
 	}
 
 	@Override
-	public List<Entity> getEntitiesInAABBexcluding(@Nullable Entity arg0, AxisAlignedBB arg1, @Nullable Predicate<? super Entity> arg2) {
+	public List<Entity> getEntities(@Nullable Entity arg0, AxisAlignedBB arg1, @Nullable Predicate<? super Entity> arg2) {
 		return Collections.emptyList();
 	}
 
 	@Override
-	public <T extends Entity> List<T> getEntitiesWithinAABB(Class<? extends T> arg0, AxisAlignedBB arg1,
+	public <T extends Entity> List<T> getEntitiesOfClass(Class<? extends T> arg0, AxisAlignedBB arg1,
 															@Nullable Predicate<? super T> arg2) {
 		return Collections.emptyList();
 	}
 
 	@Override
-	public List<? extends PlayerEntity> getPlayers() {
+	public List<? extends PlayerEntity> players() {
 		return Collections.emptyList();
 	}
 
 	@Override
-	public int getSkylightSubtracted() {
+	public int getSkyDarken() {
 		return 0;
 	}
 
 	@Override
-	public boolean hasBlockState(BlockPos pos, Predicate<BlockState> predicate) {
+	public boolean isStateAtPosition(BlockPos pos, Predicate<BlockState> predicate) {
 		return predicate.test(getBlockState(pos));
 	}
 
 	@Override
 	public boolean destroyBlock(BlockPos arg0, boolean arg1) {
-		return setBlockState(arg0, Blocks.AIR.getDefaultState(), 3);
+		return setBlock(arg0, Blocks.AIR.defaultBlockState(), 3);
 	}
 
 	@Override
 	public boolean removeBlock(BlockPos arg0, boolean arg1) {
-		return setBlockState(arg0, Blocks.AIR.getDefaultState(), 3);
+		return setBlock(arg0, Blocks.AIR.defaultBlockState(), 3);
 	}
 
 	@Override
-	public boolean setBlockState(BlockPos pos, BlockState arg1, int arg2) {
+	public boolean setBlock(BlockPos pos, BlockState arg1, int arg2) {
 		pos = pos.subtract(anchor);
-		bounds.expandTo(new MutableBoundingBox(pos, pos.add(1, 1, 1)));
+		bounds.expand(new MutableBoundingBox(pos, pos.offset(1, 1, 1)));
 		blocks.put(pos, arg1);
 		return true;
 	}
 
 	@Override
-	public ITickList<Block> getPendingBlockTicks() {
-		return EmptyTickList.get();
+	public ITickList<Block> getBlockTicks() {
+		return EmptyTickList.empty();
 	}
 
 	@Override
-	public ITickList<Fluid> getPendingFluidTicks() {
-		return EmptyTickList.get();
+	public ITickList<Fluid> getLiquidTicks() {
+		return EmptyTickList.empty();
 	}
 
 	public MutableBoundingBox getBounds() {

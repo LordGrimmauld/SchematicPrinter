@@ -33,11 +33,11 @@ public class PaletteEditTool extends SelectItem {
 		super.onEnter(screen);
 
 		BlockPos hit = RaycastHelper.getFocusedPosition();
-		if (hit == null || MC.player == null || MC.world == null)
+		if (hit == null || MC.player == null || MC.level == null)
 			return;
 
-		boolean sneaking = MC.player.isSneaking();
-		BlockState state = MC.world.getBlockState(hit);
+		boolean sneaking = MC.player.isShiftKeyDown();
+		BlockState state = MC.level.getBlockState(hit);
 
 		if (sneaking && PaletteManager.containsState(state))
 			PaletteManager.removeFromPalette(state);
@@ -46,7 +46,7 @@ public class PaletteEditTool extends SelectItem {
 		else if (PaletteManager.containsBlock(state.getBlock()))
 			PaletteManager.removeFromPalette(state.getBlock());
 		else
-			PaletteManager.addToPalette(state.getBlock().getDefaultState());
+			PaletteManager.addToPalette(state.getBlock().defaultBlockState());
 	}
 
 
@@ -54,7 +54,7 @@ public class PaletteEditTool extends SelectItem {
 	public void onScroll(InputEvent.MouseScrollEvent event) {
 		super.onScroll(event);
 
-		if (TOOL_CONFIG.isKeyDown()) {
+		if (TOOL_CONFIG.isDown()) {
 			this.modifyPalette((int) Math.signum(event.getScrollDelta()));
 			event.setCanceled(true);
 		}
@@ -65,14 +65,14 @@ public class PaletteEditTool extends SelectItem {
 			return;
 
 		BlockPos hit = RaycastHelper.getFocusedPosition();
-		if (hit == null || MC.player == null || MC.world == null)
+		if (hit == null || MC.player == null || MC.level == null)
 			return;
 
-		boolean sneaking = MC.player.isSneaking();
-		BlockState state = MC.world.getBlockState(hit);
+		boolean sneaking = MC.player.isShiftKeyDown();
+		BlockState state = MC.level.getBlockState(hit);
 
 		if (amount > 0) {
-			PaletteManager.increaseWeight(sneaking ? state : state.getBlock().getDefaultState(), amount);
+			PaletteManager.increaseWeight(sneaking ? state : state.getBlock().defaultBlockState(), amount);
 			return;
 		}
 		if (sneaking) {

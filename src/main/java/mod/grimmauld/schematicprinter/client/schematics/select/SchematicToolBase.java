@@ -58,7 +58,7 @@ public abstract class SchematicToolBase extends SelectItem {
 		if (selectedPos == null)
 			return;
 		lastChasingSelectedPos = chasingSelectedPos;
-		Vector3d target = Vector3d.copy(selectedPos);
+		Vector3d target = Vector3d.atLowerCornerOf(selectedPos);
 		if (target.distanceTo(chasingSelectedPos) < 1 / 512f) {
 			chasingSelectedPos = target;
 			return;
@@ -93,32 +93,32 @@ public abstract class SchematicToolBase extends SelectItem {
 		// Select location at distance
 		if (selectIgnoreBlocks) {
 			float pt = Minecraft.getInstance()
-				.getRenderPartialTicks();
+				.getFrameTime();
 			selectedPos = new BlockPos(player.getEyePosition(pt)
-				.add(player.getLookVec()
+				.add(player.getLookAngle()
 					.scale(selectionRange)));
 			if (snap)
-				lastChasingSelectedPos = chasingSelectedPos = Vector3d.copy(selectedPos);
+				lastChasingSelectedPos = chasingSelectedPos = Vector3d.atLowerCornerOf(selectedPos);
 			return;
 		}
 
 		// Select targeted Block
 		selectedPos = null;
-		BlockRayTraceResult trace = RaycastHelper.rayTraceRange(player.world, player, 75);
+		BlockRayTraceResult trace = RaycastHelper.rayTraceRange(player.level, player, 75);
 		if (trace.getType() != RayTraceResult.Type.BLOCK)
 			return;
 
-		BlockPos hit = new BlockPos(trace.getHitVec());
-		boolean replaceable = player.world.getBlockState(hit)
+		BlockPos hit = new BlockPos(trace.getLocation());
+		boolean replaceable = player.level.getBlockState(hit)
 			.getMaterial()
 			.isReplaceable();
-		if (trace.getFace()
+		if (trace.getDirection()
 			.getAxis()
 			.isVertical() && !replaceable)
-			hit = hit.offset(trace.getFace());
+			hit = hit.relative(trace.getDirection());
 		selectedPos = hit;
 		if (snap)
-			lastChasingSelectedPos = chasingSelectedPos = Vector3d.copy(selectedPos);
+			lastChasingSelectedPos = chasingSelectedPos = Vector3d.atLowerCornerOf(selectedPos);
 	}
 
 	public void renderTool(MatrixStack ms, SuperRenderTypeBuffer buffer) {
@@ -133,13 +133,13 @@ public abstract class SchematicToolBase extends SelectItem {
 		SchematicMetaInf inf = schematicHandler.activeSchematic;
 		if (!schematicHandler.isDeployed() || inf == null)
 			return;
-		ms.push();
+		ms.pushPose();
 		AABBOutline outline = inf.outline;
 		if (renderSelectedFace) {
 			outline.getParams()
 				.highlightFace(selectedFace)
 				.withFaceTextures(ExtraTextures.CHECKERED,
-					TOOL_CONFIG.isKeyDown() ? ExtraTextures.HIGHLIGHT_CHECKERED : ExtraTextures.CHECKERED);
+					TOOL_CONFIG.isDown() ? ExtraTextures.HIGHLIGHT_CHECKERED : ExtraTextures.CHECKERED);
 		}
 		outline.getParams()
 			.colored(0x6886c5)
@@ -148,13 +148,13 @@ public abstract class SchematicToolBase extends SelectItem {
 		outline.render(ms, buffer);
 		outline.getParams()
 			.clearTextures();
-		ms.pop();
+		ms.popPose();
 	}
 
 	@Override
 	public void onScroll(InputEvent.MouseScrollEvent event) {
 		super.onScroll(event);
-		if (TOOL_CONFIG.isKeyDown())
+		if (TOOL_CONFIG.isDown())
 			event.setCanceled(handleMouseWheel(event.getScrollDelta()));
 	}
 

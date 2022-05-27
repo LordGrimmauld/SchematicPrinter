@@ -66,7 +66,7 @@ public abstract class UtilScreen extends Screen {
 				return true;
 		}
 		if (character == 'e')
-			onClose();
+			removed();
 		return super.charTyped(character, code);
 	}
 

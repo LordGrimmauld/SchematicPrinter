@@ -15,7 +15,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public class TextHelper {
 	public static void sendStatus(@Nullable PlayerEntity player, String key, Object... args) {
 		if (player != null)
-			player.sendStatusMessage(new TranslationTextComponent(translationKey(key), args), true);
+			player.displayClientMessage(new TranslationTextComponent(translationKey(key), args), true);
 	}
 
 	public static String translationKey(String key) {

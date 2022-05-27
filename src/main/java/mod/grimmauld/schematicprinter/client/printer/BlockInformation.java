@@ -23,7 +23,7 @@ public class BlockInformation implements Comparable<BlockInformation> {
 	}
 
 	public String getPrintCommand() {
-		return printCommand.getValue();
+		return printCommand.get();
 	}
 
 	@Override

@@ -60,17 +60,17 @@ public class FlipTool extends SchematicToolBase {
 			return;
 		}
 
-		Direction facing = selectedFace.rotateY();
+		Direction facing = selectedFace.getClockWise();
 		AxisAlignedBB bounds = inf.bounds;
 
-		Vector3d directionVec = Vector3d.copy(Direction.getFacingFromAxis(Direction.AxisDirection.POSITIVE, facing.getAxis())
-			.getDirectionVec());
-		Vector3d boundsSize = new Vector3d(bounds.getXSize(), bounds.getYSize(), bounds.getZSize());
-		Vector3d vec = boundsSize.mul(directionVec);
+		Vector3d directionVec = Vector3d.atLowerCornerOf(Direction.get(Direction.AxisDirection.POSITIVE, facing.getAxis())
+			.getNormal());
+		Vector3d boundsSize = new Vector3d(bounds.getXsize(), bounds.getYsize(), bounds.getZsize());
+		Vector3d vec = boundsSize.multiply(directionVec);
 		bounds = bounds.contract(vec.x, vec.y, vec.z)
-			.grow(1 - directionVec.x, 1 - directionVec.y, 1 - directionVec.z);
-		bounds = bounds.offset(directionVec.scale(.5f)
-			.mul(boundsSize));
+			.inflate(1 - directionVec.x, 1 - directionVec.y, 1 - directionVec.z);
+		bounds = bounds.move(directionVec.scale(.5f)
+			.multiply(boundsSize));
 
 		outline.setBounds(bounds);
 		ExtraTextures tex = ExtraTextures.CHECKERED;

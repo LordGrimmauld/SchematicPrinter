@@ -6,7 +6,7 @@ license="MIT"
 [[mods]]
     modId="schematicprinter"
     version="${file.jarVersion}"
-    displayName="ModID"
+    displayName="Schematic Printer"
     #updateJSONURL=""
     authors="Grimmauld"
     description='''

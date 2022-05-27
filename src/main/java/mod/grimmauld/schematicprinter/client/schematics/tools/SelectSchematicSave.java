@@ -39,7 +39,7 @@ public class SelectSchematicSave extends SelectBox {
 		super.onEnter(screen);
 		if (MC.player == null)
 			return;
-		MC.displayGuiScreen(new StringPromptScreen(this::saveAs, translationComponent("screen.save_schematic.title")));
+		MC.setScreen(new StringPromptScreen(this::saveAs, translationComponent("screen.save_schematic.title")));
 	}
 
 	private void saveAs(String filename) {
@@ -48,7 +48,7 @@ public class SelectSchematicSave extends SelectBox {
 			TextHelper.sendStatus(MC.player, "schematic.save_no_name");
 			return;
 		}
-		if (MC.world == null) {
+		if (MC.level == null) {
 			TextHelper.sendStatus(MC.player, "schematic.save_no_world");
 			return;
 		}
@@ -58,10 +58,10 @@ public class SelectSchematicSave extends SelectBox {
 			return;
 		}
 		BlockPos origin = new BlockPos(bb.minX, bb.minY, bb.minZ);
-		BlockPos bounds = new BlockPos(bb.getXSize(), bb.getYSize(), bb.getZSize());
+		BlockPos bounds = new BlockPos(bb.getXsize(), bb.getYsize(), bb.getZsize());
 		Template t = new Template();
 
-		t.takeBlocksFromWorld(MC.world, origin, bounds, true, Blocks.AIR);
+		t.fillFromWorld(MC.level, origin, bounds, true, Blocks.AIR);
 
 		FileHelper.createFolderIfMissing(FileHelper.schematicFilePath);
 		filename = FileHelper.findFirstValidFilename(filename, FileHelper.schematicFilePath, "nbt");
@@ -71,7 +71,7 @@ public class SelectSchematicSave extends SelectBox {
 		OutputStream outputStream = null;
 		try {
 			outputStream = Files.newOutputStream(path, StandardOpenOption.CREATE);
-			CompoundNBT nbttagcompound = t.writeToNBT(new CompoundNBT());
+			CompoundNBT nbttagcompound = t.save(new CompoundNBT());
 			CompressedStreamTools.writeCompressed(nbttagcompound, outputStream);
 		} catch (IOException e) {
 			e.printStackTrace();

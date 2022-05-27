@@ -26,7 +26,7 @@ import java.util.Vector;
 @ParametersAreNonnullByDefault
 public class SchematicHandler {
 	private final Vector<SchematicRenderer> renderers = new Vector<>(3);
-	private final LazyValue<PlacementDetectWorld> placementWorld = new LazyValue<>(() -> new PlacementDetectWorld(Minecraft.getInstance().world));
+	private final LazyValue<PlacementDetectWorld> placementWorld = new LazyValue<>(() -> new PlacementDetectWorld(Minecraft.getInstance().level));
 	@Nullable
 	public SchematicMetaInf activeSchematic;
 	private boolean deployed;
@@ -56,17 +56,17 @@ public class SchematicHandler {
 			return;
 
 		BlockPos size = activeSchematic.structure.getSize();
-		World clientWorld = Minecraft.getInstance().world;
+		World clientWorld = Minecraft.getInstance().level;
 		if (!size.equals(BlockPos.ZERO) && clientWorld != null) {
 			SchematicWorld w = new SchematicWorld(clientWorld);
 			SchematicWorld wMirroredFB = new SchematicWorld(clientWorld);
 			SchematicWorld wMirroredLR = new SchematicWorld(clientWorld);
 			PlacementSettings placementSettings = new PlacementSettings();
-			activeSchematic.structure.func_237144_a_(w, BlockPos.ZERO, placementSettings, w.getRandom());
+			activeSchematic.structure.placeInWorldChunk(w, BlockPos.ZERO, placementSettings, w.getRandom());
 			placementSettings.setMirror(Mirror.FRONT_BACK);
-			activeSchematic.structure.func_237144_a_(wMirroredFB, BlockPos.ZERO.east(size.getX() - 1), placementSettings, wMirroredFB.getRandom());
+			activeSchematic.structure.placeInWorldChunk(wMirroredFB, BlockPos.ZERO.east(size.getX() - 1), placementSettings, wMirroredFB.getRandom());
 			placementSettings.setMirror(Mirror.LEFT_RIGHT);
-			activeSchematic.structure.func_237144_a_(wMirroredLR, BlockPos.ZERO.south(size.getZ() - 1), placementSettings, wMirroredLR.getRandom());
+			activeSchematic.structure.placeInWorldChunk(wMirroredLR, BlockPos.ZERO.south(size.getZ() - 1), placementSettings, wMirroredLR.getRandom());
 			this.renderers.get(0).display(w);
 			this.renderers.get(1).display(wMirroredFB);
 			this.renderers.get(2).display(wMirroredLR);
@@ -74,15 +74,15 @@ public class SchematicHandler {
 	}
 
 	public void render(MatrixStack ms, SuperRenderTypeBuffer buffer) {
-		ms.push();
+		ms.pushPose();
 		getActiveTool().ifPresent(tool -> tool.renderTool(ms, buffer));
-		ms.pop();
+		ms.popPose();
 
 		if (this.active && activeSchematic != null) {
-			ms.push();
+			ms.pushPose();
 			activeSchematic.transformation.applyGLTransformations(ms);
 			if (!this.renderers.isEmpty()) {
-				float pt = Minecraft.getInstance().getRenderPartialTicks();
+				float pt = Minecraft.getInstance().getFrameTime();
 				boolean lr = activeSchematic.transformation.getScaleLR().get(pt) < 0.0F;
 				boolean fb = activeSchematic.transformation.getScaleFB().get(pt) < 0.0F;
 				if (lr && !fb) {
@@ -95,7 +95,7 @@ public class SchematicHandler {
 			}
 
 			getActiveTool().orElse(EmptySchematicTool.INSTANCE).renderOnSchematic(ms, buffer);
-			ms.pop();
+			ms.popPose();
 		}
 	}
 
@@ -114,9 +114,9 @@ public class SchematicHandler {
 		if (this.activeSchematic == null || !deployed)
 			return;
 
-		PlacementDetectWorld world = placementWorld.getValue();
+		PlacementDetectWorld world = placementWorld.get();
 		world.clearBuffer();
-		activeSchematic.structure.func_237144_a_(world, activeSchematic.transformation.getAnchor(), activeSchematic.transformation.toSettings(), world.getRandom());
+		activeSchematic.structure.placeInWorldChunk(world, activeSchematic.transformation.getAnchor(), activeSchematic.transformation.toSettings(), world.getRandom());
 		world.printBuffer();
 		quitSchematic();
 		Printer.startPrinting();

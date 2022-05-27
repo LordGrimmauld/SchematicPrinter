@@ -33,64 +33,64 @@ public class PaletteOverlay {
 	}
 
 	private void draw(MatrixStack ms) {
-		MainWindow window = MC.getMainWindow();
+		MainWindow window = MC.getWindow();
 
 		final int menuWidth = 198;
 		final int menuHeight = (int) (16 * (Math.ceil(PaletteManager.PALETTE.size() / 12.)) + 4);
 
-		ms.push();
+		ms.pushPose();
 		RenderSystem.enableBlend();
 		RenderSystem.color4f(1, 1, 1, 3 / 4f);
 
-		MC.getTextureManager().bindTexture(ExtraTextures.GRAY.getLocation());
-		ms.translate((window.getScaledWidth() - menuWidth) / 2f, 10, 0);
+		MC.getTextureManager().bind(ExtraTextures.GRAY.getLocation());
+		ms.translate((window.getGuiScaledWidth() - menuWidth) / 2f, 10, 0);
 		blit(ms, 0, 0, 0, 0, menuWidth, menuHeight, 16, 16);
 
 
-		BlockRendererDispatcher blockRenderer = MC.getBlockRendererDispatcher();
-		IRenderTypeBuffer.Impl buffer = MC.getRenderTypeBuffers()
-			.getBufferSource();
+		BlockRendererDispatcher blockRenderer = MC.getBlockRenderer();
+		IRenderTypeBuffer.Impl buffer = MC.renderBuffers()
+			.bufferSource();
 		int scale = 10;
 		ms.translate(18, 15, 10);
 		RenderSystem.enableRescaleNormal();
 		RenderSystem.enableAlphaTest();
-		RenderHelper.setupGui3DDiffuseLighting();
+		RenderHelper.setupFor3DItems();
 		RenderSystem.alphaFunc(516, 0.1F);
 		RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 		RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 
 
 		int xOffset = 0;
-		FontRenderer fr = MC.fontRenderer;
+		FontRenderer fr = MC.font;
 
 		for (Map.Entry<BlockState, Integer> entry : PaletteManager.PALETTE.entrySet()) {
 			BlockState state = entry.getKey();
-			RenderType renderType = RenderTypeLookup.func_239220_a_(state, state.isTransparent());
+			RenderType renderType = RenderTypeLookup.getRenderType(state, state.useShapeForLightOcclusion());
 			IVertexBuilder vb = buffer.getBuffer(renderType);
-			blockRenderer.getModelForState(state);
+			blockRenderer.getBlockModel(state);
 
-			ms.push();
+			ms.pushPose();
 			ms.scale(scale, scale, scale);
-			ms.rotate(Vector3f.XN.rotationDegrees(180));
-			ms.rotate(Vector3f.XP.rotationDegrees(22.5f));
-			ms.rotate(Vector3f.YP.rotationDegrees(180 + 45));
+			ms.mulPose(Vector3f.XN.rotationDegrees(180));
+			ms.mulPose(Vector3f.XP.rotationDegrees(22.5f));
+			ms.mulPose(Vector3f.YP.rotationDegrees(180 + 45));
 
 			Vector3d rgb = ColorHelper.getRGB(Minecraft.getInstance().getBlockColors().getColor(state, null, null, 0));
 
 			MC.getTextureManager()
-				.bindTexture(PlayerContainer.LOCATION_BLOCKS_TEXTURE);
-			blockRenderer.getBlockModelRenderer()
-				.renderModel(ms.getLast(), vb, state, MC.getBlockRendererDispatcher()
-						.getModelForState(state), (float) rgb.x, (float) rgb.y, (float) rgb.z,
+				.bind(PlayerContainer.BLOCK_ATLAS);
+			blockRenderer.getModelRenderer()
+				.renderModel(ms.last(), vb, state, MC.getBlockRenderer()
+						.getBlockModel(state), (float) rgb.x, (float) rgb.y, (float) rgb.z,
 					15728880, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
-			buffer.finish();
-			ms.pop();
-			ms.push();
+			buffer.endBatch();
+			ms.popPose();
+			ms.pushPose();
 			ms.translate(0, 0, 10);
 			String weight = String.valueOf(entry.getValue());
-			fr.renderString(weight, 2 - fr.getStringWidth(weight), -4, 16777215, true, ms.getLast().getMatrix(), buffer, false, 0, 15728880);
-			buffer.finish();
-			ms.pop();
+			fr.drawInBatch(weight, 2 - fr.width(weight), -4, 16777215, true, ms.last().pose(), buffer, false, 0, 15728880);
+			buffer.endBatch();
+			ms.popPose();
 
 			ms.translate(16, 0, 0);
 			xOffset++;
@@ -103,6 +103,6 @@ public class PaletteOverlay {
 
 		RenderSystem.disableAlphaTest();
 		RenderSystem.disableRescaleNormal();
-		ms.pop();
+		ms.popPose();
 	}
 }

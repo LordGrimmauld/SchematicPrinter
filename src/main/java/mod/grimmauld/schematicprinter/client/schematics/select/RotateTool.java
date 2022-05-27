@@ -41,7 +41,7 @@ public class RotateTool extends SchematicToolBase {
 		if (inf == null || !schematicHandler.isDeployed())
 			return;
 
-		double height = inf.bounds.getYSize() + Math.max(20, inf.bounds.getYSize());
+		double height = inf.bounds.getYsize() + Math.max(20, inf.bounds.getYsize());
 		Vector3d center = inf.bounds.getCenter()
 			.add(inf.transformation
 				.getRotationOffset(false));

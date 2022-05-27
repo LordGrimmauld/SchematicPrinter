@@ -34,7 +34,7 @@ public enum GuiTextures {
 
 	@OnlyIn(Dist.CLIENT)
 	public void bind() {
-		Minecraft.getInstance().getTextureManager().bindTexture(this.location);
+		Minecraft.getInstance().getTextureManager().bind(this.location);
 	}
 
 	@OnlyIn(Dist.CLIENT)

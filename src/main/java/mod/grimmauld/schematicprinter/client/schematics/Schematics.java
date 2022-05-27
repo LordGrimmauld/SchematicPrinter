@@ -25,7 +25,7 @@ public class Schematics {
 			stream = Files.newInputStream(Paths.get(FileHelper.schematicFilePath + "/" + schematic), StandardOpenOption.READ);
 			CompoundNBT nbt = CompressedStreamTools.readCompressed(stream);
 			Template t = new Template();
-			t.read(nbt);
+			t.load(nbt);
 			return Optional.of(t);
 		} catch (IOException ignored) {
 		} finally {

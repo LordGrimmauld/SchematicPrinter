@@ -58,21 +58,21 @@ public class SchematicPrinterClient {
 	@SubscribeEvent
 	public static void onRenderWorld(RenderWorldLastEvent event) {
 		MatrixStack ms = event.getMatrixStack();
-		ActiveRenderInfo info = Minecraft.getInstance().gameRenderer.getActiveRenderInfo();
-		Vector3d view = info.getProjectedView();
-		ms.push();
-		ms.translate(-view.getX(), -view.getY(), -view.getZ());
+		ActiveRenderInfo info = Minecraft.getInstance().gameRenderer.getMainCamera();
+		Vector3d view = info.getPosition();
+		ms.pushPose();
+		ms.translate(-view.x(), -view.y(), -view.z());
 		SuperRenderTypeBuffer buffer = SuperRenderTypeBuffer.getInstance();
 		schematicHandler.render(ms, buffer);
 		buffer.draw();
 
-		ms.pop();
+		ms.popPose();
 	}
 
 	@SubscribeEvent
 	public static void onRenderOverlay(RenderGameOverlayEvent.Post event) {
 		if (event.getType() == RenderGameOverlayEvent.ElementType.HOTBAR) {
-			schematicHandler.renderOverlay(new MatrixStack(), Minecraft.getInstance().getRenderTypeBuffers().getBufferSource());
+			schematicHandler.renderOverlay(new MatrixStack(), Minecraft.getInstance().renderBuffers().bufferSource());
 		}
 	}
 
