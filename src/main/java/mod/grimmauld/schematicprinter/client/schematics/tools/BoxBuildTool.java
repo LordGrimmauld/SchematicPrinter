@@ -1,14 +1,14 @@
 package mod.grimmauld.schematicprinter.client.schematics.tools;
 
-import mcp.MethodsReturnNonnullByDefault;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import mod.grimmauld.schematicprinter.client.SchematicPrinterClient;
 import mod.grimmauld.schematicprinter.client.printer.Printer;
 import mod.grimmauld.schematicprinter.client.schematics.select.SelectBox;
 import mod.grimmauld.sidebaroverlay.api.overlay.SelectOverlay;
 import mod.grimmauld.sidebaroverlay.api.overlay.selection.config.SelectConfig;
-import net.minecraft.block.BlockState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -20,12 +20,12 @@ import java.util.function.Supplier;
 public class BoxBuildTool extends SelectBox {
 	private final Supplier<Optional<BlockState>> stateGen;
 
-	public BoxBuildTool(ITextComponent description, Supplier<Optional<BlockState>> stateGen, int color, SelectConfig<BlockPos> pos1, SelectConfig<BlockPos> pos2) {
+	public BoxBuildTool(Component description, Supplier<Optional<BlockState>> stateGen, int color, SelectConfig<BlockPos> pos1, SelectConfig<BlockPos> pos2) {
 		super(description, color, pos1, pos2);
 		this.stateGen = stateGen;
 	}
 
-	public BoxBuildTool(ITextComponent description, Supplier<Optional<BlockState>> stateGen, SelectConfig<BlockPos> pos1, SelectConfig<BlockPos> pos2) {
+	public BoxBuildTool(Component description, Supplier<Optional<BlockState>> stateGen, SelectConfig<BlockPos> pos1, SelectConfig<BlockPos> pos2) {
 		super(description, pos1, pos2);
 		this.stateGen = stateGen;
 	}

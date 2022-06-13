@@ -1,26 +1,26 @@
 package mod.grimmauld.schematicprinter.util;
 
-import mcp.MethodsReturnNonnullByDefault;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.item.crafting.RecipeManager;
-import net.minecraft.scoreboard.Scoreboard;
-import net.minecraft.tags.ITagCollectionSupplier;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.DynamicRegistries;
-import net.minecraft.world.ITickList;
-import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.chunk.AbstractChunkProvider;
-import net.minecraft.world.storage.ISpawnWorldInfo;
-import net.minecraft.world.storage.MapData;
+import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.core.*;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.entity.LevelEntityGetter;
+import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.lighting.LevelLightEngine;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.world.scores.Scoreboard;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.chunk.ChunkSource;
+import net.minecraft.world.level.storage.WritableLevelData;
+import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
+import net.minecraft.world.ticks.LevelTickAccess;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -30,115 +30,220 @@ import java.util.function.Predicate;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class WrappedWorld extends World {
-	protected final World world;
+public class WrappedWorld extends Level {
+	protected final Level world;
+	protected ChunkSource chunkSource;
 
-	public WrappedWorld(World world) {
-		super((ISpawnWorldInfo) world.getLevelData(), world.dimension(), world.dimensionType(),
-			world::getProfiler, world.isClientSide, world.isDebug(), 0);
+	protected LevelEntityGetter<Entity> entityGetter = new DummyLevelEntityGetter<>();
+
+	public WrappedWorld(Level world) {
+		super((WritableLevelData) world.getLevelData(), world.dimension(), world.dimensionTypeRegistration(),
+				world::getProfiler, world.isClientSide, world.isDebug(), 0);
 		this.world = world;
 	}
 
-	public World getWorld() {
-		return this.world;
+	public void setChunkSource(ChunkSource source) {
+		this.chunkSource = source;
 	}
 
-	public BlockState getBlockState(BlockPos pos) {
-		return this.world.getBlockState(pos);
+	public Level getLevel() {
+		return world;
 	}
 
+	@Override
+	public LevelLightEngine getLightEngine() {
+		return world.getLightEngine();
+	}
+
+	@Override
+	public BlockState getBlockState(@Nullable BlockPos pos) {
+		return world.getBlockState(pos);
+	}
+
+	@Override
 	public boolean isStateAtPosition(BlockPos p_217375_1_, Predicate<BlockState> p_217375_2_) {
-		return this.world.isStateAtPosition(p_217375_1_, p_217375_2_);
+		return world.isStateAtPosition(p_217375_1_, p_217375_2_);
 	}
 
-	public TileEntity getBlockEntity(BlockPos pos) {
-		return this.world.getBlockEntity(pos);
+	@Override
+	@Nullable
+	public BlockEntity getBlockEntity(BlockPos pos) {
+		return world.getBlockEntity(pos);
 	}
 
+	@Override
 	public boolean setBlock(BlockPos pos, BlockState newState, int flags) {
-		return this.world.setBlock(pos, newState, flags);
+		return world.setBlock(pos, newState, flags);
 	}
 
+	@Override
 	public int getMaxLocalRawBrightness(BlockPos pos) {
 		return 15;
 	}
 
+	@Override
 	public void sendBlockUpdated(BlockPos pos, BlockState oldState, BlockState newState, int flags) {
-		this.world.sendBlockUpdated(pos, oldState, newState, flags);
-	}
-
-	public ITickList<Block> getBlockTicks() {
-		return this.world.getBlockTicks();
-	}
-
-	public ITickList<Fluid> getLiquidTicks() {
-		return this.world.getLiquidTicks();
+		world.sendBlockUpdated(pos, oldState, newState, flags);
 	}
 
 	@Override
-	public AbstractChunkProvider getChunkSource() {
-		return world.getChunkSource();
+	public LevelTickAccess<Block> getBlockTicks() {
+		return world.getBlockTicks();
 	}
 
-	public void levelEvent(@Nullable PlayerEntity player, int type, BlockPos pos, int data) {
+	@Override
+	public LevelTickAccess<Fluid> getFluidTicks() {
+		return world.getFluidTicks();
 	}
 
-	public List<? extends PlayerEntity> players() {
+	@Override
+	public ChunkSource getChunkSource() {
+		return chunkSource != null ? chunkSource : world.getChunkSource();
+	}
+
+	@Override
+	public void levelEvent(@Nullable Player player, int type, BlockPos pos, int data) {}
+
+	@Override
+	public List<? extends Player> players() {
 		return Collections.emptyList();
 	}
 
-	public void playSound(@Nullable PlayerEntity player, double x, double y, double z, SoundEvent soundIn, SoundCategory category, float volume, float pitch) {
-	}
+	@Override
+	public void playSound(@Nullable Player player, double x, double y, double z, SoundEvent soundIn,
+						  SoundSource category, float volume, float pitch) {}
 
-	public void playSound(@Nullable PlayerEntity p_217384_1_, Entity p_217384_2_, SoundEvent p_217384_3_, SoundCategory p_217384_4_, float p_217384_5_, float p_217384_6_) {
-	}
+	@Override
+	public void playSound(@Nullable Player p_217384_1_, Entity p_217384_2_, SoundEvent p_217384_3_,
+						  SoundSource p_217384_4_, float p_217384_5_, float p_217384_6_) {}
 
+	@Override
 	public Entity getEntity(int id) {
 		return null;
 	}
 
-	public MapData getMapData(String mapName) {
+	@Override
+	public MapItemSavedData getMapData(String mapName) {
 		return null;
 	}
 
+	@Override
 	public boolean addFreshEntity(Entity entityIn) {
-		entityIn.setLevel(this.world);
-		return this.world.addFreshEntity(entityIn);
-	}
-
-	public void setMapData(MapData mapDataIn) {
-	}
-
-	public int getFreeMapId() {
-		return 0;
-	}
-
-	public void destroyBlockProgress(int breakerId, BlockPos pos, int progress) {
-	}
-
-	public Scoreboard getScoreboard() {
-		return this.world.getScoreboard();
-	}
-
-	public RecipeManager getRecipeManager() {
-		return this.world.getRecipeManager();
-	}
-
-	public ITagCollectionSupplier getTagManager() {
-		return this.world.getTagManager();
-	}
-
-	public Biome getUncachedNoiseBiome(int p_225604_1_, int p_225604_2_, int p_225604_3_) {
-		return this.world.getUncachedNoiseBiome(p_225604_1_, p_225604_2_, p_225604_3_);
+		entityIn.level = world;
+		return world.addFreshEntity(entityIn);
 	}
 
 	@Override
-	public DynamicRegistries registryAccess() {
+	public void setMapData(String pMapId, MapItemSavedData pData) {}
+
+	@Override
+	public int getFreeMapId() {
+		return world.getFreeMapId();
+	}
+
+	@Override
+	public void destroyBlockProgress(int breakerId, BlockPos pos, int progress) {}
+
+	@Override
+	public Scoreboard getScoreboard() {
+		return world.getScoreboard();
+	}
+
+	@Override
+	public RecipeManager getRecipeManager() {
+		return world.getRecipeManager();
+	}
+
+	@Override
+	public Holder<Biome> getUncachedNoiseBiome(int p_225604_1_, int p_225604_2_, int p_225604_3_) {
+		return world.getUncachedNoiseBiome(p_225604_1_, p_225604_2_, p_225604_3_);
+	}
+
+	@Override
+	public RegistryAccess registryAccess() {
 		return world.registryAccess();
 	}
 
 	@Override
 	public float getShade(Direction p_230487_1_, boolean p_230487_2_) {
 		return world.getShade(p_230487_1_, p_230487_2_);
+	}
+
+	@Override
+	public boolean hasChunkAt(BlockPos p_175667_1_) {
+		return world.hasChunkAt(p_175667_1_);
+	}
+
+	@Override
+	public void updateNeighbourForOutputSignal(BlockPos p_175666_1_, Block p_175666_2_) {}
+
+	@Override
+	public void gameEvent(Entity pEntity, GameEvent pEvent, BlockPos pPos) {}
+
+	@Override
+	public String gatherChunkSourceStats() {
+		return world.gatherChunkSourceStats();
+	}
+
+	@Override
+	protected LevelEntityGetter<Entity> getEntities() {
+		return entityGetter;
+	}
+
+	// Intentionally copied from LevelHeightAccessor. Workaround for issues caused
+	// when other mods (such as Lithium)
+	// override the vanilla implementations in ways which cause WrappedWorlds to
+	// return incorrect, default height info.
+	// WrappedWorld subclasses should implement their own getMinBuildHeight and
+	// getHeight overrides where they deviate
+	// from the defaults for their dimension.
+
+	@Override
+	public int getMaxBuildHeight() {
+		return this.getMinBuildHeight() + this.getHeight();
+	}
+
+	@Override
+	public int getSectionsCount() {
+		return this.getMaxSection() - this.getMinSection();
+	}
+
+	@Override
+	public int getMinSection() {
+		return SectionPos.blockToSectionCoord(this.getMinBuildHeight());
+	}
+
+	@Override
+	public int getMaxSection() {
+		return SectionPos.blockToSectionCoord(this.getMaxBuildHeight() - 1) + 1;
+	}
+
+	@Override
+	public boolean isOutsideBuildHeight(BlockPos pos) {
+		return this.isOutsideBuildHeight(pos.getY());
+	}
+
+	@Override
+	public boolean isOutsideBuildHeight(int y) {
+		return y < this.getMinBuildHeight() || y >= this.getMaxBuildHeight();
+	}
+
+	@Override
+	public int getSectionIndex(int y) {
+		return this.getSectionIndexFromSectionY(SectionPos.blockToSectionCoord(y));
+	}
+
+	@Override
+	public int getSectionIndexFromSectionY(int sectionY) {
+		return sectionY - this.getMinSection();
+	}
+
+	@Override
+	public int getSectionYFromSectionIndex(int sectionIndex) {
+		return sectionIndex + this.getMinSection();
+	}
+
+	public Level getWorld() {
+		return this.world;
 	}
 }

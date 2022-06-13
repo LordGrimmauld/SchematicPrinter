@@ -1,6 +1,6 @@
 package mod.grimmauld.schematicprinter.client.schematics.tools;
 
-import mcp.MethodsReturnNonnullByDefault;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import mod.grimmauld.schematicprinter.client.SchematicPrinterClient;
 import mod.grimmauld.schematicprinter.client.printer.Printer;
 import mod.grimmauld.schematicprinter.util.outline.CollectionOutline;
@@ -8,9 +8,9 @@ import mod.grimmauld.sidebaroverlay.api.overlay.SelectOverlay;
 import mod.grimmauld.sidebaroverlay.api.overlay.selection.config.NonNullSelectConfig;
 import mod.grimmauld.sidebaroverlay.api.overlay.selection.config.SelectConfig;
 import mod.grimmauld.sidebaroverlay.util.outline.Outline;
-import net.minecraft.block.BlockState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 
 import javax.annotation.Nullable;
@@ -28,7 +28,7 @@ public class CircleBuildTool extends AbstractSelectTool {
 	private final NonNullSelectConfig<Integer> height;
 	private final Supplier<Optional<BlockState>> stateGen;
 
-	public CircleBuildTool(ITextComponent description, SelectConfig<BlockPos> anchor, NonNullSelectConfig<Integer> radius, NonNullSelectConfig<Integer> height, Supplier<Optional<BlockState>> stateGen) {
+	public CircleBuildTool(Component description, SelectConfig<BlockPos> anchor, NonNullSelectConfig<Integer> radius, NonNullSelectConfig<Integer> height, Supplier<Optional<BlockState>> stateGen) {
 		super(description, 0x6886c5);
 		this.anchor = anchor;
 		this.radius = radius;

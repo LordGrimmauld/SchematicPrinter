@@ -1,28 +1,33 @@
 package mod.grimmauld.schematicprinter.client.palette;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.platform.Lighting;
+import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Vector3f;
 import mod.grimmauld.schematicprinter.util.EmptyModelData;
 import mod.grimmauld.sidebaroverlay.render.ExtraTextures;
 import mod.grimmauld.sidebaroverlay.util.ColorHelper;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.inventory.container.PlayerContainer;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 
 import java.util.Map;
 
-import static net.minecraft.client.gui.AbstractGui.blit;
+import static net.minecraft.client.gui.GuiComponent.blit;
 
 public class PaletteOverlay {
+
 	private static final Minecraft MC = Minecraft.getInstance();
 
 
@@ -32,41 +37,38 @@ public class PaletteOverlay {
 		}
 	}
 
-	private void draw(MatrixStack ms) {
-		MainWindow window = MC.getWindow();
+	private void draw(PoseStack ms) {
+		Window window = MC.getWindow();
 
 		final int menuWidth = 198;
 		final int menuHeight = (int) (16 * (Math.ceil(PaletteManager.PALETTE.size() / 12.)) + 4);
 
 		ms.pushPose();
 		RenderSystem.enableBlend();
-		RenderSystem.color4f(1, 1, 1, 3 / 4f);
+		RenderSystem.setShaderColor(1, 1, 1, 3 / 4f);
 
-		MC.getTextureManager().bind(ExtraTextures.GRAY.getLocation());
+		RenderSystem.setShaderTexture(0, ExtraTextures.GRAY.getLocation());
 		ms.translate((window.getGuiScaledWidth() - menuWidth) / 2f, 10, 0);
 		blit(ms, 0, 0, 0, 0, menuWidth, menuHeight, 16, 16);
 
 
-		BlockRendererDispatcher blockRenderer = MC.getBlockRenderer();
-		IRenderTypeBuffer.Impl buffer = MC.renderBuffers()
-			.bufferSource();
+		BlockRenderDispatcher blockRenderer = MC.getBlockRenderer();
+		MultiBufferSource.BufferSource buffer = MC.renderBuffers()
+				.bufferSource();
 		int scale = 10;
 		ms.translate(18, 15, 10);
-		RenderSystem.enableRescaleNormal();
-		RenderSystem.enableAlphaTest();
-		RenderHelper.setupFor3DItems();
-		RenderSystem.alphaFunc(516, 0.1F);
+		Lighting.setupFor3DItems();
 		RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-		RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
 
 		int xOffset = 0;
-		FontRenderer fr = MC.font;
+		Font fr = MC.font;
 
 		for (Map.Entry<BlockState, Integer> entry : PaletteManager.PALETTE.entrySet()) {
 			BlockState state = entry.getKey();
-			RenderType renderType = RenderTypeLookup.getRenderType(state, state.useShapeForLightOcclusion());
-			IVertexBuilder vb = buffer.getBuffer(renderType);
+			RenderType renderType = ItemBlockRenderTypes.getRenderType(state, state.useShapeForLightOcclusion());
+			VertexConsumer vb = buffer.getBuffer(renderType);
 			blockRenderer.getBlockModel(state);
 
 			ms.pushPose();
@@ -75,14 +77,13 @@ public class PaletteOverlay {
 			ms.mulPose(Vector3f.XP.rotationDegrees(22.5f));
 			ms.mulPose(Vector3f.YP.rotationDegrees(180 + 45));
 
-			Vector3d rgb = ColorHelper.getRGB(Minecraft.getInstance().getBlockColors().getColor(state, null, null, 0));
+			Vec3 rgb = ColorHelper.getRGB(Minecraft.getInstance().getBlockColors().getColor(state, null, null, 0));
 
-			MC.getTextureManager()
-				.bind(PlayerContainer.BLOCK_ATLAS);
+			RenderSystem.setShaderTexture(0, InventoryMenu.BLOCK_ATLAS);
 			blockRenderer.getModelRenderer()
-				.renderModel(ms.last(), vb, state, MC.getBlockRenderer()
-						.getBlockModel(state), (float) rgb.x, (float) rgb.y, (float) rgb.z,
-					15728880, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
+					.renderModel(ms.last(), vb, state, MC.getBlockRenderer()
+									.getBlockModel(state), (float) rgb.x, (float) rgb.y, (float) rgb.z,
+							15728880, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
 			buffer.endBatch();
 			ms.popPose();
 			ms.pushPose();
@@ -101,8 +102,6 @@ public class PaletteOverlay {
 			}
 		}
 
-		RenderSystem.disableAlphaTest();
-		RenderSystem.disableRescaleNormal();
 		ms.popPose();
 	}
 }

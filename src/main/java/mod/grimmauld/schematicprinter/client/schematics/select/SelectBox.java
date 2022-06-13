@@ -1,13 +1,13 @@
 package mod.grimmauld.schematicprinter.client.schematics.select;
 
-import mcp.MethodsReturnNonnullByDefault;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import mod.grimmauld.schematicprinter.client.schematics.tools.AbstractSelectTool;
 import mod.grimmauld.sidebaroverlay.api.overlay.selection.config.SelectConfig;
 import mod.grimmauld.sidebaroverlay.util.outline.AABBOutline;
 import mod.grimmauld.sidebaroverlay.util.outline.Outline;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -20,7 +20,7 @@ public abstract class SelectBox extends AbstractSelectTool {
 	protected final SelectConfig<BlockPos> pos1;
 	protected final SelectConfig<BlockPos> pos2;
 
-	public SelectBox(ITextComponent description, int color, SelectConfig<BlockPos> pos1, SelectConfig<BlockPos> pos2) {
+	public SelectBox(Component description, int color, SelectConfig<BlockPos> pos1, SelectConfig<BlockPos> pos2) {
 		super(description, color);
 
 		this.pos1 = pos1;
@@ -30,7 +30,7 @@ public abstract class SelectBox extends AbstractSelectTool {
 		this.pos2.registerChangeListener(this::invalidateOutline);
 	}
 
-	public SelectBox(ITextComponent description, SelectConfig<BlockPos> pos1, SelectConfig<BlockPos> pos2) {
+	public SelectBox(Component description, SelectConfig<BlockPos> pos1, SelectConfig<BlockPos> pos2) {
 		this(description, 0x6886c5, pos1, pos2);
 	}
 
@@ -40,7 +40,7 @@ public abstract class SelectBox extends AbstractSelectTool {
 		if (outline != null)
 			return outline;
 
-		AxisAlignedBB bb = getBoundingBox();
+		AABB bb = getBoundingBox();
 		if (bb == null)
 			return outline;
 
@@ -48,18 +48,18 @@ public abstract class SelectBox extends AbstractSelectTool {
 	}
 
 	@Nullable
-	protected AxisAlignedBB getBoundingBox() {
+	protected AABB getBoundingBox() {
 		BlockPos blockPos1 = pos1.getValue();
 		BlockPos blockPos2 = pos2.getValue();
 
 		if (blockPos1 == null || blockPos2 == null)
 			return null;
-		return new AxisAlignedBB(blockPos1, blockPos2).expandTowards(1, 1, 1);
+		return new AABB(blockPos1, blockPos2).expandTowards(1, 1, 1);
 	}
 
 	@Override
 	protected Stream<BlockPos> getPositions() {
-		AxisAlignedBB bb = getBoundingBox();
+		AABB bb = getBoundingBox();
 		if (bb == null)
 			return Stream.empty();
 		return IntStream.range(((int) bb.minY), ((int) bb.maxY)).boxed().flatMap(y ->

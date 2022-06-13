@@ -1,7 +1,7 @@
 package mod.grimmauld.schematicprinter.client.schematics.tools;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import mcp.MethodsReturnNonnullByDefault;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import mod.grimmauld.schematicprinter.client.palette.PaletteManager;
 import mod.grimmauld.schematicprinter.client.printer.BlockInformation;
 import mod.grimmauld.sidebaroverlay.api.overlay.selection.SelectItem;
@@ -9,9 +9,9 @@ import mod.grimmauld.sidebaroverlay.api.overlay.selection.config.SelectConfig;
 import mod.grimmauld.sidebaroverlay.render.ExtraTextures;
 import mod.grimmauld.sidebaroverlay.render.SuperRenderTypeBuffer;
 import mod.grimmauld.sidebaroverlay.util.outline.Outline;
-import net.minecraft.block.BlockState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -26,7 +26,7 @@ public abstract class AbstractSelectTool extends SelectItem {
 	@Nullable
 	protected Outline outline;
 
-	public AbstractSelectTool(ITextComponent description, int color) {
+	public AbstractSelectTool(Component description, int color) {
 		super(description);
 		this.color = color;
 		outline = null;
@@ -36,7 +36,7 @@ public abstract class AbstractSelectTool extends SelectItem {
 	protected abstract Outline getUpdatedOutline();
 
 	@Override
-	public void renderActive(MatrixStack ms, SuperRenderTypeBuffer buffer) {
+	public void renderActive(PoseStack ms, SuperRenderTypeBuffer buffer) {
 		super.renderActive(ms, buffer);
 		outline = getUpdatedOutline();
 

@@ -17,7 +17,7 @@ version = "mc${minecraft_version}_v${mod_version}"
 group = "mod.grimmauld.${modid}"
 archivesBaseName = "${modid}"
 
-sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 
 minecraft {
@@ -29,7 +29,6 @@ minecraft {
             workingDirectory project.file('run')
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
-            jvmArgs "-XX:+UnlockCommercialFeatures"
 
             mods {
                 schematicprinter {
@@ -76,7 +75,7 @@ repositories {
 dependencies {
     implementation 'org.jetbrains:annotations:20.1.0'
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
-    implementation files ("sidebaroverlay-mc1.16.5_v0.0.1-deobf.jar")
+    implementation files ("sidebaroverlay-mc1.18.2_v0.0.1-deobf.jar")
 }
 
 jar {

@@ -1,11 +1,11 @@
 package mod.grimmauld.schematicprinter.client.palette.select;
 
-import mcp.MethodsReturnNonnullByDefault;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import mod.grimmauld.schematicprinter.client.SchematicPrinterClient;
 import mod.grimmauld.schematicprinter.client.palette.PaletteManager;
 import mod.grimmauld.sidebaroverlay.api.overlay.SelectOverlay;
 import mod.grimmauld.sidebaroverlay.api.overlay.selection.SelectItem;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -13,7 +13,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class PaletteClearTool extends SelectItem {
-	public PaletteClearTool(ITextComponent description) {
+	public PaletteClearTool(Component description) {
 		super(description);
 	}
 

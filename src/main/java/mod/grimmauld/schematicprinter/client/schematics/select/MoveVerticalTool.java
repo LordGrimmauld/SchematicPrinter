@@ -1,10 +1,10 @@
 package mod.grimmauld.schematicprinter.client.schematics.select;
 
 import mod.grimmauld.schematicprinter.client.schematics.SchematicMetaInf;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.network.chat.Component;
 
 public class MoveVerticalTool extends SchematicToolBase {
-	public MoveVerticalTool(ITextComponent description) {
+	public MoveVerticalTool(Component description) {
 		super(description);
 	}
 

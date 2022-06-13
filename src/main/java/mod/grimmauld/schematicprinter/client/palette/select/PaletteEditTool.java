@@ -1,6 +1,6 @@
 package mod.grimmauld.schematicprinter.client.palette.select;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import mod.grimmauld.schematicprinter.client.SchematicPrinterClient;
 import mod.grimmauld.schematicprinter.client.palette.PaletteManager;
 import mod.grimmauld.sidebaroverlay.api.overlay.SelectOverlay;
@@ -10,10 +10,10 @@ import mod.grimmauld.sidebaroverlay.render.SuperRenderTypeBuffer;
 import mod.grimmauld.sidebaroverlay.util.RaycastHelper;
 import mod.grimmauld.sidebaroverlay.util.outline.AABBOutline;
 import mod.grimmauld.sidebaroverlay.util.outline.Outline;
-import net.minecraft.block.BlockState;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 
@@ -24,7 +24,7 @@ import static mod.grimmauld.sidebaroverlay.Manager.TOOL_CONFIG;
 @ParametersAreNonnullByDefault
 public class PaletteEditTool extends SelectItem {
 
-	public PaletteEditTool(ITextComponent description) {
+	public PaletteEditTool(Component description) {
 		super(description);
 	}
 
@@ -83,14 +83,14 @@ public class PaletteEditTool extends SelectItem {
 	}
 
 	@Override
-	public void renderActive(MatrixStack ms, SuperRenderTypeBuffer buffer) {
+	public void renderActive(PoseStack ms, SuperRenderTypeBuffer buffer) {
 		super.renderActive(ms, buffer);
 
 		BlockPos pos = RaycastHelper.getFocusedPosition();
 		if (pos == null)
 			return;
 
-		Outline outline = new AABBOutline(new AxisAlignedBB(pos));
+		Outline outline = new AABBOutline(new AABB(pos));
 		outline.getParams()
 			.colored(11141290)
 			.withFaceTexture(ExtraTextures.CHECKERED)

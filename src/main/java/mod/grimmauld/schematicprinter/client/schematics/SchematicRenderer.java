@@ -1,20 +1,20 @@
 package mod.grimmauld.schematicprinter.client.schematics;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import mod.grimmauld.schematicprinter.util.TERenderHelper;
 import mod.grimmauld.sidebaroverlay.render.SuperByteBuffer;
 import mod.grimmauld.sidebaroverlay.render.SuperRenderTypeBuffer;
-import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockRendererDispatcher;
-import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.RenderTypeLookup;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.model.data.EmptyModelData;
-import org.lwjgl.opengl.GL11;
 
 import java.util.*;
 
@@ -58,7 +58,7 @@ public class SchematicRenderer {
 		changed = false;
 	}
 
-	public void render(MatrixStack ms, SuperRenderTypeBuffer buffer) {
+	public void render(PoseStack ms, SuperRenderTypeBuffer buffer) {
 		if (!active)
 			return;
 		buffer.getBuffer(RenderType.solid());
@@ -68,20 +68,23 @@ public class SchematicRenderer {
 			SuperByteBuffer superByteBuffer = bufferCache.get(layer);
 			superByteBuffer.renderInto(ms, buffer.getBuffer(layer));
 		}
-		TERenderHelper.renderTileEntities(schematic, schematic.getRenderedTileEntities(), ms, new MatrixStack(),
-			buffer);
+		TERenderHelper.renderTileEntities(schematic, schematic.getRenderedTileEntities(), ms, new PoseStack(),
+				buffer);
 	}
 
 	private void redraw(Minecraft minecraft) {
+		if (minecraft.level == null)
+			return;
+
 		usedBlockRenderLayers.clear();
 		startedBufferBuilders.clear();
 
 		final SchematicWorld blockAccess = schematic;
-		final BlockRendererDispatcher blockRendererDispatcher = minecraft.getBlockRenderer();
+		final BlockRenderDispatcher blockRendererDispatcher = minecraft.getBlockRenderer();
 
 		List<BlockState> blockstates = new LinkedList<>();
 		Map<RenderType, BufferBuilder> buffers = new HashMap<>();
-		MatrixStack ms = new MatrixStack();
+		PoseStack ms = new PoseStack();
 
 		BlockPos.betweenClosedStream(blockAccess.getBounds())
 			.forEach(localPos -> {
@@ -91,23 +94,22 @@ public class SchematicRenderer {
 				BlockState state = blockAccess.getBlockState(pos);
 
 				for (RenderType blockRenderLayer : RenderType.chunkBufferLayers()) {
-					if (!RenderTypeLookup.canRenderInLayer(state, blockRenderLayer))
+					if (!ItemBlockRenderTypes.canRenderInLayer(state, blockRenderLayer))
 						continue;
-					ForgeHooksClient.setRenderLayer(blockRenderLayer);
+					ForgeHooksClient.setRenderType(blockRenderLayer);
 					if (!buffers.containsKey(blockRenderLayer))
-						buffers.put(blockRenderLayer, new BufferBuilder(DefaultVertexFormats.BLOCK.getIntegerSize()));
+						buffers.put(blockRenderLayer, new BufferBuilder(DefaultVertexFormat.BLOCK.getIntegerSize()));
 
 					BufferBuilder bufferBuilder = buffers.get(blockRenderLayer);
 					if (startedBufferBuilders.add(blockRenderLayer))
-						bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-					if (blockRendererDispatcher.renderModel(state, pos, blockAccess, ms, bufferBuilder, true,
-						minecraft.level.random, EmptyModelData.INSTANCE)) {
-						usedBlockRenderLayers.add(blockRenderLayer);
-					}
+						bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.BLOCK);
+					blockRendererDispatcher.renderBreakingTexture(state, pos, blockAccess, ms, bufferBuilder, EmptyModelData.INSTANCE);
+					usedBlockRenderLayers.add(blockRenderLayer);
+
 					blockstates.add(state);
 				}
 
-				ForgeHooksClient.setRenderLayer(null);
+				ForgeHooksClient.setRenderType(null);
 				ms.popPose();
 			});
 

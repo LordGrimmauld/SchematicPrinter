@@ -1,26 +1,26 @@
 package mod.grimmauld.schematicprinter.util.outline;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import mod.grimmauld.sidebaroverlay.render.SuperRenderTypeBuffer;
 import mod.grimmauld.sidebaroverlay.util.outline.Outline;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.phys.Vec3;
 
 public class LineOutline extends Outline {
-	protected Vector3d start;
-	protected Vector3d end;
+	protected Vec3 start;
+	protected Vec3 end;
 
 	public LineOutline() {
-		this.start = Vector3d.ZERO;
-		this.end = Vector3d.ZERO;
+		this.start = Vec3.ZERO;
+		this.end = Vec3.ZERO;
 	}
 
-	public LineOutline set(Vector3d start, Vector3d end) {
+	public LineOutline set(Vec3 start, Vec3 end) {
 		this.start = start;
 		this.end = end;
 		return this;
 	}
 
-	public void render(MatrixStack ms, SuperRenderTypeBuffer buffer) {
+	public void render(PoseStack ms, SuperRenderTypeBuffer buffer) {
 		this.renderCuboidLine(ms, buffer, this.start, this.end);
 	}
 }

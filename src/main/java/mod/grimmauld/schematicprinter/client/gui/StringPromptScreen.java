@@ -1,12 +1,12 @@
 package mod.grimmauld.schematicprinter.client.gui;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import mcp.MethodsReturnNonnullByDefault;
+import com.mojang.blaze3d.vertex.PoseStack;
 import mod.grimmauld.schematicprinter.util.FileHelper;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.util.Util;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.Util;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -18,17 +18,17 @@ import static mod.grimmauld.schematicprinter.util.TextHelper.translationComponen
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class StringPromptScreen extends UtilScreen {
-	private final ITextComponent title;
-	private final ITextComponent abortLabel = translationComponent("screen.discard");
-	private final ITextComponent confirmLabel = translationComponent("screen.confirm");
-	private final ITextComponent folder = translationComponent("screen.open_folder");
+	private final Component title;
+	private final Component abortLabel = translationComponent("screen.discard");
+	private final Component confirmLabel = translationComponent("screen.confirm");
+	private final Component folder = translationComponent("screen.open_folder");
 	private final Consumer<String> onFinish;
-	private TextFieldWidget nameField;
+	private EditBox nameField;
 	private IconButton confirm;
 	private IconButton abort;
 	private IconButton folderButton;
 
-	public StringPromptScreen(Consumer<String> onFinish, ITextComponent title) {
+	public StringPromptScreen(Consumer<String> onFinish, Component title) {
 		this.onFinish = onFinish;
 		this.title = title;
 	}
@@ -39,7 +39,7 @@ public class StringPromptScreen extends UtilScreen {
 		GuiTextures background = GuiTextures.SCHEMATIC_PROMPT;
 		setWindowSize(background.width, background.height + 30);
 
-		nameField = new TextFieldWidget(font, guiLeft + 49, guiTop + 26, 131, 10, StringTextComponent.EMPTY);
+		nameField = new EditBox(font, guiLeft + 49, guiTop + 26, 131, 10, TextComponent.EMPTY);
 		nameField.setTextColor(-1);
 		nameField.setTextColorUneditable(-1);
 		nameField.setBordered(false);
@@ -64,7 +64,7 @@ public class StringPromptScreen extends UtilScreen {
 	}
 
 	@Override
-	public void renderWindow(MatrixStack ms) {
+	public void renderWindow(PoseStack ms) {
 		GuiTextures.SCHEMATIC_PROMPT.draw(ms, this, guiLeft, guiTop);
 		font.drawShadow(ms, title, guiLeft + (sWidth / 2f) - (font.width(title.getContents()) / 2f), guiTop + 3,
 			0xffffff);
@@ -85,15 +85,15 @@ public class StringPromptScreen extends UtilScreen {
 
 	@Override
 	public boolean mouseClicked(double x, double y, int button) {
-		if (confirm.isHovered()) {
+		if (confirm.isHoveredOrFocused()) {
 			confirm();
 			return true;
 		}
-		if (abort.isHovered() && MC.player != null) {
+		if (abort.isHoveredOrFocused() && MC.player != null) {
 			MC.player.closeContainer();
 			return true;
 		}
-		if (folderButton.isHovered()) {
+		if (folderButton.isHoveredOrFocused()) {
 			Util.getPlatform()
 				.openFile(Paths.get(FileHelper.schematicFilePath + "/")
 					.toFile());

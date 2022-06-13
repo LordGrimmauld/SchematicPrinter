@@ -1,9 +1,9 @@
 package mod.grimmauld.schematicprinter.client.printer;
 
-import mcp.MethodsReturnNonnullByDefault;
-import net.minecraft.block.BlockState;
-import net.minecraft.util.LazyValue;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.util.LazyLoadedValue;
+import net.minecraft.core.BlockPos;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -12,13 +12,13 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public class BlockInformation implements Comparable<BlockInformation> {
 	public final BlockState state;
 	public final BlockPos pos;
-	private final LazyValue<String> printCommand;
+	private final LazyLoadedValue<String> printCommand;
 	public boolean overrideAir = true;
 
 	public BlockInformation(BlockPos pos, BlockState state) {
 		this.pos = pos;
 		this.state = state;
-		this.printCommand = new LazyValue<>(() -> "/setblock " + pos.getX() + " " + pos.getY() + " "
+		this.printCommand = new LazyLoadedValue<>(() -> "/setblock " + pos.getX() + " " + pos.getY() + " "
 			+ pos.getZ() + " " + state.toString().replaceFirst("Block\\{", "").replaceFirst("}", ""));
 	}
 

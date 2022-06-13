@@ -1,6 +1,6 @@
 package mod.grimmauld.schematicprinter.client.palette.select;
 
-import mcp.MethodsReturnNonnullByDefault;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import mod.grimmauld.schematicprinter.client.SchematicPrinterClient;
 import mod.grimmauld.schematicprinter.client.gui.StringPromptScreen;
 import mod.grimmauld.schematicprinter.client.palette.PaletteManager;
@@ -8,8 +8,8 @@ import mod.grimmauld.schematicprinter.util.FileHelper;
 import mod.grimmauld.schematicprinter.util.TextHelper;
 import mod.grimmauld.sidebaroverlay.api.overlay.SelectOverlay;
 import mod.grimmauld.sidebaroverlay.api.overlay.selection.SelectItem;
-import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.nbt.NbtIo;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import org.apache.commons.io.IOUtils;
 
@@ -26,7 +26,7 @@ import static mod.grimmauld.schematicprinter.util.TextHelper.translationComponen
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class PaletteSaveTool extends SelectItem {
-	public PaletteSaveTool(ITextComponent description) {
+	public PaletteSaveTool(Component description) {
 		super(description);
 	}
 
@@ -53,7 +53,7 @@ public class PaletteSaveTool extends SelectItem {
 		OutputStream outputStream = null;
 		try {
 			outputStream = Files.newOutputStream(path, StandardOpenOption.CREATE);
-			CompressedStreamTools.writeCompressed(PaletteManager.serialize(), outputStream);
+			NbtIo.writeCompressed(PaletteManager.serialize(), outputStream);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {

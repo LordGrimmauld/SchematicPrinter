@@ -1,10 +1,10 @@
 package mod.grimmauld.schematicprinter.client.gui;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -14,12 +14,12 @@ import java.util.List;
 @OnlyIn(Dist.CLIENT)
 public abstract class UtilScreen extends Screen {
 	protected static final Minecraft MC = Minecraft.getInstance();
-	protected final List<Widget> widgets;
+	protected final List<AbstractWidget> widgets;
 	protected int sWidth, sHeight;
 	protected int guiLeft, guiTop;
 
 	protected UtilScreen() {
-		super(new StringTextComponent(""));
+		super(new TextComponent(""));
 		widgets = new ArrayList<>();
 	}
 
@@ -31,10 +31,10 @@ public abstract class UtilScreen extends Screen {
 	}
 
 	@Override
-	public void render(MatrixStack ms, int mouseX, int mouseY, float partialTicks) {
+	public void render(PoseStack ms, int mouseX, int mouseY, float partialTicks) {
 		renderBackground(ms);
 		renderWindow(ms);
-		for (Widget widget : widgets) {
+		for (AbstractWidget widget : widgets) {
 			widget.render(ms, mouseX, mouseY, partialTicks);
 			widget.renderToolTip(ms, mouseX, mouseY);
 		}
@@ -43,7 +43,7 @@ public abstract class UtilScreen extends Screen {
 	@Override
 	public boolean mouseClicked(double x, double y, int button) {
 		boolean result = false;
-		for (Widget widget : widgets) {
+		for (AbstractWidget widget : widgets) {
 			if (widget.mouseClicked(x, y, button))
 				result = true;
 		}
@@ -52,7 +52,7 @@ public abstract class UtilScreen extends Screen {
 
 	@Override
 	public boolean keyPressed(int code, int p_keyPressed_2_, int p_keyPressed_3_) {
-		for (Widget widget : widgets) {
+		for (AbstractWidget widget : widgets) {
 			if (widget.keyPressed(code, p_keyPressed_2_, p_keyPressed_3_))
 				return true;
 		}
@@ -61,7 +61,7 @@ public abstract class UtilScreen extends Screen {
 
 	@Override
 	public boolean charTyped(char character, int code) {
-		for (Widget widget : widgets) {
+		for (AbstractWidget widget : widgets) {
 			if (widget.charTyped(character, code))
 				return true;
 		}
@@ -72,7 +72,7 @@ public abstract class UtilScreen extends Screen {
 
 	@Override
 	public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
-		for (Widget widget : widgets) {
+		for (AbstractWidget widget : widgets) {
 			if (widget.mouseScrolled(mouseX, mouseY, delta))
 				return true;
 		}
@@ -82,7 +82,7 @@ public abstract class UtilScreen extends Screen {
 	@Override
 	public boolean mouseReleased(double x, double y, int button) {
 		boolean result = false;
-		for (Widget widget : widgets) {
+		for (AbstractWidget widget : widgets) {
 			if (widget.mouseReleased(x, y, button))
 				result = true;
 		}
@@ -99,5 +99,5 @@ public abstract class UtilScreen extends Screen {
 		return false;
 	}
 
-	protected abstract void renderWindow(MatrixStack ms);
+	protected abstract void renderWindow(PoseStack ms);
 }

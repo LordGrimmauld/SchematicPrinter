@@ -1,7 +1,7 @@
 package mod.grimmauld.schematicprinter.client;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import mcp.MethodsReturnNonnullByDefault;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import mod.grimmauld.schematicprinter.client.palette.PaletteOverlay;
 import mod.grimmauld.schematicprinter.client.palette.select.PaletteClearTool;
 import mod.grimmauld.schematicprinter.client.palette.select.PaletteEditTool;
@@ -22,13 +22,14 @@ import mod.grimmauld.sidebaroverlay.api.overlay.selection.config.IntSelectConfig
 import mod.grimmauld.sidebaroverlay.render.SuperRenderTypeBuffer;
 import mod.grimmauld.sidebaroverlay.util.TextHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.ActiveRenderInfo;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.client.Camera;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.ChatFormatting;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.client.event.RenderLevelLastEvent;
+import net.minecraftforge.client.gui.ForgeIngameGui;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
@@ -56,10 +57,10 @@ public class SchematicPrinterClient {
 	}
 
 	@SubscribeEvent
-	public static void onRenderWorld(RenderWorldLastEvent event) {
-		MatrixStack ms = event.getMatrixStack();
-		ActiveRenderInfo info = Minecraft.getInstance().gameRenderer.getMainCamera();
-		Vector3d view = info.getPosition();
+	public static void onRenderWorld(RenderLevelLastEvent event) {
+		PoseStack ms = event.getPoseStack();
+		Camera info = Minecraft.getInstance().gameRenderer.getMainCamera();
+		Vec3 view = info.getPosition();
 		ms.pushPose();
 		ms.translate(-view.x(), -view.y(), -view.z());
 		SuperRenderTypeBuffer buffer = SuperRenderTypeBuffer.getInstance();
@@ -70,15 +71,15 @@ public class SchematicPrinterClient {
 	}
 
 	@SubscribeEvent
-	public static void onRenderOverlay(RenderGameOverlayEvent.Post event) {
-		if (event.getType() == RenderGameOverlayEvent.ElementType.HOTBAR) {
-			schematicHandler.renderOverlay(new MatrixStack(), Minecraft.getInstance().renderBuffers().bufferSource());
+	public static void onRenderOverlay(RenderGameOverlayEvent.PostLayer event) {
+		if (event.getOverlay() == ForgeIngameGui.HOTBAR_ELEMENT) {
+			schematicHandler.renderOverlay(new PoseStack(), Minecraft.getInstance().renderBuffers().bufferSource());
 		}
 	}
 
 	public static void setupOverlay(InterModEnqueueEvent event) {
-		pos1 = new BlockPosSelectConfig(translationComponent("pos1"), TextFormatting.YELLOW);
-		pos2 = new BlockPosSelectConfig(translationComponent("pos2"), TextFormatting.LIGHT_PURPLE);
+		pos1 = new BlockPosSelectConfig(translationComponent("pos1"), ChatFormatting.YELLOW);
+		pos2 = new BlockPosSelectConfig(translationComponent("pos2"), ChatFormatting.LIGHT_PURPLE);
 
 
 		SelectOverlay schematicOverlay = new SelectOverlay(translationComponent("schematics"))

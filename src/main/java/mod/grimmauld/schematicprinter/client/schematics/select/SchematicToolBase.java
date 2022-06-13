@@ -1,6 +1,6 @@
 package mod.grimmauld.schematicprinter.client.schematics.select;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import mod.grimmauld.schematicprinter.client.SchematicPrinterClient;
 import mod.grimmauld.schematicprinter.client.schematics.SchematicHandler;
 import mod.grimmauld.schematicprinter.client.schematics.SchematicMetaInf;
@@ -11,14 +11,14 @@ import mod.grimmauld.sidebaroverlay.util.RaycastHelper;
 import mod.grimmauld.sidebaroverlay.util.VecHelper;
 import mod.grimmauld.sidebaroverlay.util.outline.AABBOutline;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.client.event.InputEvent;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -29,15 +29,15 @@ import static mod.grimmauld.sidebaroverlay.Manager.TOOL_CONFIG;
 public abstract class SchematicToolBase extends SelectItem {
 	protected SchematicHandler schematicHandler;
 	protected BlockPos selectedPos;
-	protected Vector3d chasingSelectedPos;
-	protected Vector3d lastChasingSelectedPos;
+	protected Vec3 chasingSelectedPos;
+	protected Vec3 lastChasingSelectedPos;
 	protected boolean selectIgnoreBlocks;
 	protected int selectionRange;
 	protected boolean schematicSelected;
 	protected boolean renderSelectedFace;
 	protected Direction selectedFace;
 
-	public SchematicToolBase(ITextComponent description) {
+	public SchematicToolBase(Component description) {
 		super(description);
 	}
 
@@ -48,8 +48,8 @@ public abstract class SchematicToolBase extends SelectItem {
 		selectedPos = null;
 		selectedFace = null;
 		schematicSelected = false;
-		chasingSelectedPos = Vector3d.ZERO;
-		lastChasingSelectedPos = Vector3d.ZERO;
+		chasingSelectedPos = Vec3.ZERO;
+		lastChasingSelectedPos = Vec3.ZERO;
 	}
 
 	public void updateSelection() {
@@ -58,7 +58,7 @@ public abstract class SchematicToolBase extends SelectItem {
 		if (selectedPos == null)
 			return;
 		lastChasingSelectedPos = chasingSelectedPos;
-		Vector3d target = Vector3d.atLowerCornerOf(selectedPos);
+		Vec3 target = Vec3.atLowerCornerOf(selectedPos);
 		if (target.distanceTo(chasingSelectedPos) < 1 / 512f) {
 			chasingSelectedPos = target;
 			return;
@@ -69,7 +69,7 @@ public abstract class SchematicToolBase extends SelectItem {
 	}
 
 	public void updateTargetPos() {
-		ClientPlayerEntity player = Minecraft.getInstance().player;
+		LocalPlayer player = Minecraft.getInstance().player;
 		SchematicMetaInf inf = schematicHandler.activeSchematic;
 
 		if (player == null || inf == null)
@@ -78,9 +78,9 @@ public abstract class SchematicToolBase extends SelectItem {
 		// Select Blueprint
 		if (schematicHandler.isDeployed()) {
 
-			Vector3d traceOrigin = RaycastHelper.getTraceOrigin(player);
-			Vector3d start = inf.transformation.toLocalSpace(traceOrigin);
-			Vector3d end = inf.transformation.toLocalSpace(RaycastHelper.getTraceTarget(player, 70, traceOrigin));
+			Vec3 traceOrigin = RaycastHelper.getTraceOrigin(player);
+			Vec3 start = inf.transformation.toLocalSpace(traceOrigin);
+			Vec3 end = inf.transformation.toLocalSpace(RaycastHelper.getTraceTarget(player, 70, traceOrigin));
 			RaycastHelper.PredicateTraceResult result =
 				RaycastHelper.rayTraceUntil(start, end, pos -> inf.bounds.contains(VecHelper.getCenterOf(pos)));
 
@@ -98,14 +98,14 @@ public abstract class SchematicToolBase extends SelectItem {
 				.add(player.getLookAngle()
 					.scale(selectionRange)));
 			if (snap)
-				lastChasingSelectedPos = chasingSelectedPos = Vector3d.atLowerCornerOf(selectedPos);
+				lastChasingSelectedPos = chasingSelectedPos = Vec3.atLowerCornerOf(selectedPos);
 			return;
 		}
 
 		// Select targeted Block
 		selectedPos = null;
-		BlockRayTraceResult trace = RaycastHelper.rayTraceRange(player.level, player, 75);
-		if (trace.getType() != RayTraceResult.Type.BLOCK)
+		BlockHitResult trace = RaycastHelper.rayTraceRange(player.level, player, 75);
+		if (trace.getType() != HitResult.Type.BLOCK)
 			return;
 
 		BlockPos hit = new BlockPos(trace.getLocation());
@@ -118,16 +118,16 @@ public abstract class SchematicToolBase extends SelectItem {
 			hit = hit.relative(trace.getDirection());
 		selectedPos = hit;
 		if (snap)
-			lastChasingSelectedPos = chasingSelectedPos = Vector3d.atLowerCornerOf(selectedPos);
+			lastChasingSelectedPos = chasingSelectedPos = Vec3.atLowerCornerOf(selectedPos);
 	}
 
-	public void renderTool(MatrixStack ms, SuperRenderTypeBuffer buffer) {
+	public void renderTool(PoseStack ms, SuperRenderTypeBuffer buffer) {
 	}
 
-	public void renderOverlay(MatrixStack ms, IRenderTypeBuffer buffer) {
+	public void renderOverlay(PoseStack ms, MultiBufferSource buffer) {
 	}
 
-	public void renderOnSchematic(MatrixStack ms, SuperRenderTypeBuffer buffer) {
+	public void renderOnSchematic(PoseStack ms, SuperRenderTypeBuffer buffer) {
 		if (schematicHandler == null)
 			schematicHandler = SchematicPrinterClient.schematicHandler;
 		SchematicMetaInf inf = schematicHandler.activeSchematic;

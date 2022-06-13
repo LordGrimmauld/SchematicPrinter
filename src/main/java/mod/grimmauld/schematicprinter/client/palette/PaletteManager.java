@@ -1,12 +1,12 @@
 package mod.grimmauld.schematicprinter.client.palette;
 
-import mcp.MethodsReturnNonnullByDefault;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import mod.grimmauld.schematicprinter.SchematicPrinter;
 import mod.grimmauld.schematicprinter.util.FileHelper;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.nbt.*;
-import net.minecraft.world.IWorld;
+import net.minecraft.world.level.LevelAccessor;
 import org.apache.commons.io.IOUtils;
 
 import javax.annotation.Nullable;
@@ -61,7 +61,7 @@ public class PaletteManager {
 		PALETTE.remove(state);
 	}
 
-	public static Optional<BlockState> getRandomBlockState(@Nullable IWorld world) {
+	public static Optional<BlockState> getRandomBlockState(@Nullable LevelAccessor world) {
 		if (world == null)
 			return Optional.empty();
 		return getRandomBlockState(world.getRandom());
@@ -92,39 +92,39 @@ public class PaletteManager {
 		PALETTE.keySet().stream().filter(state -> state.getBlock().equals(block)).collect(Collectors.toSet()).forEach(PALETTE::remove);
 	}
 
-	public static CompoundNBT serialize() {
-		ListNBT palette = new ListNBT();
+	public static CompoundTag serialize() {
+		ListTag palette = new ListTag();
 
 		for (Map.Entry<BlockState, Integer> entry : PALETTE.entrySet()) {
-			CompoundNBT compoundNBT = new CompoundNBT();
-			compoundNBT.put("state", NBTUtil.writeBlockState(entry.getKey()));
+			CompoundTag compoundNBT = new CompoundTag();
+			compoundNBT.put("state", NbtUtils.writeBlockState(entry.getKey()));
 			compoundNBT.putInt("weight", entry.getValue());
 			palette.add(compoundNBT);
 		}
-		CompoundNBT out = new CompoundNBT();
+		CompoundTag out = new CompoundTag();
 		out.put("palette", palette);
 		return out;
 	}
 
-	public static void deserialize(CompoundNBT in) {
-		INBT palette = null;
+	public static void deserialize(CompoundTag in) {
+		Tag palette = null;
 		try {
 			palette = in.get("palette");
 		} catch (Exception e) {
 			SchematicPrinter.LOGGER.warn("could not load palette: " + e);
 		}
-		if (!(palette instanceof ListNBT))
+		if (!(palette instanceof ListTag))
 			return;
 
 		Map<BlockState, Integer> tmpPalette = new HashMap<>();
 
-		((ListNBT) palette).forEach(entry -> {
-			if (!(entry instanceof CompoundNBT))
+		((ListTag) palette).forEach(entry -> {
+			if (!(entry instanceof CompoundTag))
 				return;
-			CompoundNBT compoundNBT = ((CompoundNBT) entry);
+			CompoundTag compoundNBT = ((CompoundTag) entry);
 			try {
 				int weight = compoundNBT.getInt("weight");
-				BlockState state = NBTUtil.readBlockState(compoundNBT.getCompound("state"));
+				BlockState state = NbtUtils.readBlockState(compoundNBT.getCompound("state"));
 				tmpPalette.put(state, weight);
 			} catch (Exception e) {
 				SchematicPrinter.LOGGER.warn("could not load palette: " + e);
@@ -144,7 +144,7 @@ public class PaletteManager {
 		InputStream stream = null;
 		try {
 			stream = Files.newInputStream(Paths.get(FileHelper.palettesFilePath + "/" + filename), StandardOpenOption.READ);
-			deserialize(CompressedStreamTools.readCompressed(stream));
+			deserialize(NbtIo.readCompressed(stream));
 		} catch (IOException ignored) {
 		} finally {
 			if (stream != null) {

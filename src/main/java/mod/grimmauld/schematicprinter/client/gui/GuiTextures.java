@@ -1,10 +1,11 @@
 package mod.grimmauld.schematicprinter.client.gui;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import mod.grimmauld.schematicprinter.SchematicPrinter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -34,11 +35,11 @@ public enum GuiTextures {
 
 	@OnlyIn(Dist.CLIENT)
 	public void bind() {
-		Minecraft.getInstance().getTextureManager().bind(this.location);
+		RenderSystem.setShaderTexture(0, this.location);
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	public void draw(MatrixStack ms, AbstractGui screen, int x, int y) {
+	public void draw(PoseStack ms, GuiComponent screen, int x, int y) {
 		this.bind();
 		screen.blit(ms, x, y, this.startX, this.startY, this.width, this.height);
 	}

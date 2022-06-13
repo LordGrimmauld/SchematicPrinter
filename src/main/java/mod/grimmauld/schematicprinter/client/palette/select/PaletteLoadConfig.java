@@ -1,12 +1,12 @@
 package mod.grimmauld.schematicprinter.client.palette.select;
 
-import mcp.MethodsReturnNonnullByDefault;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import mod.grimmauld.schematicprinter.client.SchematicPrinterClient;
 import mod.grimmauld.schematicprinter.client.palette.PaletteManager;
 import mod.grimmauld.schematicprinter.util.FileHelper;
 import mod.grimmauld.sidebaroverlay.api.overlay.SelectOverlay;
 import mod.grimmauld.sidebaroverlay.api.overlay.selection.config.SelectConfig;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 
 import javax.annotation.Nullable;
@@ -27,7 +27,7 @@ public class PaletteLoadConfig extends SelectConfig<String> {
 	private final List<String> availablePalettes;
 	private int index;
 
-	public PaletteLoadConfig(ITextComponent description) {
+	public PaletteLoadConfig(Component description) {
 		super(description);
 		availablePalettes = new ArrayList<>();
 		refreshFiles();

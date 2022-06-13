@@ -1,11 +1,11 @@
 package mod.grimmauld.schematicprinter.client.schematics.select;
 
-import mcp.MethodsReturnNonnullByDefault;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import mod.grimmauld.schematicprinter.client.SchematicPrinterClient;
 import mod.grimmauld.schematicprinter.util.FileHelper;
 import mod.grimmauld.sidebaroverlay.api.overlay.SelectOverlay;
 import mod.grimmauld.sidebaroverlay.api.overlay.selection.config.SelectConfig;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.network.chat.Component;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -25,7 +25,7 @@ public class SchematicSelectConfig extends SelectConfig<String> {
 	private final List<String> availableSchematics;
 	private int index;
 
-	public SchematicSelectConfig(ITextComponent description) {
+	public SchematicSelectConfig(Component description) {
 		super(description);
 		availableSchematics = new ArrayList<>();
 		refreshFiles();

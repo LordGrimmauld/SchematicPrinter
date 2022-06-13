@@ -1,10 +1,10 @@
 package mod.grimmauld.schematicprinter.util.outline;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import mod.grimmauld.sidebaroverlay.render.SuperRenderTypeBuffer;
 import mod.grimmauld.sidebaroverlay.util.outline.Outline;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -19,7 +19,7 @@ public class CollectionOutline extends Outline {
 	}
 
 	@Override
-	public void render(MatrixStack ms, SuperRenderTypeBuffer buffer) {
+	public void render(PoseStack ms, SuperRenderTypeBuffer buffer) {
 		long startTime = System.currentTimeMillis();
 		while (edgesToProcess.hasNext() && (System.currentTimeMillis() - startTime) < 40) {
 			LineVecPair line = edgesToProcess.next();
@@ -41,14 +41,14 @@ public class CollectionOutline extends Outline {
 	}
 
 	private Stream<LineVecPair> addVerticeForPos(BlockPos pos) {
-		Vector3d xyz = new Vector3d(pos.getX(), pos.getY(), pos.getZ());
-		Vector3d Xyz = new Vector3d(pos.getX() + 1, pos.getY(), pos.getZ());
-		Vector3d xYz = new Vector3d(pos.getX(), pos.getY() + 1, pos.getZ());
-		Vector3d XYz = new Vector3d(pos.getX() + 1, pos.getY() + 1, pos.getZ());
-		Vector3d xyZ = new Vector3d(pos.getX(), pos.getY(), pos.getZ() + 1);
-		Vector3d XyZ = new Vector3d(pos.getX() + 1, pos.getY(), pos.getZ() + 1);
-		Vector3d xYZ = new Vector3d(pos.getX(), pos.getY() + 1, pos.getZ() + 1);
-		Vector3d XYZ = new Vector3d(pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1);
+		Vec3 xyz = new Vec3(pos.getX(), pos.getY(), pos.getZ());
+		Vec3 Xyz = new Vec3(pos.getX() + 1, pos.getY(), pos.getZ());
+		Vec3 xYz = new Vec3(pos.getX(), pos.getY() + 1, pos.getZ());
+		Vec3 XYz = new Vec3(pos.getX() + 1, pos.getY() + 1, pos.getZ());
+		Vec3 xyZ = new Vec3(pos.getX(), pos.getY(), pos.getZ() + 1);
+		Vec3 XyZ = new Vec3(pos.getX() + 1, pos.getY(), pos.getZ() + 1);
+		Vec3 xYZ = new Vec3(pos.getX(), pos.getY() + 1, pos.getZ() + 1);
+		Vec3 XYZ = new Vec3(pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1);
 		return Stream.of(
 			LineVecPair.of(xyz, Xyz), LineVecPair.of(xyz, xYz),
 			LineVecPair.of(xyz, xyZ), LineVecPair.of(XyZ, xyZ),

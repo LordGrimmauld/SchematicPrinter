@@ -1,10 +1,10 @@
 package mod.grimmauld.schematicprinter.util;
 
-import mcp.MethodsReturnNonnullByDefault;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import mod.grimmauld.schematicprinter.SchematicPrinter;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -13,16 +13,16 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class TextHelper {
-	public static void sendStatus(@Nullable PlayerEntity player, String key, Object... args) {
+	public static void sendStatus(@Nullable Player player, String key, Object... args) {
 		if (player != null)
-			player.displayClientMessage(new TranslationTextComponent(translationKey(key), args), true);
+			player.displayClientMessage(new TranslatableComponent(translationKey(key), args), true);
 	}
 
 	public static String translationKey(String key) {
 		return SchematicPrinter.MODID + "." + key;
 	}
 
-	public static ITextComponent translationComponent(String key) {
-		return new TranslationTextComponent(translationKey(key));
+	public static Component translationComponent(String key) {
+		return new TranslatableComponent(translationKey(key));
 	}
 }

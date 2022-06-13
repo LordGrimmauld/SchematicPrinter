@@ -1,8 +1,8 @@
 package mod.grimmauld.schematicprinter.client.schematics.tools;
 
 import mod.grimmauld.schematicprinter.client.palette.PaletteManager;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.client.Minecraft;
 
 import java.util.Optional;

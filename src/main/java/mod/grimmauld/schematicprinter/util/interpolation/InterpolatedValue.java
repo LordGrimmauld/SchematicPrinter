@@ -1,6 +1,6 @@
 package mod.grimmauld.schematicprinter.util.interpolation;
 
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
 
 public class InterpolatedValue {
 	public float value = 0.0F;
@@ -15,6 +15,6 @@ public class InterpolatedValue {
 	}
 
 	public float get(float partialTicks) {
-		return MathHelper.lerp(partialTicks, this.lastValue, this.value);
+		return Mth.lerp(partialTicks, this.lastValue, this.value);
 	}
 }

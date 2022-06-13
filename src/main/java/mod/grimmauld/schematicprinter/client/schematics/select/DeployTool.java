@@ -1,16 +1,16 @@
 package mod.grimmauld.schematicprinter.client.schematics.select;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import mcp.MethodsReturnNonnullByDefault;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import mod.grimmauld.schematicprinter.client.schematics.SchematicMetaInf;
 import mod.grimmauld.sidebaroverlay.api.overlay.SelectOverlay;
 import mod.grimmauld.sidebaroverlay.render.SuperRenderTypeBuffer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec3;
+import com.mojang.math.Vector3f;
+import net.minecraft.network.chat.Component;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -19,7 +19,7 @@ import static mod.grimmauld.sidebaroverlay.Manager.TOOL_CONFIG;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class DeployTool extends SchematicToolBase {
-	public DeployTool(ITextComponent description) {
+	public DeployTool(Component description) {
 		super(description);
 	}
 
@@ -36,14 +36,14 @@ public class DeployTool extends SchematicToolBase {
 			selectionRange = (int) (inf.bounds
 				.getCenter()
 				.length() / 2);
-			selectionRange = MathHelper.clamp(selectionRange, 1, 100);
+			selectionRange = Mth.clamp(selectionRange, 1, 100);
 		}
 		selectIgnoreBlocks = TOOL_CONFIG.consumeClick();
 		super.updateSelection();
 	}
 
 	@Override
-	public void renderTool(MatrixStack ms, SuperRenderTypeBuffer buffer) {
+	public void renderTool(PoseStack ms, SuperRenderTypeBuffer buffer) {
 		super.renderTool(ms, buffer);
 		SchematicMetaInf inf = schematicHandler.activeSchematic;
 
@@ -53,17 +53,17 @@ public class DeployTool extends SchematicToolBase {
 		ms.pushPose();
 		float pt = Minecraft.getInstance()
 			.getFrameTime();
-		double x = MathHelper.lerp(pt, lastChasingSelectedPos.x, chasingSelectedPos.x);
-		double y = MathHelper.lerp(pt, lastChasingSelectedPos.y, chasingSelectedPos.y);
-		double z = MathHelper.lerp(pt, lastChasingSelectedPos.z, chasingSelectedPos.z);
+		double x = Mth.lerp(pt, lastChasingSelectedPos.x, chasingSelectedPos.x);
+		double y = Mth.lerp(pt, lastChasingSelectedPos.y, chasingSelectedPos.y);
+		double z = Mth.lerp(pt, lastChasingSelectedPos.z, chasingSelectedPos.z);
 
-		Vector3d center = inf.bounds.getCenter();
-		Vector3d rotationOffset = inf.transformation.getRotationOffset(true);
+		Vec3 center = inf.bounds.getCenter();
+		Vec3 rotationOffset = inf.transformation.getRotationOffset(true);
 		int centerX = (int) center.x;
 		int centerZ = (int) center.z;
 		double xOrigin = inf.bounds.getXsize() / 2f;
 		double zOrigin = inf.bounds.getZsize() / 2f;
-		Vector3d origin = new Vector3d(xOrigin, 0, zOrigin);
+		Vec3 origin = new Vec3(xOrigin, 0, zOrigin);
 
 		ms.translate(x - centerX, y, z - centerZ);
 		ms.translate(origin.x, origin.y, origin.z);
@@ -82,7 +82,7 @@ public class DeployTool extends SchematicToolBase {
 		if (!selectIgnoreBlocks)
 			return super.handleMouseWheel(delta);
 		selectionRange += delta;
-		selectionRange = MathHelper.clamp(selectionRange, 1, 100);
+		selectionRange = Mth.clamp(selectionRange, 1, 100);
 		return true;
 	}
 
@@ -92,7 +92,7 @@ public class DeployTool extends SchematicToolBase {
 		SchematicMetaInf inf = schematicHandler.activeSchematic;
 		if (selectedPos == null || inf == null)
 			return;
-		Vector3d center = inf.bounds
+		Vec3 center = inf.bounds
 			.getCenter();
 		BlockPos target = selectedPos.offset(-((int) center.x), 0, -((int) center.z));
 		inf.transformation

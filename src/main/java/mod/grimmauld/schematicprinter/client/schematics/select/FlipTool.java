@@ -1,17 +1,17 @@
 package mod.grimmauld.schematicprinter.client.schematics.select;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import mcp.MethodsReturnNonnullByDefault;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import mod.grimmauld.schematicprinter.client.schematics.SchematicMetaInf;
 import mod.grimmauld.sidebaroverlay.api.overlay.SelectOverlay;
 import mod.grimmauld.sidebaroverlay.render.ExtraTextures;
 import mod.grimmauld.sidebaroverlay.render.SuperRenderTypeBuffer;
 import mod.grimmauld.sidebaroverlay.util.outline.AABBOutline;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.core.Direction;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.network.chat.Component;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -19,9 +19,9 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @MethodsReturnNonnullByDefault
 public class FlipTool extends SchematicToolBase {
 
-	private final AABBOutline outline = new AABBOutline(new AxisAlignedBB(BlockPos.ZERO));
+	private final AABBOutline outline = new AABBOutline(new AABB(BlockPos.ZERO));
 
-	public FlipTool(ITextComponent description) {
+	public FlipTool(Component description) {
 		super(description);
 	}
 
@@ -52,7 +52,7 @@ public class FlipTool extends SchematicToolBase {
 	}
 
 	@Override
-	public void renderOnSchematic(MatrixStack ms, SuperRenderTypeBuffer buffer) {
+	public void renderOnSchematic(PoseStack ms, SuperRenderTypeBuffer buffer) {
 		SchematicMetaInf inf = schematicHandler.activeSchematic;
 		if (!schematicSelected || !selectedFace.getAxis()
 			.isHorizontal() || inf == null || !schematicHandler.isDeployed()) {
@@ -61,12 +61,12 @@ public class FlipTool extends SchematicToolBase {
 		}
 
 		Direction facing = selectedFace.getClockWise();
-		AxisAlignedBB bounds = inf.bounds;
+		AABB bounds = inf.bounds;
 
-		Vector3d directionVec = Vector3d.atLowerCornerOf(Direction.get(Direction.AxisDirection.POSITIVE, facing.getAxis())
+		Vec3 directionVec = Vec3.atLowerCornerOf(Direction.get(Direction.AxisDirection.POSITIVE, facing.getAxis())
 			.getNormal());
-		Vector3d boundsSize = new Vector3d(bounds.getXsize(), bounds.getYsize(), bounds.getZsize());
-		Vector3d vec = boundsSize.multiply(directionVec);
+		Vec3 boundsSize = new Vec3(bounds.getXsize(), bounds.getYsize(), bounds.getZsize());
+		Vec3 vec = boundsSize.multiply(directionVec);
 		bounds = bounds.contract(vec.x, vec.y, vec.z)
 			.inflate(1 - directionVec.x, 1 - directionVec.y, 1 - directionVec.z);
 		bounds = bounds.move(directionVec.scale(.5f)

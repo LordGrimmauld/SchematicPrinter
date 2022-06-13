@@ -1,11 +1,11 @@
 package mod.grimmauld.schematicprinter.client.schematics;
 
-import mcp.MethodsReturnNonnullByDefault;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import mod.grimmauld.schematicprinter.client.printer.BlockInformation;
 import mod.grimmauld.schematicprinter.client.printer.Printer;
-import net.minecraft.block.BlockState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nonnull;
 import java.util.HashSet;
@@ -15,7 +15,7 @@ import java.util.Set;
 public class PlacementDetectWorld extends SchematicWorld {
 	private final HashSet<BlockInformation> bufferedSchematic;
 
-	public PlacementDetectWorld(World original) {
+	public PlacementDetectWorld(Level original) {
 		super(original);
 		bufferedSchematic = new HashSet<>();
 	}

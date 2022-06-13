@@ -1,13 +1,13 @@
 package mod.grimmauld.schematicprinter.util.outline;
 
 
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.phys.Vec3;
 
 public class LineVecPair {
-	public Vector3d first;
-	public Vector3d second;
+	public Vec3 first;
+	public Vec3 second;
 
-	private LineVecPair(Vector3d from, Vector3d to) {
+	private LineVecPair(Vec3 from, Vec3 to) {
 		if (from.hashCode() < to.hashCode()) {
 			first = from;
 			second = to;
@@ -17,7 +17,7 @@ public class LineVecPair {
 		}
 	}
 
-	public static LineVecPair of(Vector3d from, Vector3d to) {
+	public static LineVecPair of(Vec3 from, Vec3 to) {
 		return new LineVecPair(from, to);
 	}
 
@@ -40,11 +40,11 @@ public class LineVecPair {
 		return "(" + this.first + ", " + this.second + ")";
 	}
 
-	public Vector3d getFirst() {
+	public Vec3 getFirst() {
 		return first;
 	}
 
-	public Vector3d getSecond() {
+	public Vec3 getSecond() {
 		return second;
 	}
 

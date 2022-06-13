@@ -2,15 +2,15 @@ package mod.grimmauld.schematicprinter.client.printer;
 
 import mod.grimmauld.schematicprinter.SchematicPrinter;
 import mod.grimmauld.schematicprinter.util.LazyQueue;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.event.TickEvent;
@@ -52,18 +52,18 @@ public class Printer {
 	private static boolean canPlace(BlockInformation inf) {
 		if (MC.level == null || MC.player == null)
 			return false;
-		if (World.isOutsideBuildHeight(inf.pos))
+		if (MC.level.isOutsideBuildHeight(inf.pos))
 			return false;
 		// if (MC.world.getWorldInfo().getGenerator() == WorldType.DEBUG_ALL_BLOCK_STATES)
 		// 	return false;
 		BlockState replaceState = MC.level.getBlockState(inf.pos);
 		if (replaceState.equals(inf.state))
 			return false;
-		if (!MC.level.isUnobstructed(inf.state, inf.pos, ISelectionContext.of(MC.player)))
+		if (!MC.level.isUnobstructed(inf.state, inf.pos, CollisionContext.of(MC.player)))
 			return false;
 		if (replaceState.isAir())
 			return true;
-		if (!shouldReplaceTEs && replaceState.hasTileEntity())
+		if (!shouldReplaceTEs && replaceState.hasBlockEntity())
 			return false;
 		if (inf.state.getBlock() == Blocks.AIR)
 			return inf.overrideAir;
@@ -74,17 +74,17 @@ public class Printer {
 	public static void onCommandFeedback(ClientChatReceivedEvent event) {
 		if (event.getMessage() == null || MC.player == null)
 			return;
-		List<ITextComponent> checking = new LinkedList<>();
+		List<Component> checking = new LinkedList<>();
 		checking.add(event.getMessage());
 
 		while (!checking.isEmpty()) {
-			ITextComponent iTextComponent = checking.get(0);
-			if (iTextComponent instanceof TranslationTextComponent) {
-				String test = ((TranslationTextComponent) iTextComponent).getKey();
+			Component iTextComponent = checking.get(0);
+			if (iTextComponent instanceof TranslatableComponent) {
+				String test = ((TranslatableComponent) iTextComponent).getKey();
 				if (test.equals("command.unknown.command")) {
 					stopPrinting();
-					event.setMessage(new StringTextComponent(
-						TextFormatting.RED + "You do not have permission to print on this server."));
+					event.setMessage(new TextComponent(
+						ChatFormatting.RED + "You do not have permission to print on this server."));
 					return;
 				}
 				if (test.equals("parsing.int.expected")) {
@@ -95,7 +95,7 @@ public class Printer {
 					event.setCanceled(true);
 					return;
 				}
-				Object[] args = ((TranslationTextComponent) iTextComponent).getArgs();
+				Object[] args = ((TranslatableComponent) iTextComponent).getArgs();
 				if (!receivedEndFeedback && test.equals("commands.gamerule.set") && args.length == 2
 					&& args[0].equals("sendCommandFeedback") && args[1].equals("true")) {
 					receivedEndFeedback = true;
@@ -129,7 +129,7 @@ public class Printer {
 		shouldPrint = true;
 		if (MC.player == null)
 			return;
-		MC.player.displayClientMessage(new StringTextComponent("Printing Structure..."), true);
+		MC.player.displayClientMessage(new TextComponent("Printing Structure..."), true);
 		MC.player.chat("/gamerule sendCommandFeedback false");
 		MC.player.chat("/gamerule logAdminCommands false");
 	}
@@ -139,7 +139,7 @@ public class Printer {
 		printQueue.clear();
 		if (MC.player == null)
 			return;
-		MC.player.displayClientMessage(new StringTextComponent("Printing done"), true);
+		MC.player.displayClientMessage(new TextComponent("Printing done"), true);
 		MC.player.chat("/gamerule logAdminCommands true");
 		MC.player.chat("/gamerule sendCommandFeedback true");
 		receivedEndFeedback = false;
